@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5A7C9F</color>
+    <color name="colorPrimaryDark">#49627F</color>
+    <color name="colorAccent">#5295CF</color>
+    
+    <color name="chart_mini_line_green_day">#66BE52</color>
+    <color name="chart_mini_line_red_day">#DD7064</color>
+</resources>
