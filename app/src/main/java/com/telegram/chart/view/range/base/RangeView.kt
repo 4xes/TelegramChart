@@ -16,6 +16,12 @@ class RangeView @JvmOverloads constructor(
 
     private val bound = RectF()
     private val line = RectF()
+    private val range = RectF()
+    private val fingerLeft = RectF()
+    private val fingerRight = RectF()
+
+    private var timeDown = 0L
+    private var xDown: Float = 0f
 
     private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.CYAN
@@ -62,35 +68,106 @@ class RangeView @JvmOverloads constructor(
         line.set(bound)
         line.inset(halfTouch, 0f)
 
+        range.set(line)
+        fingerLeft.set(line)
+        fingerRight.set(line)
+        recalculateRange()
+    }
+
+    private fun recalculateRange() {
+        range.left = line.left + (line.width() * start)
+        range.right = line.left + (line.width() * end)
+
+        fingerLeft.left = range.left - halfTouch
+        fingerLeft.right = range.left + halfTouch
+
+
+        fingerRight.left = range.right - halfTouch
+        fingerRight.right = range.right + halfTouch
     }
 
     private var currentZone = Zone.None
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-
         val x = event.x
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 currentZone = getZone(x)
+                xDown = x
+                timeDown = System.currentTimeMillis()
+                return true
             }
             MotionEvent.ACTION_UP -> {
 
             }
             MotionEvent.ACTION_MOVE -> {
+                val dx = x - xDown
+                xDown = x
+                when (currentZone) {
+                    Zone.None -> {
+                        //todo move to here by center rangeX
+                        return true
+                    }
+                    Zone.Start -> {
+                        moveStart(dx)
+                    }
+                    Zone.End -> {
+                        moveEnd(dx)
+                    }
+                    Zone.Range -> {
+                        moveRange(dx)
+                    }
 
+                }
             }
         }
 
         return false
     }
 
-    private fun getZone(x: Float): Zone {
-        val left = line.left + (line.width() * start)
-        val right = line.left + (line.width() * end)
+    private fun moveStart(dx: Float) {
+       val dPercentage = dx / line.width()
+       start += dPercentage
+       if (start < 0f) {
+           start = 0f
+       } else if (end - start < min) {
+           start = end - min
+       }
+       recalculateRange()
+       invalidate()
+    }
 
-        if (x >= left + halfTouch && x <= right + halfTouch) {
-            return Zone.Move
+    private fun moveEnd(dx: Float) {
+        val dPercentage = dx / line.width()
+        end += dPercentage
+        if (end > 1f) {
+            end = 1f
+        } else if (end - start < min) {
+            if (start + min > 1f) {
+                start = 1f - min
+                end = 1f
+            } else {
+                end = start + min
+            }
+        }
+        recalculateRange()
+        invalidate()
+    }
+
+    private fun moveRange(dx: Float) {
+
+    }
+
+    private fun getZone(x: Float): Zone {
+        if (fingerLeft.containsX(x)) {
+            return Zone.Start
+        }
+        if (fingerRight.containsX(x)) {
+            return Zone.End
+        }
+        if (range.containsX(x)) {
+            return Zone.Range
         }
         return Zone.None
     }
@@ -101,12 +178,9 @@ class RangeView @JvmOverloads constructor(
         canvas.drawRect(bound, backgroundPaint)
         canvas.drawRect(line, linePaint)
 
-        val left = line.left + (line.width() * start)
-        val right = line.left + (line.width() * end)
-
-        canvas.drawRect(left, line.top, right, line.bottom, rangePaint)
-        canvas.drawRect(left - halfTouch, line.top, left + halfTouch, line.bottom, touchPaint)
-        canvas.drawRect(right - halfTouch, line.top, right + halfTouch, line.bottom, touchPaint)
+        canvas.drawRect(range, rangePaint)
+        canvas.drawRect(fingerLeft, touchPaint)
+        canvas.drawRect(fingerRight, touchPaint)
     }
 
     override fun setValues(start: Float, end: Float) {
@@ -114,4 +188,7 @@ class RangeView @JvmOverloads constructor(
         this.end = end
         invalidate()
     }
+
+    private fun RectF.containsX(value: Float): Boolean = value in left..right
+
 }
