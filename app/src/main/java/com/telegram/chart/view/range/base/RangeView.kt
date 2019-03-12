@@ -156,7 +156,25 @@ class RangeView @JvmOverloads constructor(
     }
 
     private fun moveRange(dx: Float) {
+        val dPercentage = dx / line.width()
+        val range = end - start
 
+        val toRight = dPercentage > 0
+        if (toRight) {
+            end += dPercentage
+            if (end > 1f) {
+                end = 1f
+            }
+            start = end - range
+        } else {
+            start += dPercentage
+            if (start < 0f) {
+                start = 0f
+            }
+            end = start + range
+        }
+        recalculateRange()
+        invalidate()
     }
 
     private fun getZone(x: Float): Zone {
