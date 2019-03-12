@@ -1,4 +1,4 @@
-package com.telegram.chart.view.range.base
+package com.telegram.chart.view.range
 
 import android.content.Context
 import android.graphics.*
@@ -8,37 +8,19 @@ import android.view.View
 import com.telegram.chart.extensions.pxFromDp
 import com.telegram.chart.extensions.reconcileSize
 
-class RangeView @JvmOverloads constructor(
+abstract class BaseRangeView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr), Range {
 
-    private val bound = RectF()
-    private val line = RectF()
-    private val range = RectF()
-    private val fingerLeft = RectF()
-    private val fingerRight = RectF()
+    protected val bound = RectF()
+    protected val line = RectF()
+    protected val range = RectF()
+    protected val fingerLeft = RectF()
+    protected val fingerRight = RectF()
 
-    private var timeDown = 0L
     private var xDown: Float = 0f
-
-    private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.CYAN
-    }
-
-    private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.GREEN
-    }
-
-    private val rangePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-    }
-
-    private val touchPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.RED
-        alpha = 122
-    }
 
     private var start = 0.8f
     private var end = 1f
@@ -95,7 +77,6 @@ class RangeView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 currentZone = getZone(x)
                 xDown = x
-                timeDown = System.currentTimeMillis()
                 return true
             }
             MotionEvent.ACTION_UP -> {
@@ -188,17 +169,6 @@ class RangeView @JvmOverloads constructor(
             return Zone.Range
         }
         return Zone.None
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
-        canvas.drawRect(bound, backgroundPaint)
-        canvas.drawRect(line, linePaint)
-
-        canvas.drawRect(range, rangePaint)
-        canvas.drawRect(fingerLeft, touchPaint)
-        canvas.drawRect(fingerRight, touchPaint)
     }
 
     override fun setValues(start: Float, end: Float) {

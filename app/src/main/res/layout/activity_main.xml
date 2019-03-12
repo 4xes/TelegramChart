@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.telegram.chart.view.range.base.RangeView
+    <com.telegram.chart.view.range.ChartRangeView
         android:layout_width="match_parent"
         android:layout_height="50dp" />
 

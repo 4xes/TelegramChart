@@ -1,4 +1,4 @@
-package com.telegram.chart.view.range.base
+package com.telegram.chart.view.range
 
 interface Range {
 
