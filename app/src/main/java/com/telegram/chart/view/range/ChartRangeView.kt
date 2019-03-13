@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Region
+import android.os.Build
 import android.util.AttributeSet
 
 class ChartRangeView @JvmOverloads constructor(
@@ -21,11 +23,6 @@ class ChartRangeView @JvmOverloads constructor(
         alpha = 40
     }
 
-    private val rangePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLUE
-        alpha = 122
-    }
-
     private val touchPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.BLUE
         alpha = 200
@@ -33,12 +30,17 @@ class ChartRangeView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
+        val save = canvas.saveCount
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipOutRect(range)
+        } else {
+            @Suppress("DEPRECATION")
+            canvas.clipRect(range, Region.Op.DIFFERENCE)
+        }
         canvas.drawRect(bound, backgroundPaint)
         canvas.drawRect(line, linePaint)
-
-        canvas.drawRect(range, rangePaint)
         canvas.drawRect(fingerLeft, touchPaint)
         canvas.drawRect(fingerRight, touchPaint)
+        canvas.restoreToCount(save)
     }
 }
