@@ -12,7 +12,7 @@ abstract class BaseRangeView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr), Range {
+) : View(context, attrs, defStyleAttr) {
 
     protected val bound = RectF()
     protected val line = RectF()
@@ -48,8 +48,6 @@ abstract class BaseRangeView @JvmOverloads constructor(
         bound.bottom = height - paddingBottom.toFloat()
 
         line.set(bound)
-        line.inset(halfTouch, 0f)
-
         range.set(line)
         fingerLeft.set(line)
         fingerRight.set(line)
@@ -171,7 +169,7 @@ abstract class BaseRangeView @JvmOverloads constructor(
         return Zone.None
     }
 
-    override fun setValues(start: Float, end: Float) {
+    fun setValues(start: Float, end: Float) {
         this.start = start
         this.end = end
         invalidate()

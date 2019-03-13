@@ -16,6 +16,7 @@ class ChartRangeView @JvmOverloads constructor(
 
     private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.CYAN
+        alpha = 70
     }
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -25,7 +26,7 @@ class ChartRangeView @JvmOverloads constructor(
 
     private val touchPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.BLUE
-        alpha = 200
+        alpha = 80
     }
 
     override fun onDraw(canvas: Canvas) {

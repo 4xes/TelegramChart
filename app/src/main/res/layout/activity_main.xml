@@ -8,38 +8,57 @@
     tools:context=".TestActivity">
 
     <TextView
+        android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/followers"
-        android:id="@+id/label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/normal"
         android:layout_marginStart="@dimen/normal"
         android:layout_marginLeft="@dimen/normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
-    <FrameLayout
+    <com.telegram.chart.view.chart.SimpleChartView
+        android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:id="@+id/chart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/label"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/normal"
         android:layout_marginStart="@dimen/normal"
         android:layout_marginLeft="@dimen/normal"
         android:layout_marginRight="@dimen/normal"
         android:layout_marginEnd="@dimen/normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label"
+        app:layout_constraintEnd_toEndOf="parent"
         />
 
+    <com.telegram.chart.view.chart.SimpleChartView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/preview_height"
+        android:layout_marginTop="@dimen/normal"
+        android:layout_marginStart="@dimen/normal"
+        android:layout_marginLeft="@dimen/normal"
+        android:layout_marginRight="@dimen/normal"
+        android:layout_marginEnd="@dimen/normal"
+        app:layout_constraintTop_toBottomOf="@id/chart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- padding for touch zone -->
     <com.telegram.chart.view.range.ChartRangeView
         android:id="@+id/range"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:layout_constraintTop_toBottomOf="@id/chart"
+        android:layout_height="@dimen/preview_height"
+        android:paddingLeft="@dimen/normal"
+        android:paddingStart="@dimen/normal"
+        android:paddingRight="@dimen/normal"
+        android:paddingEnd="@dimen/normal"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/preview"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/preview"
         />
 
 </android.support.constraint.ConstraintLayout>
