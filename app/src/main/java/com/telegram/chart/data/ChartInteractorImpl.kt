@@ -3,9 +3,7 @@ package com.telegram.chart.data
 import android.content.Context
 import org.json.JSONArray
 
-import org.json.JSONObject
-
-class ChartInteractorImpl(val context: Context): ChartsInteractor {
+class ChartInteractorImpl(private val context: Context): ChartsInteractor {
 
     private val jsonMapper = ChartJsonMapper()
 

@@ -2,6 +2,7 @@ package com.telegram.chart.data
 
 import android.graphics.Color
 import android.support.v4.util.ArrayMap
+import com.telegram.chart.extensions.maxMin
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -12,7 +13,7 @@ class ChartJsonMapper: Mapper<List<Chart>, JSONArray> {
             val obj = array.getJSONObject(i)
             charts.add(parseChart(obj))
         }
-        return emptyList()
+        return charts
     }
 
     private fun parseChart(obj: JSONObject): Chart {
@@ -28,10 +29,15 @@ class ChartJsonMapper: Mapper<List<Chart>, JSONArray> {
             val type = types.getString(key)
             when (type) {
                 "line" -> {
+                    val y = data.getValue(key)
+                    val (max, min) = y.maxMin()!!
+
                     lines.add(Line(
                             name = names.getString(key),
                             color = Color.parseColor(colors.getString(key)),
-                            y = data.getValue(key)
+                            y = y,
+                            maxY = max,
+                            minY = min
                     ))
                 }
                 "x" -> {
@@ -40,7 +46,8 @@ class ChartJsonMapper: Mapper<List<Chart>, JSONArray> {
             }
         }
         val xData = data.getValue(xKey)
-        return Chart(lines, xData)
+        val (max, min) = lines.maxMin()!!
+        return Chart(lines, xData, max, min)
     }
 
     private fun parseData(columns: JSONArray): Map<String, LongArray> {
