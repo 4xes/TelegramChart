@@ -28,6 +28,8 @@ abstract class BaseRangeView @JvmOverloads constructor(
 
     private var halfTouch = 10f.pxFromDp()
 
+    var listener: RangeListener? = null
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 
         val minWidth = 200.pxFromDp()
@@ -51,10 +53,10 @@ abstract class BaseRangeView @JvmOverloads constructor(
         range.set(line)
         fingerLeft.set(line)
         fingerRight.set(line)
-        recalculateRange()
+        recalculateBounds()
     }
 
-    private fun recalculateRange() {
+    private fun recalculateBounds() {
         range.left = line.left + (line.width() * start)
         range.right = line.left + (line.width() * end)
 
@@ -83,6 +85,8 @@ abstract class BaseRangeView @JvmOverloads constructor(
             MotionEvent.ACTION_MOVE -> {
                 val dx = x - xDown
                 xDown = x
+                val tStart = start
+                val tEnd = end
                 when (currentZone) {
                     Zone.None -> {
                         //todo move to here by center rangeX
@@ -97,7 +101,10 @@ abstract class BaseRangeView @JvmOverloads constructor(
                     Zone.Range -> {
                         moveRange(dx)
                     }
-
+                }
+                val isChange = tStart != start || tEnd != end
+                if (isChange) {
+                    onChange()
                 }
             }
         }
@@ -106,15 +113,13 @@ abstract class BaseRangeView @JvmOverloads constructor(
     }
 
     private fun moveStart(dx: Float) {
-       val dPercentage = dx / line.width()
-       start += dPercentage
-       if (start < 0f) {
-           start = 0f
-       } else if (end - start < min) {
-           start = end - min
-       }
-       recalculateRange()
-       invalidate()
+        val dPercentage = dx / line.width()
+        start += dPercentage
+        if (start < 0f) {
+            start = 0f
+        } else if (end - start < min) {
+            start = end - min
+        }
     }
 
     private fun moveEnd(dx: Float) {
@@ -130,7 +135,11 @@ abstract class BaseRangeView @JvmOverloads constructor(
                 end = start + min
             }
         }
-        recalculateRange()
+    }
+
+    private fun onChange() {
+        recalculateBounds()
+        notifyListener()
         invalidate()
     }
 
@@ -152,8 +161,6 @@ abstract class BaseRangeView @JvmOverloads constructor(
             }
             end = start + range
         }
-        recalculateRange()
-        invalidate()
     }
 
     private fun getZone(x: Float): Zone {
@@ -176,5 +183,9 @@ abstract class BaseRangeView @JvmOverloads constructor(
     }
 
     private fun RectF.containsX(value: Float): Boolean = value in left..right
+
+    private fun notifyListener() {
+        listener?.onChangeRange(start, end)
+    }
 
 }
