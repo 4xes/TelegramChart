@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/followers"
+        android:textColor="@color/primary_text_color"
         android:layout_marginTop="@dimen/normal"
         android:layout_marginStart="@dimen/normal"
         android:layout_marginLeft="@dimen/normal"
