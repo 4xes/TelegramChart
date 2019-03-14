@@ -4,7 +4,7 @@ import android.graphics.*
 import com.telegram.chart.data.Line
 import com.telegram.chart.extensions.pxFromDp
 
-class SimpleRenderLine(val line: Line) {
+class SimpleRenderLine(private val line: Line) {
 
     private val path = Path()
 
@@ -17,7 +17,6 @@ class SimpleRenderLine(val line: Line) {
     private val matrix = Matrix()
 
     fun calculatePath(bound: RectF, maxY: Long, minY: Long) {
-
         matrix.setScale(1f, 1f, bound.centerX(), bound.centerY())
         if (line.y.size > 2) {
             val dx = bound.width() / (line.y.size - 1)
@@ -29,6 +28,10 @@ class SimpleRenderLine(val line: Line) {
             }
         }
         path.transform(matrix)
+    }
+
+    private fun changeMatrix(start: Float, end: Float) {
+
     }
 
     fun draw(canvas: Canvas) {
