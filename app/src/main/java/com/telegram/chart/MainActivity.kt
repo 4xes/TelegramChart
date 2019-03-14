@@ -2,13 +2,9 @@ package com.telegram.chart
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import com.telegram.chart.data.ChartInteractorImpl
 import com.telegram.chart.data.ChartsInteractor
-import com.telegram.chart.test.LineChartView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_test.*
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         val chart0 = chartInteractor.getCharts()[0]
         chart.setChart(chart0)
         preview.setChart(chart0)
+
     }
 
 
