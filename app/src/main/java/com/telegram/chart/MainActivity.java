@@ -2,29 +2,28 @@ package com.telegram.chart;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.telegram.chart.data.Chart;
-import com.telegram.chart.data.ChartInteractorImpl;
+import com.telegram.chart.R;
+
+import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.ChartsInteractor;
+import com.telegram.chart.data.DataInteractorImpl;
+import com.telegram.chart.view.base.Theme;
 import com.telegram.chart.view.chart.SimpleChartView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ThemeBaseActivity {
 
     private SimpleChartView chartView;
     private SimpleChartView previewView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            setTheme(R.style.AppThemeDark);
-        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        updateTheme();
 
         chartView = findViewById(R.id.chart);
         previewView = findViewById(R.id.preview);
@@ -32,14 +31,19 @@ public class MainActivity extends AppCompatActivity {
         loadChart();
     }
 
-    private void renderChart(Chart chart) {
-        chartView.setChart(chart);
-        previewView.setChart(chart);
+    private void renderChart(ChartData chart) {
+        chartView.setChartData(chart);
+        previewView.setChartData(chart);
     }
 
     private void loadChart() {
-        ChartsInteractor interactor = new ChartInteractorImpl(getApplicationContext());
-        Chart chart = interactor.getCharts().get(0);
+        ChartsInteractor interactor = new DataInteractorImpl(getApplicationContext());
+        ChartData chart = null;
+        try {
+            chart = interactor.getCharts().get(0);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
         renderChart(chart);
     }
 
@@ -51,19 +55,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void toggleNightMode() {
+        super.toggleNightMode();
+        updateTheme();
+    }
+
+    private void updateTheme() {
+        if (isNightMode()) {
+            applyTheme(Theme.createTheme(this, Theme.NIGHT));
+        } else {
+            applyTheme(Theme.createTheme(this, Theme.DAY));
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_night_mode:
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                    AppCompatDelegate
-                            .setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                } else {
-                    AppCompatDelegate
-                            .setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                }
-                //getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                recreate();
+                toggleNightMode();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

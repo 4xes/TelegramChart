@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">TelegramChart</string>
-    <string name="followers">Followers</string>
-    <string name="night_mode">Night mode</string>
+    <string name="chart_followers">Followers</string>
+    <string name="chart_night_mode">Night mode</string>
 </resources>

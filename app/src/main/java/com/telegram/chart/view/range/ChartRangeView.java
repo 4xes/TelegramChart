@@ -6,10 +6,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Region;
 import android.os.Build;
+import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 class ChartRangeView extends BaseRangeView {
 
@@ -17,12 +16,12 @@ class ChartRangeView extends BaseRangeView {
     private Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint touchPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    public ChartRangeView(@NotNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
+    public ChartRangeView(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initPaints(context);
     }
 
-    public ChartRangeView(@NotNull Context context, @Nullable AttributeSet attrs) {
+    public ChartRangeView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initPaints(context);
     }

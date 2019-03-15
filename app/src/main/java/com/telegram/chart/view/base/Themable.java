@@ -1,5 +1,5 @@
 package com.telegram.chart.view.base;
 
-interface Themable<T> {
-    void apply(T theme);
+public interface Themable<T> {
+    void applyTheme(T theme);
 }
