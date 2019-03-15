@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#5A7C9F</color>
-    <color name="colorPrimaryDark">#49627F</color>
-    <color name="colorAccent">#5295CF</color>
-    
-    <color name="chart_mini_line_green_day">#66BE52</color>
-    <color name="chart_mini_line_red_day">#DD7064</color>
+    <color name="background_night">#171E26</color>
+    <color name="background_day">#F0F0F0</color>
+    <color name="background_content_night">#1F2732</color>
+    <color name="background_content_day">#FFFFFF</color>
+    <color name="primary_night">#232D3A</color>
+    <color name="primary_day">#5A7C9F</color>
+    <color name="primary_dark_day">#49627F</color>
+    <color name="primary_dark_night">#1C242D</color>
+
+    <color name="primary_accent">#5295CF</color>
+    <color name="primary_text_color">#5295CF</color>
 </resources>
