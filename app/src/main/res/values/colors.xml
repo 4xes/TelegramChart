@@ -23,9 +23,8 @@
     <color name="primary_accent">#5295CF</color>
     <color name="primary_text_color">#5295CF</color>
 
-    <!-- all 20 percentage alpha -->
-    <color name="range_day">#33C3D9EA</color>
-    <color name="range_night">#3317191B</color>
-    <color name="range_selected_day">#337CA5C4</color>
-    <color name="range_selected_night">#3390CEFC</color>
+    <color name="range_day">#B3F3F7F9</color>
+    <color name="range_night">#B31A222B</color>
+    <color name="range_selected_day">#334A82AC</color>
+    <color name="range_selected_night">#3375ADD8</color>
 </resources>
