@@ -29,7 +29,7 @@ class LineRenderer implements Renderer {
             float scaleY = (maxY - minY) / bound.height();
 
             path.reset();
-            path.moveTo(bound.left, bound.bottom - (line.getY(0) * scaleY));
+            path.moveTo(bound.left, bound.bottom - ((line.getY(0) - minY) / scaleY));
             for (int i = 0; i < line.size(); i++) {
                 path.lineTo(bound.left + i * dx, bound.bottom - ((line.getY(i) - minY) / scaleY));
             }

@@ -6,8 +6,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.telegram.chart.R;
-
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.ChartsInteractor;
 import com.telegram.chart.data.DataInteractorImpl;
