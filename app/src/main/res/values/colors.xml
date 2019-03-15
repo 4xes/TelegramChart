@@ -24,8 +24,8 @@
     <color name="primary_text_color">#5295CF</color>
 
     <!-- all 20 percentage alpha -->
-    <color name="range_day">#C3D9EA</color>
-    <color name="range_night">#17191B</color>
-    <color name="range_selected_day">#7CA5C4</color>
-    <color name="range_selected_night">#90CEFC</color>
+    <color name="range_day">#33C3D9EA</color>
+    <color name="range_night">#3317191B</color>
+    <color name="range_selected_day">#337CA5C4</color>
+    <color name="range_selected_night">#3390CEFC</color>
 </resources>

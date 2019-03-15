@@ -37,7 +37,7 @@ public abstract class BaseRangeView extends View {
 
     protected RectF bound = new RectF();
     protected RectF line = new RectF();
-    protected RectF range = new RectF();
+    protected RectF selectedRange = new RectF();
     protected RectF fingerLeft = new RectF();
     protected RectF fingerRight = new RectF();
 
@@ -81,7 +81,7 @@ public abstract class BaseRangeView extends View {
         bound.bottom = getHeight() - getPaddingBottom();
 
         line.set(bound);
-        range.set(line);
+        selectedRange.set(line);
         fingerLeft.set(line);
         fingerRight.set(line);
         recalculateBounds();
@@ -89,15 +89,15 @@ public abstract class BaseRangeView extends View {
 
 
     private void recalculateBounds() {
-        range.left = line.left + (line.width() * start);
-        range.right = line.left + (line.width() * end);
+        selectedRange.left = line.left + (line.width() * start);
+        selectedRange.right = line.left + (line.width() * end);
 
-        fingerLeft.left = range.left - halfTouch;
-        fingerLeft.right = range.left + halfTouch;
+        fingerLeft.left = selectedRange.left - halfTouch;
+        fingerLeft.right = selectedRange.left + halfTouch;
 
 
-        fingerRight.left = range.right - halfTouch;
-        fingerRight.right = range.right + halfTouch;
+        fingerRight.left = selectedRange.right - halfTouch;
+        fingerRight.right = selectedRange.right + halfTouch;
     }
 
     @Override
@@ -204,7 +204,7 @@ public abstract class BaseRangeView extends View {
         if (fingerRight.left <=  x && fingerRight.right >= x) {
             return END;
         }
-        if (range.left <= x && range.right >= x) {
+        if (selectedRange.left <= x && selectedRange.right >= x) {
             return RANGE;
         }
         return NONE;

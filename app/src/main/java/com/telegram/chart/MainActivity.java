@@ -12,11 +12,13 @@ import com.telegram.chart.data.ChartsInteractor;
 import com.telegram.chart.data.DataInteractorImpl;
 import com.telegram.chart.view.base.Theme;
 import com.telegram.chart.view.chart.SimpleChartView;
+import com.telegram.chart.view.range.ChartRangeView;
 
 public class MainActivity extends ThemeBaseActivity {
 
     private SimpleChartView chartView;
     private SimpleChartView previewView;
+    private ChartRangeView rangeView;
     private View divider;
     private View secondBackground;
 
@@ -29,6 +31,7 @@ public class MainActivity extends ThemeBaseActivity {
         previewView = findViewById(R.id.preview);
         divider = findViewById(R.id.divider);
         secondBackground = findViewById(R.id.secondaryBackground);
+        rangeView = findViewById(R.id.range);
 
         updateTheme();
 
@@ -69,6 +72,7 @@ public class MainActivity extends ThemeBaseActivity {
         applyTheme(theme);
         divider.setBackgroundColor(theme.getDividerColor());
         secondBackground.setBackgroundColor(theme.getBackgroundSecondColor());
+        rangeView.applyTheme(theme);
     }
 
     @Override

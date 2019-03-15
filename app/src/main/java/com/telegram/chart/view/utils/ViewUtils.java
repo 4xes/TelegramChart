@@ -1,6 +1,10 @@
 package com.telegram.chart.view.utils;
 
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.RectF;
+import android.graphics.Region;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -20,6 +24,23 @@ public class ViewUtils {
 
     public static float pxFromSp(float value) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, Resources.getSystem().getDisplayMetrics());
+    }
+
+
+    public static void clipSupport(Canvas canvas, RectF rect) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipOutRect(rect);
+        } else {
+            canvas.clipRect(rect, Region.Op.DIFFERENCE);
+        }
+    }
+
+    public static void clipSupport(Canvas canvas, float left, float top, float right, float bottom) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipOutRect(left, top, right, bottom);
+        } else {
+            canvas.clipRect(left, top, right, bottom, Region.Op.DIFFERENCE);
+        }
     }
 
     public static int reconcileSize(int contentSize, int measureSpec){
