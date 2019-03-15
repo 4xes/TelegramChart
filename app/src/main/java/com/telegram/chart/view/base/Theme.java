@@ -15,14 +15,14 @@ public class Theme {
     private int primaryColor;
     private int primaryDarkColor;
     private int backgroundWindowColor;
-    private int backgroundContentColor;
+    private int backgroundSecondColor;
 
-    public Theme(Context context,@ThemeId int themeId, @ColorRes int primaryColor, @ColorRes int primaryDarkColor, @ColorRes int backgroundWindowColor, @ColorRes int backgroundContentColor) {
+    public Theme(Context context,@ThemeId int themeId, @ColorRes int primaryColor, @ColorRes int primaryDarkColor, @ColorRes int backgroundWindowColor, @ColorRes int backgroundSecondColor) {
         this.id = themeId;
         this.primaryColor = ContextCompat.getColor(context, primaryColor);
         this.primaryDarkColor = ContextCompat.getColor(context, primaryDarkColor);
         this.backgroundWindowColor = ContextCompat.getColor(context, backgroundWindowColor);
-        this.backgroundContentColor = ContextCompat.getColor(context, backgroundContentColor);
+        this.backgroundSecondColor = ContextCompat.getColor(context, backgroundSecondColor);
     }
 
     public int getPrimaryColor() {
@@ -37,18 +37,18 @@ public class Theme {
         return backgroundWindowColor;
     }
 
-    public @ColorRes int getBackgroundContentColor() {
-        return backgroundContentColor;
+    public @ColorRes int getBackgroundSecondColor() {
+        return backgroundSecondColor;
     }
 
     public static Theme createTheme(Context context, @ThemeId int themeId) {
         switch (themeId) {
             case DAY:
-                return new Theme(context, themeId, R.color.primary_day, R.color.primary_dark_day, R.color.background_day, R.color.background_content_day);
+                return new Theme(context, themeId, R.color.primary_day, R.color.primary_dark_day, R.color.background_day, R.color.background_second_day);
             case NIGHT:
-                return new Theme(context, themeId, R.color.primary_night, R.color.primary_dark_night, R.color.background_night, R.color.background_content_night);
+                return new Theme(context, themeId, R.color.primary_night, R.color.primary_dark_night, R.color.background_night, R.color.background_second_night);
         }
-        return new Theme(context, themeId, R.color.primary_day, R.color.primary_dark_day, R.color.background_day, R.color.background_content_day);
+        return new Theme(context, themeId, R.color.primary_day, R.color.primary_dark_day, R.color.background_day, R.color.background_second_day);
     }
 
     public static final int DAY = 0;
