@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.ChartsInteractor;
@@ -16,15 +17,20 @@ public class MainActivity extends ThemeBaseActivity {
 
     private SimpleChartView chartView;
     private SimpleChartView previewView;
+    private View divider;
+    private View secondBackground;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        updateTheme();
 
         chartView = findViewById(R.id.chart);
         previewView = findViewById(R.id.preview);
+        divider = findViewById(R.id.divider);
+        secondBackground = findViewById(R.id.secondaryBackground);
+
+        updateTheme();
 
         loadChart();
     }
@@ -59,11 +65,10 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     private void updateTheme() {
-        if (isNightMode()) {
-            applyTheme(Theme.createTheme(this, Theme.NIGHT));
-        } else {
-            applyTheme(Theme.createTheme(this, Theme.DAY));
-        }
+        Theme theme = Theme.createTheme(this, isNightMode() ? Theme.NIGHT : Theme.DAY);
+        applyTheme(theme);
+        divider.setBackgroundColor(theme.getDividerColor());
+        secondBackground.setBackgroundColor(theme.getBackgroundSecondColor());
     }
 
     @Override

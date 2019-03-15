@@ -37,15 +37,15 @@ public class Theme {
         return primaryColor;
     }
 
-    public @ColorRes int getPrimaryDarkColor() {
+    public int getPrimaryDarkColor() {
         return primaryDarkColor;
     }
 
-    public @ColorRes int getBackgroundWindowColor() {
+    public int getBackgroundWindowColor() {
         return backgroundWindowColor;
     }
 
-    public @ColorRes int getBackgroundSecondColor() {
+    public int getBackgroundSecondColor() {
         return backgroundSecondColor;
     }
 
