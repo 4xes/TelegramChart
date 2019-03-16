@@ -125,16 +125,25 @@ public abstract class BaseRangeView extends View {
     private void handleMove(float dx) {
         final float oldStart = start;
         final float oldEnd = end;
+        final float dPercentage = dx / line.width();
 
         switch (currentZone) {
             case START:
-                moveStart(dx);
+                if (isNeedMoveLeft(dPercentage)) {
+                    moveRange(dPercentage);
+                } else {
+                    moveStart(dPercentage);
+                }
                 break;
             case RANGE:
-                moveRange(dx);
+                moveRange(dPercentage);
                 break;
             case END:
-                moveEnd(dx);
+                if (isNeedMoveRight(dPercentage)) {
+                    moveRange(dPercentage);
+                } else {
+                    moveEnd(dPercentage);
+                }
                 break;
             case NONE:
                 break;
@@ -146,8 +155,17 @@ public abstract class BaseRangeView extends View {
         }
     }
 
-    private void moveStart(Float dx) {
-        final float dPercentage = dx / line.width();
+    private boolean isNeedMoveLeft(Float dPercentage) {
+        final float range = end - (start + dPercentage);
+        return range < min;
+    }
+
+    private boolean isNeedMoveRight(Float dPercentage) {
+        final float range = (end + dPercentage) - start;
+        return range < min;
+    }
+
+    private void moveStart(Float dPercentage) {
         start += dPercentage;
         if (start < 0f) {
             start = 0f;
@@ -156,8 +174,25 @@ public abstract class BaseRangeView extends View {
         }
     }
 
-    private void moveEnd(Float dx) {
-        final float dPercentage = dx / line.width();
+    private void moveRange(Float dPercentage) {
+        final float range = end - start;
+        final boolean toRight = dPercentage > 0f;
+        if (toRight) {
+            end += dPercentage;
+            if (end > 1f) {
+                end = 1f;
+            }
+            start = end - range;
+        } else {
+            start += dPercentage;
+            if (start < 0f) {
+                start = 0f;
+            }
+            end = start + range;
+        }
+    }
+
+    private void moveEnd(Float dPercentage) {
         end += dPercentage;
         if (end > 1f) {
             end = 1f;
@@ -175,26 +210,6 @@ public abstract class BaseRangeView extends View {
         recalculateBounds();
         notifyListeners();
         invalidate();
-    }
-
-    private void moveRange(Float dx) {
-        final float dPercentage = dx / line.width();
-        final float range = end - start;
-
-        final boolean toRight = dPercentage > 0f;
-        if (toRight) {
-            end += dPercentage;
-            if (end > 1f) {
-                end = 1f;
-            }
-            start = end - range;
-        } else {
-            start += dPercentage;
-            if (start < 0f) {
-                start = 0f;
-            }
-            end = start + range;
-        }
     }
 
     private @Zone int getZone(Float x) {
