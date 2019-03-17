@@ -26,6 +26,10 @@ class LineRenderer implements Renderer {
         paint.setColor(line.getColor());
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(ViewUtils.pxFromDp(1.5f));
+        paint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
+        paint.setStrokeCap(Paint.Cap.ROUND);  // set the paint cap to round too
+        CornerPathEffect cornerPathEffect = new CornerPathEffect(ViewUtils.pxFromDp(2f)); // set the path effect when they join.
+        paint.setPathEffect(cornerPathEffect);
     }
 
     public void calculatePath(RectF bound, Long maxY, Long minY, float start, float end) {
