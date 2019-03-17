@@ -54,7 +54,7 @@ public class ChartView extends BaseChartView {
         this.end = end;
         if (!init) {
             for (LineRenderer render: lineRenders) {
-                render.changeMatrix(bound, start, end);
+                render.changeMatrix(start, end);
             }
         }
         invalidate();

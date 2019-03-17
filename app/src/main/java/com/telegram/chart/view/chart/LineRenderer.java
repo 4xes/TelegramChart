@@ -6,6 +6,8 @@ import android.util.Log;
 import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.utils.ViewUtils;
 
+import java.util.Arrays;
+
 class LineRenderer implements Renderer {
     private final LineData line;
     private final Path transitionPath = new Path();
@@ -37,21 +39,24 @@ class LineRenderer implements Renderer {
                 path.lineTo(bound.left + i * dx, bound.bottom - ((line.getY(i) - minY) / scaleY));
             }
         }
-        changeMatrix(bound, start, end);
+        changeMatrix(start, end);
     }
 
 
-    public void changeMatrix(RectF bound, float start, float end) {
+    public void changeMatrix(float start, float end) {
         this.start = start;
         this.end = end;
-        matrix.setScale(1f / (end - start), 1f, bound.centerX(), bound.centerY());
+        final float scale = 1f / (end - start);
+        matrix.setScale(scale, 1f, 0f, 0f);
         path.transform(matrix, transitionPath);
     }
 
     @Override
     public void render(RectF bound, Canvas canvas) {
         final int save = canvas.save();
-        canvas.translate(-bound.width() * start, 0f);
+        final float scale = 1f / (end - start);
+        final float dx = (-bound.width() * start) * scale;
+        canvas.translate(dx, 0f);
         canvas.drawPath(transitionPath, paint);
         canvas.restoreToCount(save);
     }
