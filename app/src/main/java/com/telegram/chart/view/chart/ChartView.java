@@ -29,7 +29,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     private TextPaint valuesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final float chartPadding = pxFromDp(1f);
+    private final float chartPadding = pxFromDp(2f);
 
     private List<LineRenderer> lineRenders = new ArrayList<>();
     private ChartData chartData = null;
@@ -72,7 +72,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         datesPaint.setTextSize(pxFromSp(9f));
         datesPaint.setTextAlign(Paint.Align.CENTER);
 
-        dividerPaint.setStrokeWidth(pxFromDp(2f));
+        dividerPaint.setStrokeWidth(pxFromDp(1f));
     }
 
     public void setChartData(ChartData chartData) {
