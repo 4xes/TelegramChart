@@ -29,7 +29,7 @@ public class MainActivity extends ThemeBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setTitle(R.string.chart_title);
         initViews();
         updateTheme();
 

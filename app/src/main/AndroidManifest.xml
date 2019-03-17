@@ -14,7 +14,6 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".MainActivity"
-            android:label="@string/chart_title"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
