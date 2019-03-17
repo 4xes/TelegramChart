@@ -87,6 +87,7 @@ public class MainActivity extends ThemeBaseActivity {
         divider.setBackgroundColor(theme.getDividerColor());
         secondBackground.setBackgroundColor(theme.getBackgroundSecondColor());
         rangeView.applyTheme(theme);
+        chartView.applyTheme(theme);
     }
 
     @Override
