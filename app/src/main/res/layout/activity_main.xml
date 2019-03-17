@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <com.telegram.chart.view.chart.SimpleChartView
+    <com.telegram.chart.view.chart.ChartView
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -34,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-    <com.telegram.chart.view.chart.SimpleChartView
+    <com.telegram.chart.view.chart.PreviewChartView
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="@dimen/preview_height"
@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- padding for touch zone -->
-    <com.telegram.chart.view.range.ChartRangeView
+    <com.telegram.chart.view.range.RangeView
         android:id="@+id/range"
         android:layout_width="match_parent"
         android:layout_height="@dimen/preview_height"

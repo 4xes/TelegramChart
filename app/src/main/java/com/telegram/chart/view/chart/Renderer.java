@@ -1,7 +1,8 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.Canvas;
+import android.graphics.RectF;
 
 public interface Renderer {
-    void render(Canvas canvas);
+    void render(RectF bound, Canvas canvas);
 }

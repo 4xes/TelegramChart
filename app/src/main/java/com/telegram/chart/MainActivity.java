@@ -11,14 +11,17 @@ import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.ChartsInteractor;
 import com.telegram.chart.data.DataInteractorImpl;
 import com.telegram.chart.view.base.Theme;
-import com.telegram.chart.view.chart.SimpleChartView;
-import com.telegram.chart.view.range.ChartRangeView;
+import com.telegram.chart.view.chart.ChartView;
+import com.telegram.chart.view.chart.PreviewChartView;
+import com.telegram.chart.view.range.BaseRangeView;
+import com.telegram.chart.view.range.BaseRangeView.OnRangeListener;
+import com.telegram.chart.view.range.RangeView;
 
 public class MainActivity extends ThemeBaseActivity {
 
-    private SimpleChartView chartView;
-    private SimpleChartView previewView;
-    private ChartRangeView rangeView;
+    private ChartView chartView;
+    private PreviewChartView previewView;
+    private RangeView rangeView;
     private View divider;
     private View secondBackground;
 
@@ -27,15 +30,26 @@ public class MainActivity extends ThemeBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initViews();
+        updateTheme();
+
+        loadChart();
+    }
+
+    private void initViews() {
         chartView = findViewById(R.id.chart);
         previewView = findViewById(R.id.preview);
         divider = findViewById(R.id.divider);
         secondBackground = findViewById(R.id.secondaryBackground);
         rangeView = findViewById(R.id.range);
 
-        updateTheme();
-
-        loadChart();
+        chartView.setVisible(rangeView.getStart(), rangeView.getEnd(), false);
+        rangeView.setOnRangeListener(new OnRangeListener() {
+            @Override
+            public void onChangeRange(Float start, Float end) {
+                chartView.setVisible(start, end, false);
+            }
+        });
     }
 
     private void renderChart(ChartData chart) {
@@ -47,7 +61,7 @@ public class MainActivity extends ThemeBaseActivity {
         ChartsInteractor interactor = new DataInteractorImpl(getApplicationContext());
         ChartData chart = null;
         try {
-            chart = interactor.getCharts().get(0);
+            chart = interactor.getCharts().get(4);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

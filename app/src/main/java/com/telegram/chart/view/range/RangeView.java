@@ -16,7 +16,7 @@ import com.telegram.chart.view.utils.ViewUtils;
 import static com.telegram.chart.view.utils.ViewUtils.clipSupport;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class ChartRangeView extends BaseRangeView implements Themable<Theme> {
+public class RangeView extends BaseRangeView implements Themable<Theme> {
 
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -24,15 +24,15 @@ public class ChartRangeView extends BaseRangeView implements Themable<Theme> {
     private float selectVerticalWidth = pxFromDp(1f);
     private float selectHorizontalWidth = pxFromDp(4f);
 
-    public ChartRangeView(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
+    public RangeView(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public ChartRangeView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public RangeView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ChartRangeView(@Nullable Context context) {
+    public RangeView(@Nullable Context context) {
         super(context);
     }
 

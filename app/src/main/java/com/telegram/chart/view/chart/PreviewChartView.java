@@ -13,25 +13,25 @@ import com.telegram.chart.data.LineData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleChartView extends BaseChartView {
+public class PreviewChartView extends BaseChartView {
 
-    private List<LineRenderer> lineRenders = new ArrayList<>();
+    private List<PreviewRenderer> lineRenders = new ArrayList<>();
     private ChartData chartData = null;
 
-    public SimpleChartView(Context context) {
+    public PreviewChartView(Context context) {
         super(context);
     }
 
-    public SimpleChartView(Context context, @Nullable AttributeSet attrs) {
+    public PreviewChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SimpleChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public PreviewChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SimpleChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PreviewChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
@@ -40,7 +40,7 @@ public class SimpleChartView extends BaseChartView {
         this.chartData = chartData;
         if (chartData != null) {
             for (LineData lineData: chartData.getLines()) {
-                lineRenders.add(new LineRenderer(lineData));
+                lineRenders.add(new PreviewRenderer(lineData));
             }
             computeRenders();
         }
@@ -49,7 +49,7 @@ public class SimpleChartView extends BaseChartView {
 
     private void computeRenders() {
         if (isReady() && chartData != null) {
-            for (LineRenderer render: lineRenders) {
+            for (PreviewRenderer render: lineRenders) {
                 render.calculatePath(bound, chartData.getMaxY(), chartData.getMinY());
             }
         }
@@ -66,8 +66,8 @@ public class SimpleChartView extends BaseChartView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for (LineRenderer render: lineRenders) {
-            render.render(canvas);
+        for (PreviewRenderer render: lineRenders) {
+            render.render(bound, canvas);
         }
     }
 

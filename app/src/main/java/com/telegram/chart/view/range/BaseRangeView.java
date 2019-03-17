@@ -237,7 +237,15 @@ public abstract class BaseRangeView extends View {
         }
     }
 
-    interface OnRangeListener {
+    public Float getStart() {
+        return start;
+    }
+
+    public Float getEnd() {
+        return end;
+    }
+
+    public interface OnRangeListener {
         void onChangeRange(Float start, Float end);
     }
 

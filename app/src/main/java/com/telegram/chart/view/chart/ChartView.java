@@ -1,0 +1,87 @@
+package com.telegram.chart.view.chart;
+
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.os.Build;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+
+import com.telegram.chart.data.ChartData;
+import com.telegram.chart.data.LineData;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ChartView extends BaseChartView {
+
+    private List<LineRenderer> lineRenders = new ArrayList<>();
+    private ChartData chartData = null;
+    private float start = 0.8f;
+    private float end = 1f;
+
+    public ChartView(Context context) {
+        super(context);
+    }
+
+    public ChartView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    public void setChartData(ChartData chartData) {
+        lineRenders.clear();
+        this.chartData = chartData;
+        if (chartData != null) {
+            for (LineData lineData: chartData.getLines()) {
+                lineRenders.add(new LineRenderer(lineData));
+            }
+            computeRenders();
+        }
+        invalidate();
+    }
+
+    public void setVisible(float start, float end, boolean init) {
+        this.start = start;
+        this.end = end;
+        if (!init) {
+            for (LineRenderer render: lineRenders) {
+                render.changeMatrix(bound, start, end);
+            }
+        }
+        invalidate();
+    }
+
+    private void computeRenders() {
+        if (isReady() && chartData != null) {
+            for (LineRenderer render: lineRenders) {
+                render.calculatePath(bound, chartData.getMaxY(), chartData.getMinY(), start, end);
+            }
+        }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        computeRenders();
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        for (LineRenderer render: lineRenders) {
+            render.render(bound, canvas);
+        }
+    }
+
+}
