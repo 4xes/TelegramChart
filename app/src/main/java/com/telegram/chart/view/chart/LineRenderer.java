@@ -35,19 +35,29 @@ class LineRenderer {
         if (line.isNotEmpty()) {
             path.moveTo(0, - (line.getY(0)));
             for (int i = 0; i < line.size(); i++) {
-                path.lineTo(  i, - (line.getY(i)));
+                path.lineTo(i, - (line.getY(i)));
             }
         }
     }
 
     private void changeMatrix(Bound bound, float start, float end, float maxY) {
         matrix.reset();
-        final float scaleX = 1f / (end - start);
-        final float scaleY = (maxY) / bound.height();
-        final float dx = (-bound.width() * start) * scaleX;
-        matrix.setScale(scaleX * sectionWidth(bound.width()), 1f / scaleY, 0f, 0f);
-        matrix.postTranslate(bound.left + dx + bound.offsetX, bound.bottom + bound.offsetY);
+        final float scaleRange = 1f / (end - start);
+        final float scaleX = scaleRange * sectionWidth(bound.width());
+        final float scaleY = 1f / (maxY / bound.height());
+        final float dx = (-bound.width() * start) * scaleRange;
+        final float offsetX = bound.left + dx + bound.offsetX;
+        final float offsetY = bound.bottom + bound.offsetY;
+        matrix.setScale(scaleX, scaleY, 0f, 0f);
+        matrix.postTranslate(offsetX, offsetY);
         path.transform(matrix, transitionPath);
+    }
+
+    private int getIndex(float x, Bound bound, float start, float end) {
+//        final float scaleRange = 1f / (end - start);
+//        final float scaleX = scaleRange * sectionWidth(bound.width());
+//        return start + ((x - bound.offsetX) / scaleX);
+        return 0;
     }
 
     public void render(Canvas canvas, Bound bound, float start, float end, float maxY) {

@@ -60,7 +60,7 @@ public class PreviewChartView extends BaseChartView {
         chartBound.set(bound);
         chartBound.bottom -= verticalPadding * 2f;
         chartBound.right -= horizontalPadding * 2f;
-        chartBound.offsetX = verticalPadding;
+        chartBound.offsetX = horizontalPadding;
         chartBound.offsetY = verticalPadding;
     }
 

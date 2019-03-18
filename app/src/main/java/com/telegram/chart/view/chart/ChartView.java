@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.LineData;
@@ -29,7 +30,8 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     private TextPaint valuesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final float chartPadding = pxFromDp(2f);
+    private final float horizontalPadding = pxFromDp(1f);
+    private final float verticalPadding = pxFromDp(2f);
 
     private List<LineRenderer> lineRenders = new ArrayList<>();
     private ChartData chartData = null;
@@ -105,10 +107,17 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         datesBound.top = bound.bottom - maxTextHeight;
         chartBound.bottom = datesBound.top;
 
-        chartBound.bottom -= chartPadding * 2f;
-        chartBound.right -= chartPadding * 2f;
-        chartBound.offsetX = chartPadding;
-        chartBound.offsetY = chartPadding;
+        chartBound.bottom -= verticalPadding * 2f;
+        chartBound.right -= horizontalPadding * 2f;
+        chartBound.offsetX = horizontalPadding;
+        chartBound.offsetY = verticalPadding;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+
+
     }
 
     @Override
