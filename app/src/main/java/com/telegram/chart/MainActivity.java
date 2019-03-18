@@ -13,7 +13,6 @@ import com.telegram.chart.data.DataInteractorImpl;
 import com.telegram.chart.view.base.Theme;
 import com.telegram.chart.view.chart.ChartView;
 import com.telegram.chart.view.chart.PreviewChartView;
-import com.telegram.chart.view.range.BaseRangeView;
 import com.telegram.chart.view.range.BaseRangeView.OnRangeListener;
 import com.telegram.chart.view.range.RangeView;
 
@@ -43,11 +42,11 @@ public class MainActivity extends ThemeBaseActivity {
         secondBackground = findViewById(R.id.secondaryBackground);
         rangeView = findViewById(R.id.range);
 
-        chartView.setVisible(rangeView.getStart(), rangeView.getEnd(), false);
+        chartView.setVisible(rangeView.getStart(), rangeView.getEnd());
         rangeView.setOnRangeListener(new OnRangeListener() {
             @Override
             public void onChangeRange(Float start, Float end) {
-                chartView.setVisible(start, end, false);
+                chartView.setVisible(start, end);
             }
         });
     }

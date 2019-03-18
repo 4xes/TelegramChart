@@ -1,12 +1,10 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.*;
-import android.util.Log;
 
 import com.telegram.chart.data.LineData;
-import com.telegram.chart.view.utils.ViewUtils;
 
-import java.util.Arrays;
+import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class LineRenderer {
     private final LineData line;
@@ -14,21 +12,35 @@ class LineRenderer {
     private final Path path = new Path();
     private final Matrix matrix = new Matrix();
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private int windowColor = 0;
+    private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final PointF point = new PointF();
+    private final float outerRadius = pxFromDp(7);
+    private final float innerRadius = pxFromDp(3);
 
-    public LineRenderer(LineData lineData, float lineWidth) {
+    public LineRenderer(LineData lineData) {
         this.line = lineData;
-        initPaint(lineWidth);
+        initPaint();
         initPath();
     }
 
-    private void initPaint(float lineWidth) {
+    private void initPaint() {
         paint.setColor(line.getColor());
         paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(pxFromDp(1f));
+        paint.setStrokeJoin(Paint.Join.ROUND); // set the join to round you want
+        paint.setStrokeCap(Paint.Cap.ROUND); // set the paint cap to round too
+        paint.setPathEffect(new CornerPathEffect(pxFromDp(2f))); // set the path effect when they join.
+
+        paintCircle.setStyle(Paint.Style.FILL);
+    }
+
+    public void setLineWidth(float lineWidth) {
         paint.setStrokeWidth(lineWidth);
-        paint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
-        paint.setStrokeCap(Paint.Cap.ROUND);  // set the paint cap to round too
-        CornerPathEffect cornerPathEffect = new CornerPathEffect(ViewUtils.pxFromDp(2f)); // set the path effect when they join.
-        paint.setPathEffect(cornerPathEffect);
+    }
+
+    public void setWindowColor(int color) {
+        windowColor = color;
     }
 
     private void initPath() {
@@ -53,16 +65,52 @@ class LineRenderer {
         path.transform(matrix, transitionPath);
     }
 
-    private int getIndex(float x, Bound bound, float start, float end) {
-//        final float scaleRange = 1f / (end - start);
-//        final float scaleX = scaleRange * sectionWidth(bound.width());
-//        return start + ((x - bound.offsetX) / scaleX);
-        return 0;
+    public int getIndex(float touchX, Bound bound, float start, float end) {
+        float x = touchX;
+        if (bound.left > x) {
+            x = bound.left;
+        }
+        if (bound.right < x) {
+            x = bound.right;
+        }
+        final int count = line.size();
+        final int maxIndex = line.size() - 1;
+        float percent = (start) + (x) / bound.width() * (end - start);
+        if (count > 1) {
+            int index = (int) (percent * maxIndex);
+            if (index > maxIndex) {
+                return maxIndex;
+            }
+            return index;
+        } else {
+            if (line.isNotEmpty()) {
+                return 0;
+            }
+            return -1;
+        }
+    }
+
+    public void calculatePoint(int index, Bound bound, float start, float end, float maxY, PointF point) {
+        final float scaleRange = 1f / (end - start);
+        final float scaleX = scaleRange * sectionWidth(bound.width());
+        final float dx = (-bound.width() * start) * scaleRange;
+        final float offsetX = bound.left + dx + bound.offsetX;
+        final float scaleY = 1f / (maxY / bound.height());
+        final float offsetY = bound.bottom + bound.offsetY;
+        point.set(index * scaleX + offsetX, -(line.getY(index) * scaleY) + offsetY);
     }
 
     public void render(Canvas canvas, Bound bound, float start, float end, float maxY) {
         changeMatrix(bound, start, end, maxY);
         canvas.drawPath(transitionPath, paint);
+    }
+
+    public void renderCircle(Canvas canvas, int selectIndex, Bound bound, float start, float end, float maxY) {
+        calculatePoint(selectIndex, bound, start, end, maxY, point);
+        paintCircle.setColor(line.getColor());
+        canvas.drawCircle(point.x, point.y, outerRadius, paintCircle);
+        paintCircle.setColor(windowColor);
+        canvas.drawCircle(point.x, point.y, innerRadius, paintCircle);
     }
 
     private float sectionWidth(Float widthChart) {

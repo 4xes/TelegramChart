@@ -47,7 +47,7 @@ public class PreviewChartView extends BaseChartView {
         this.chartData = chartData;
         if (chartData != null) {
             for (LineData lineData: chartData.getLines()) {
-                lineRenders.add(new LineRenderer(lineData, pxFromDp(1f)));
+                lineRenders.add(new LineRenderer(lineData));
             }
         }
         invalidate();
