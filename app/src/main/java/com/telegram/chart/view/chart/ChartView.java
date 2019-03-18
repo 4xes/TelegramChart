@@ -24,7 +24,7 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
 public class ChartView extends BaseChartView implements Themable<Theme> {
 
-    protected RectF chartBound = new RectF();
+    protected Bound chartBound = new Bound();
     protected RectF datesBound = new RectF();
     private TextPaint valuesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -118,7 +118,11 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         datesBound.set(bound);
         datesBound.top = bound.bottom - maxTextHeight;
         chartBound.bottom = datesBound.top;
-        chartBound.inset(chartPadding, chartPadding);
+
+        chartBound.bottom -= chartPadding * 2f;
+        chartBound.right -= chartPadding * 2f;
+        chartBound.offsetX = chartPadding;
+        chartBound.offsetY = chartPadding;
         computeRenders();
     }
 
@@ -127,7 +131,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         super.onDraw(canvas);
 
         for (LineRenderer render: lineRenders) {
-            render.render(bound, canvas);
+            render.render(chartBound, canvas);
         }
         canvas.drawLine(bound.left, chartBound.bottom, bound.right, chartBound.bottom, dividerPaint);
     }

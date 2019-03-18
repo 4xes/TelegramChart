@@ -8,7 +8,7 @@ import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.Arrays;
 
-class LineRenderer implements Renderer {
+class LineRenderer {
     private final LineData line;
     private final Path transitionPath = new Path();
     private final Path path = new Path();
@@ -55,12 +55,11 @@ class LineRenderer implements Renderer {
         path.transform(matrix, transitionPath);
     }
 
-    @Override
-    public void render(RectF bound, Canvas canvas) {
+    public void render(Bound bound, Canvas canvas) {
         final int save = canvas.save();
         final float scale = 1f / (end - start);
         final float dx = (-bound.width() * start) * scale;
-        canvas.translate(dx, 0f);
+        canvas.translate(dx + bound.offsetX, bound.offsetY);
         canvas.drawPath(transitionPath, paint);
         canvas.restoreToCount(save);
     }

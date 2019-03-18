@@ -15,10 +15,13 @@ import com.telegram.chart.view.utils.ViewUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
+
 public class PreviewChartView extends BaseChartView {
 
-    private RectF chartBound = new RectF();
-    private final float insidePadding = ViewUtils.pxFromDp(2f);
+    private Bound chartBound = new Bound();
+    private final float horizontalPadding = pxFromDp(1f);
+    private final float verticalPadding = pxFromDp(2f);
     private List<PreviewRenderer> lineRenders = new ArrayList<>();
     private ChartData chartData = null;
 
@@ -63,7 +66,10 @@ public class PreviewChartView extends BaseChartView {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         chartBound.set(bound);
-        chartBound.inset(0f, insidePadding);
+        chartBound.bottom -= verticalPadding * 2f;
+        chartBound.right -= horizontalPadding * 2f;
+        chartBound.offsetX = verticalPadding;
+        chartBound.offsetY = verticalPadding;
         computeRenders();
     }
 

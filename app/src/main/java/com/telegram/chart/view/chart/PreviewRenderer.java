@@ -9,7 +9,7 @@ import android.graphics.RectF;
 import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.utils.ViewUtils;
 
-class PreviewRenderer implements Renderer {
+class PreviewRenderer {
     private final LineData line;
     private final Path path = new Path();
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -38,8 +38,10 @@ class PreviewRenderer implements Renderer {
         }
     }
 
-    @Override
-    public void render(RectF bound, Canvas canvas) {
+    public void render(Bound bound, Canvas canvas) {
+        final int save = canvas.save();
+        canvas.translate(bound.offsetX, bound.offsetY);
         canvas.drawPath(path, paint);
+        canvas.restoreToCount(save);
     }
 }
