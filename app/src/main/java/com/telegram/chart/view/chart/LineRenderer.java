@@ -35,12 +35,12 @@ class LineRenderer {
     public void calculatePath(RectF bound, Long maxY, Long minY, float start, float end) {
         if (line.canBeDraw()) {
             float dx = bound.width() / (line.size() - 1);
-            float scaleY = (maxY - minY) / bound.height();
+            float scaleY = (maxY) / bound.height();
 
             path.reset();
-            path.moveTo(bound.left, bound.bottom - ((line.getY(0) - minY) / scaleY));
+            path.moveTo(bound.left, bound.bottom - ((line.getY(0)) / scaleY));
             for (int i = 0; i < line.size(); i++) {
-                path.lineTo(bound.left + i * dx, bound.bottom - ((line.getY(i) - minY) / scaleY));
+                path.lineTo(bound.left + i * dx, bound.bottom - ((line.getY(i)) / scaleY));
             }
         }
         changeMatrix(start, end);

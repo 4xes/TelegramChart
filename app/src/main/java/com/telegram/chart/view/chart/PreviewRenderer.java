@@ -1,13 +1,13 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
 import com.telegram.chart.data.LineData;
-import com.telegram.chart.view.utils.ViewUtils;
+
+import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class PreviewRenderer {
     private final LineData line;
@@ -22,17 +22,17 @@ class PreviewRenderer {
     private void initPaint() {
         paint.setColor(line.getColor());
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(ViewUtils.pxFromDp(1f));
+        paint.setStrokeWidth(pxFromDp(1f));
     }
 
     public void calculatePath(RectF bound, Long maxY, Long minY) {
         if (line.canBeDraw()) {
             float dx = bound.width() / (line.size() - 1);
-            float scaleY = (maxY - minY) / bound.height();
+            float scaleY = (maxY) / bound.height();
             path.reset();
-            path.moveTo(bound.left, bound.bottom - ((line.getY(0) - minY) / scaleY));
+            path.moveTo(bound.left, bound.bottom - ((line.getY(0)) / scaleY));
             for (int i = 0; i < line.size(); i++) {
-                path.lineTo(bound.left + i * dx, bound.bottom - ((line.getY(i) - minY) / scaleY));
+                path.lineTo(bound.left + i * dx, bound.bottom - ((line.getY(i)) / scaleY));
             }
 
         }
