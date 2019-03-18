@@ -22,7 +22,7 @@ public class PreviewChartView extends BaseChartView {
     private Bound chartBound = new Bound();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
-    private List<PreviewRenderer> lineRenders = new ArrayList<>();
+    private List<LineRenderer> lineRenders = new ArrayList<>();
     private ChartData chartData = null;
 
     public PreviewChartView(Context context) {
@@ -47,20 +47,12 @@ public class PreviewChartView extends BaseChartView {
         this.chartData = chartData;
         if (chartData != null) {
             for (LineData lineData: chartData.getLines()) {
-                lineRenders.add(new PreviewRenderer(lineData));
+                lineRenders.add(new LineRenderer(lineData, pxFromDp(1f)));
             }
-            computeRenders();
         }
         invalidate();
     }
 
-    private void computeRenders() {
-        if (isReady() && chartData != null) {
-            for (PreviewRenderer render: lineRenders) {
-                render.calculatePath(chartBound, chartData.getMaxY(), chartData.getMinY());
-            }
-        }
-    }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -70,15 +62,14 @@ public class PreviewChartView extends BaseChartView {
         chartBound.right -= horizontalPadding * 2f;
         chartBound.offsetX = verticalPadding;
         chartBound.offsetY = verticalPadding;
-        computeRenders();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for (PreviewRenderer render: lineRenders) {
-            render.render(chartBound, canvas);
+        for (LineRenderer render: lineRenders) {
+            render.render(canvas, chartBound, 0, 1f, chartData.getMaxY());
         }
     }
 

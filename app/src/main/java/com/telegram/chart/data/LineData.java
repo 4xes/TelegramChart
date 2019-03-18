@@ -43,7 +43,7 @@ public class LineData {
         return y.length;
     }
 
-    public boolean canBeDraw() {
-        return y.length > 2;
+    public boolean isNotEmpty() {
+        return y.length > 0;
     }
 }

@@ -14,53 +14,51 @@ class LineRenderer {
     private final Path path = new Path();
     private final Matrix matrix = new Matrix();
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private float start = 0.8f;
-    private float end = 1f;
 
-    public LineRenderer(LineData lineData) {
+    public LineRenderer(LineData lineData, float lineWidth) {
         this.line = lineData;
-        initPaint();
+        initPaint(lineWidth);
+        initPath();
     }
 
-    private void initPaint() {
+    private void initPaint(float lineWidth) {
         paint.setColor(line.getColor());
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(ViewUtils.pxFromDp(1.5f));
+        paint.setStrokeWidth(lineWidth);
         paint.setStrokeJoin(Paint.Join.ROUND);    // set the join to round you want
         paint.setStrokeCap(Paint.Cap.ROUND);  // set the paint cap to round too
         CornerPathEffect cornerPathEffect = new CornerPathEffect(ViewUtils.pxFromDp(2f)); // set the path effect when they join.
         paint.setPathEffect(cornerPathEffect);
     }
 
-    public void calculatePath(RectF bound, Long maxY, Long minY, float start, float end) {
-        if (line.canBeDraw()) {
-            float dx = bound.width() / (line.size() - 1);
-            float scaleY = (maxY) / bound.height();
-
-            path.reset();
-            path.moveTo(bound.left, bound.bottom - ((line.getY(0)) / scaleY));
+    private void initPath() {
+        if (line.isNotEmpty()) {
+            path.moveTo(0, - (line.getY(0)));
             for (int i = 0; i < line.size(); i++) {
-                path.lineTo(bound.left + i * dx, bound.bottom - ((line.getY(i)) / scaleY));
+                path.lineTo(  i, - (line.getY(i)));
             }
         }
-        changeMatrix(start, end);
     }
 
-
-    public void changeMatrix(float start, float end) {
-        this.start = start;
-        this.end = end;
-        final float scale = 1f / (end - start);
-        matrix.setScale(scale, 1f, 0f, 0f);
+    private void changeMatrix(Bound bound, float start, float end, float maxY) {
+        matrix.reset();
+        final float scaleX = 1f / (end - start);
+        final float scaleY = (maxY) / bound.height();
+        final float dx = (-bound.width() * start) * scaleX;
+        matrix.setScale(scaleX * sectionWidth(bound.width()), 1f / scaleY, 0f, 0f);
+        matrix.postTranslate(bound.left + dx + bound.offsetX, bound.bottom + bound.offsetY);
         path.transform(matrix, transitionPath);
     }
 
-    public void render(Bound bound, Canvas canvas) {
-        final int save = canvas.save();
-        final float scale = 1f / (end - start);
-        final float dx = (-bound.width() * start) * scale;
-        canvas.translate(dx + bound.offsetX, bound.offsetY);
+    public void render(Canvas canvas, Bound bound, float start, float end, float maxY) {
+        changeMatrix(bound, start, end, maxY);
         canvas.drawPath(transitionPath, paint);
-        canvas.restoreToCount(save);
+    }
+
+    private float sectionWidth(Float widthChart) {
+        if (line.size() > 1) {
+            return widthChart / (line.size() - 1);
+        }
+        return widthChart;
     }
 }

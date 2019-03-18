@@ -80,9 +80,8 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         this.chartData = chartData;
         if (chartData != null) {
             for (LineData lineData: chartData.getLines()) {
-                lineRenders.add(new LineRenderer(lineData));
+                lineRenders.add(new LineRenderer(lineData, pxFromDp(2f)));
             }
-            computeRenders();
         }
         invalidate();
     }
@@ -90,20 +89,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     public void setVisible(float start, float end, boolean init) {
         this.start = start;
         this.end = end;
-        if (!init) {
-            for (LineRenderer render: lineRenders) {
-                render.changeMatrix(start, end);
-            }
-        }
         invalidate();
-    }
-
-    private void computeRenders() {
-        if (isReady() && chartData != null) {
-            for (LineRenderer render: lineRenders) {
-                render.calculatePath(chartBound, chartData.getMaxY(), chartData.getMinY(), start, end);
-            }
-        }
     }
 
     @Override
@@ -123,7 +109,6 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         chartBound.right -= chartPadding * 2f;
         chartBound.offsetX = chartPadding;
         chartBound.offsetY = chartPadding;
-        computeRenders();
     }
 
     @Override
@@ -131,7 +116,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         super.onDraw(canvas);
 
         for (LineRenderer render: lineRenders) {
-            render.render(chartBound, canvas);
+            render.render(canvas, chartBound, start, end, chartData.getMaxY());
         }
         canvas.drawLine(bound.left, chartBound.bottom, bound.right, chartBound.bottom, dividerPaint);
     }
