@@ -5,15 +5,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.telegram.chart.data.ChartData;
-import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
 
@@ -23,10 +20,10 @@ import java.util.List;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
-public class ChartView extends BaseChartView implements Themable<Theme> {
+public class ChartView extends BaseChartView implements Themable<Theme>, Graph.InvalidateListener {
 
     protected Bound chartBound = new Bound();
-    protected RectF datesBound = new RectF();
+    protected Bound datesBound = new Bound();
     private TextPaint valuesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -35,10 +32,8 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     private final float verticalPadding = pxFromDp(2f);
     private int windowColor = 0;
 
-    private List<LineRenderer> lineRenders = new ArrayList<>();
-    private ChartData chartData = null;
-    private float start = 0.8f;
-    private float end = 1f;
+    private List<LineRender> lineRenders = new ArrayList<>();
+    private Graph graph;
     private int selectIndex = NONE_INDEX;
 
     public ChartView(Context context) {
@@ -68,7 +63,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         datesPaint.setColor(theme.getAxisValueColor());
         dividerPaint.setColor(theme.getDividerColor());
         windowColor = theme.getBackgroundWindowColor();
-        for (LineRenderer renderer: lineRenders) {
+        for (LineRender renderer: lineRenders) {
             renderer.setWindowColor(windowColor);
         }
         invalidate();
@@ -85,24 +80,15 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         dividerPaint.setStyle(Paint.Style.STROKE);
     }
 
-    public void setChartData(ChartData chartData) {
+    public void seGraph(Graph graph) {
+        this.graph = graph;
         lineRenders.clear();
-        this.chartData = chartData;
-        if (chartData != null) {
-            for (LineData lineData: chartData.getLines()) {
-                LineRenderer renderer = new LineRenderer(lineData);
-                renderer.setLineWidth(pxFromDp(2f));
-                renderer.setWindowColor(windowColor);
-                lineRenders.add(renderer);
-            }
+        lineRenders = graph.initRenders();
+        for (LineRender renderer: lineRenders) {
+            renderer.setLineWidth(pxFromDp(2f));
+            renderer.setWindowColor(windowColor);
         }
-        invalidate();
-    }
-
-    public void setVisible(float start, float end) {
-        this.start = start;
-        this.end = end;
-        selectIndex = NONE_INDEX;
+        graph.addListener(this);
         invalidate();
     }
 
@@ -126,15 +112,18 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (lineRenders.size() > 0) {
-            LineRenderer renderer = lineRenders.get(0);
-            int touchIndex = renderer.getIndex(event.getX(), chartBound, start, end);
+            int touchIndex = graph.getIndex(event.getX(), chartBound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
-                renderer.calculatePoint(selectIndex, chartBound, start, end, chartData.getMaxY(), point);
+                graph.calculatePoint(0, selectIndex, chartBound, point);
                 invalidate();
             }
         }
         return true;
+    }
+
+    public void resetIndex() {
+        selectIndex = NONE_INDEX;
     }
 
     @Override
@@ -142,18 +131,22 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         super.onDraw(canvas);
         int save = canvas.save();
         canvas.clipRect(bound);
-        for (LineRenderer render: lineRenders) {
-            render.render(canvas, chartBound, start, end, chartData.getMaxY());
+        for (LineRender render: lineRenders) {
+            render.render(canvas, chartBound);
         }
         canvas.restoreToCount(save);
         if (selectIndex != NONE_INDEX) {
             canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
-            for (LineRenderer render: lineRenders) {
-                render.renderCircle(canvas, selectIndex, chartBound, start, end, chartData.getMaxY());
+            for (LineRender render: lineRenders) {
+                render.renderCircle(canvas, selectIndex, chartBound);
             }
         }
-        //canvas.drawRect(chartBound, dividerPaint);
         canvas.drawLine( bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
+    }
+
+    @Override
+    public void needInvalidate() {
+        invalidate();
     }
 
     private static final int NONE_INDEX = -1;
