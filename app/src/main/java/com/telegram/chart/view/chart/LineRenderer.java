@@ -65,17 +65,18 @@ class LineRenderer {
         path.transform(matrix, transitionPath);
     }
 
-    public int getIndex(float touchX, Bound bound, float start, float end) {
+    public int getIndex(float touchX, RectF bound, float start, float end) {
         float x = touchX;
-        if (bound.left > x) {
+        if (x < bound.left) {
             x = bound.left;
         }
-        if (bound.right < x) {
+        if (x > bound.right) {
             x = bound.right;
         }
         final int count = line.size();
         final int maxIndex = line.size() - 1;
-        float percent = (start) + (x) / bound.width() * (end - start);
+        final float dx = (x - bound.left);
+        float percent = (start) + (dx) / bound.width() * (end - start);
         if (count > 1) {
             int index = (int) (percent * maxIndex);
             if (index > maxIndex) {

@@ -81,7 +81,7 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     private void updateTheme() {
-        Theme theme = Theme.createTheme(this, isNightMode() ? Theme.NIGHT : Theme.DAY);
+        Theme theme = Theme.createTheme(this, !isNightMode() ? Theme.NIGHT : Theme.DAY);
         applyTheme(theme);
         divider.setBackgroundColor(theme.getDividerColor());
         secondBackground.setBackgroundColor(theme.getBackgroundSecondColor());

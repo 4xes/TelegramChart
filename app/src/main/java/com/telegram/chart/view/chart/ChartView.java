@@ -31,7 +31,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private PointF point = new PointF();
-    private final float horizontalPadding = pxFromDp(1f);
+    private final float horizontalPadding = pxFromDp(0f);
     private final float verticalPadding = pxFromDp(2f);
     private int windowColor = 0;
 
@@ -39,7 +39,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     private ChartData chartData = null;
     private float start = 0.8f;
     private float end = 1f;
-    private int selectIndex = -1;
+    private int selectIndex = NONE_INDEX;
 
     public ChartView(Context context) {
         super(context);
@@ -82,6 +82,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         datesPaint.setTextAlign(Paint.Align.CENTER);
 
         dividerPaint.setStrokeWidth(pxFromDp(1f));
+        dividerPaint.setStyle(Paint.Style.STROKE);
     }
 
     public void setChartData(ChartData chartData) {
@@ -101,6 +102,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     public void setVisible(float start, float end) {
         this.start = start;
         this.end = end;
+        selectIndex = NONE_INDEX;
         invalidate();
     }
 
@@ -125,7 +127,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     public boolean onTouchEvent(MotionEvent event) {
         if (lineRenders.size() > 0) {
             LineRenderer renderer = lineRenders.get(0);
-            int touchIndex = renderer.getIndex(event.getX(), chartBound, start, end);
+            int touchIndex = renderer.getIndex(event.getX(), bound, start, end);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
                 renderer.calculatePoint(selectIndex, chartBound, start, end, chartData.getMaxY(), point);
@@ -150,6 +152,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
                 render.renderCircle(canvas, selectIndex, chartBound, start, end, chartData.getMaxY());
             }
         }
+        //canvas.drawRect(chartBound, dividerPaint);
         canvas.drawLine(bound.left, chartBound.bottom, bound.right, chartBound.bottom, dividerPaint);
     }
 
