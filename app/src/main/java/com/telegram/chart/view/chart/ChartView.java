@@ -31,7 +31,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private PointF point = new PointF();
-    private final float horizontalPadding = pxFromDp(0f);
+    private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
     private int windowColor = 0;
 
@@ -147,13 +147,13 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
         }
         canvas.restoreToCount(save);
         if (selectIndex != NONE_INDEX) {
-            canvas.drawLine(point.x, chartBound.top, point.x, chartBound.bottom, dividerPaint);
+            canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
             for (LineRenderer render: lineRenders) {
                 render.renderCircle(canvas, selectIndex, chartBound, start, end, chartData.getMaxY());
             }
         }
         //canvas.drawRect(chartBound, dividerPaint);
-        canvas.drawLine(bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
+        canvas.drawLine( bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
     }
 
     private static final int NONE_INDEX = -1;
