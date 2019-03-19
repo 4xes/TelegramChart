@@ -65,7 +65,7 @@ class LineRenderer {
         path.transform(matrix, transitionPath);
     }
 
-    public int getIndex(float touchX, RectF bound, float start, float end) {
+    public int getIndex(float touchX, Bound bound, float start, float end) {
         float x = touchX;
         if (x < bound.left) {
             x = bound.left;

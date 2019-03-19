@@ -127,7 +127,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
     public boolean onTouchEvent(MotionEvent event) {
         if (lineRenders.size() > 0) {
             LineRenderer renderer = lineRenders.get(0);
-            int touchIndex = renderer.getIndex(event.getX(), bound, start, end);
+            int touchIndex = renderer.getIndex(event.getX(), chartBound, start, end);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
                 renderer.calculatePoint(selectIndex, chartBound, start, end, chartData.getMaxY(), point);
