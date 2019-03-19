@@ -153,7 +153,7 @@ public class ChartView extends BaseChartView implements Themable<Theme> {
             }
         }
         //canvas.drawRect(chartBound, dividerPaint);
-        canvas.drawLine(bound.left, chartBound.bottom, bound.right, chartBound.bottom, dividerPaint);
+        canvas.drawLine(bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
     }
 
     private static final int NONE_INDEX = -1;
