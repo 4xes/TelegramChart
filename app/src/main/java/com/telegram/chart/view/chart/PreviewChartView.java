@@ -3,27 +3,22 @@ package com.telegram.chart.view.chart;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-
-import com.telegram.chart.data.ChartData;
-import com.telegram.chart.data.LineData;
-import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class PreviewChartView extends BaseChartView {
+public class PreviewChartView extends BaseChartView implements Graph.InvalidateListener {
 
     private Bound chartBound = new Bound();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
-    private List<LineRenderer> lineRenders = new ArrayList<>();
-    private ChartData chartData = null;
+    private List<LineRender> lineRenders = new ArrayList<>();
+    private Graph chartData = null;
 
     public PreviewChartView(Context context) {
         super(context);
@@ -42,14 +37,10 @@ public class PreviewChartView extends BaseChartView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void setChartData(ChartData chartData) {
+    public void seGraph(Graph graph) {
         lineRenders.clear();
-        this.chartData = chartData;
-        if (chartData != null) {
-            for (LineData lineData: chartData.getLines()) {
-                lineRenders.add(new LineRenderer(lineData));
-            }
-        }
+        lineRenders = graph.initRenders();
+        graph.addListener(this);
         invalidate();
     }
 
@@ -65,11 +56,16 @@ public class PreviewChartView extends BaseChartView {
     }
 
     @Override
+    public void needInvalidate() {
+        invalidate();
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for (LineRenderer render: lineRenders) {
-            render.render(canvas, chartBound, 0, 1f, chartData.getMaxY());
+        for (LineRender render: lineRenders) {
+            render.renderPreview(canvas, chartBound);
         }
     }
 

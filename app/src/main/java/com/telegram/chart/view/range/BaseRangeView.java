@@ -10,6 +10,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.telegram.chart.view.chart.Range;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -41,12 +43,12 @@ public abstract class BaseRangeView extends View {
     protected RectF fingerLeft = new RectF();
     protected RectF fingerRight = new RectF();
 
-    private Float start = 0.8f;
-    private Float end = 1f;
-    private Float min = 0.2f;
+    protected float start = Range.RANGE_START_INIT;
+    protected float end = Range.RANGE_END_INIT;
+    protected float min = Range.RANGE_MIN_INIT;
 
-    private Float halfTouch = pxFromDp(10f);
-    private Float xDown = 0f;
+    private float halfTouch = pxFromDp(10f);
+    private float xDown = 0f;
     private @Zone int currentZone = NONE;
 
     private OnRangeListener onRangeListener;
@@ -206,8 +208,13 @@ public abstract class BaseRangeView extends View {
         }
     }
 
-    private void onChange() {
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         recalculateBounds();
+    }
+
+    protected void onChange() {
         notifyListeners();
         invalidate();
     }
@@ -231,7 +238,7 @@ public abstract class BaseRangeView extends View {
         invalidate();
     }
 
-    private void notifyListeners() {
+    protected void notifyListeners() {
         if (onRangeListener != null) {
             onRangeListener.onChangeRange(start, end);
         }
@@ -257,4 +264,6 @@ public abstract class BaseRangeView extends View {
     @IntDef({START, RANGE, END, NONE})
     @Retention(RetentionPolicy.SOURCE)
     @interface Zone { }
+
+
 }

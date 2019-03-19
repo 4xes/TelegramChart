@@ -11,15 +11,18 @@ import android.util.AttributeSet;
 
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
+import com.telegram.chart.view.chart.Graph;
+import com.telegram.chart.view.chart.Range;
 import com.telegram.chart.view.utils.ViewUtils;
 
 import static com.telegram.chart.view.utils.ViewUtils.clipSupport;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class RangeView extends BaseRangeView implements Themable<Theme> {
+public class RangeView extends BaseRangeView implements Themable<Theme>, Graph.InvalidateListener {
 
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Graph graph;
 
     private float selectVerticalWidth = pxFromDp(1f);
     private float selectHorizontalWidth = pxFromDp(4f);
@@ -40,6 +43,27 @@ public class RangeView extends BaseRangeView implements Themable<Theme> {
     public void applyTheme(Theme theme) {
         rangePaint.setColor(theme.getRangeColor());
         selectedPaint.setColor(theme.getRangeSelectedColor());
+        invalidate();
+    }
+
+    @Override
+    protected void onChange() {
+        notifyListeners();
+    }
+
+    @Override
+    public void needInvalidate() {
+        if (graph != null) {
+            start = graph.getStart();
+            end = graph.getEnd();
+            min = graph.getMin();
+        }
+        invalidate();
+    }
+
+    public void seGraph(Graph graph) {
+        this.graph = graph;
+        this.graph.addListener(this);
         invalidate();
     }
 
