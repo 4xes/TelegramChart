@@ -27,4 +27,7 @@
     <color name="range_night">#B31A222B</color>
     <color name="range_selected_day">#334A82AC</color>
     <color name="range_selected_night">#3375ADD8</color>
+
+    <color name="info_bg_day">#FFFFFF</color>
+    <color name="info_bg_night">#1D2631</color>
 </resources>

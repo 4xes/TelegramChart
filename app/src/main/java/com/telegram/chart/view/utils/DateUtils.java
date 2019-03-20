@@ -6,15 +6,11 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateUtils {
-	private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("d MMM", Locale.getDefault());
-	private static Calendar calendar = Calendar.getInstance();
+	private static SimpleDateFormat INFO_DATE_FORMAT = new SimpleDateFormat("EEE, MMM d", Locale.getDefault());
+	private static Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
-	static {
-		calendar.setTimeZone(TimeZone.getDefault());
-	}
-
-	public static String getDate(long date){
+	public static String getInfoDate(long date){
 		calendar.setTimeInMillis(date);
-		return DATE_FORMAT.format(calendar.getTime());
+		return INFO_DATE_FORMAT.format(calendar.getTime());
 	}
 }

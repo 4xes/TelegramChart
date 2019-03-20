@@ -22,8 +22,9 @@ public class Theme {
     private int nameColor;
     private int rangeColor;
     private int rangeSelectedColor;
+    private int backgroundInfoColor;
 
-    public Theme(Context context, @ThemeId int id, @ColorRes int primaryColor, @ColorRes  int primaryDarkColor, @ColorRes  int backgroundWindowColor, @ColorRes  int backgroundSecondColor, @ColorRes  int dividerColor, @ColorRes  int axisValueColor, @ColorRes  int axisColor, @ColorRes  int nameColor, @ColorRes  int rangeColor, @ColorRes  int rangeSelectedColor) {
+    public Theme(Context context, @ThemeId int id, @ColorRes int primaryColor, @ColorRes  int primaryDarkColor, @ColorRes  int backgroundWindowColor, @ColorRes  int backgroundSecondColor, @ColorRes  int dividerColor, @ColorRes  int axisValueColor, @ColorRes  int axisColor, @ColorRes  int nameColor, @ColorRes  int rangeColor, @ColorRes  int rangeSelectedColor, @ColorRes  int backgroundInfoColor) {
         this.id = id;
         this.primaryColor = ContextCompat.getColor(context, primaryColor);
         this.primaryDarkColor = ContextCompat.getColor(context, primaryDarkColor);
@@ -35,6 +36,7 @@ public class Theme {
         this.nameColor = ContextCompat.getColor(context, nameColor);
         this.rangeColor = ContextCompat.getColor(context, rangeColor);
         this.rangeSelectedColor = ContextCompat.getColor(context, rangeSelectedColor);
+        this.backgroundInfoColor = ContextCompat.getColor(context, backgroundInfoColor);
     }
 
     public int getPrimaryColor() {
@@ -77,6 +79,14 @@ public class Theme {
         return rangeSelectedColor;
     }
 
+    public int getBackgroundInfoColor() {
+        return backgroundInfoColor;
+    }
+
+    public void setBackgroundInfoColor(int backgroundInfoColor) {
+        this.backgroundInfoColor = backgroundInfoColor;
+    }
+
     public static Theme createTheme(Context context, @ThemeId int themeId) {
         switch (themeId) {
             case DAY:
@@ -100,7 +110,8 @@ public class Theme {
                 R.color.axis_night,
                 R.color.column_name_night,
                 R.color.range_night,
-                R.color.range_selected_night
+                R.color.range_selected_night,
+                R.color.info_bg_night
         );
     }
 
@@ -117,7 +128,8 @@ public class Theme {
                 R.color.axis_day,
                 R.color.column_name_day,
                 R.color.range_day,
-                R.color.range_selected_day
+                R.color.range_selected_day,
+                R.color.info_bg_day
         );
     }
 

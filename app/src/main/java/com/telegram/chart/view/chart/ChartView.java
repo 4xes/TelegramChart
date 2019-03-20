@@ -17,6 +17,7 @@ import com.telegram.chart.view.base.Theme;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
@@ -30,9 +31,10 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
     private PointF point = new PointF();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
-    private int windowColor = 0;
 
     private List<LineRender> lineRenders = new ArrayList<>();
+    private InfoRender infoRender;
+    private Theme theme;
     private Graph graph;
     private int selectIndex = NONE_INDEX;
 
@@ -59,12 +61,15 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
 
     @Override
     public void applyTheme(Theme theme) {
+        this.theme = theme;
         valuesPaint.setColor(theme.getAxisValueColor());
         datesPaint.setColor(theme.getAxisValueColor());
         dividerPaint.setColor(theme.getDividerColor());
-        windowColor = theme.getBackgroundWindowColor();
         for (LineRender renderer: lineRenders) {
-            renderer.setWindowColor(windowColor);
+            renderer.setWindowColor(theme.getBackgroundWindowColor());
+        }
+        if (infoRender != null) {
+            infoRender.applyTheme(theme);
         }
         invalidate();
     }
@@ -86,21 +91,21 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
         lineRenders = graph.initRenders();
         for (LineRender renderer: lineRenders) {
             renderer.setLineWidth(pxFromDp(2f));
-            renderer.setWindowColor(windowColor);
         }
+        infoRender = new InfoRender(graph);
         graph.addListener(this);
+        if (theme != null){
+            applyTheme(theme);
+        }
         invalidate();
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        Paint.FontMetrics fontMetrics = datesPaint.getFontMetrics();
-        float maxTextHeight = fontMetrics.bottom - fontMetrics.top;
-
         chartBound.set(bound);
         datesBound.set(bound);
-        datesBound.top = bound.bottom - maxTextHeight;
+        datesBound.top = bound.bottom - measureHeightText(datesPaint);
         chartBound.bottom = datesBound.top;
 
         chartBound.bottom -= verticalPadding * 2f;
@@ -139,6 +144,9 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
             canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
             for (LineRender render: lineRenders) {
                 render.renderCircle(canvas, selectIndex, chartBound);
+            }
+            if (infoRender != null) {
+                infoRender.render(canvas, selectIndex, chartBound, point);
             }
         }
         canvas.drawLine( bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);

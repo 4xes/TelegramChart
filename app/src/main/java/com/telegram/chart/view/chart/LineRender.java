@@ -20,11 +20,11 @@ class LineRender {
     public LineRender(int id, Graph data) {
         this.id = id;
         this.graph = data;
-        initPaint();
+        initPaints();
         initPath();
     }
 
-    private void initPaint() {
+    private void initPaints() {
         paintLine.setColor(graph.getColor(id));
         paintLine.setStyle(Paint.Style.STROKE);
         paintLine.setStrokeWidth(pxFromDp(1f));

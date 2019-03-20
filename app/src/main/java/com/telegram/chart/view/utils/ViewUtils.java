@@ -2,6 +2,7 @@ package com.telegram.chart.view.utils;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.os.Build;
@@ -26,6 +27,10 @@ public class ViewUtils {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, Resources.getSystem().getDisplayMetrics());
     }
 
+    public static float measureHeightText(Paint paint) {
+        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+        return fontMetrics.bottom - fontMetrics.top;
+    }
 
     public static void clipSupport(Canvas canvas, RectF rect) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

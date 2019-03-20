@@ -6,6 +6,7 @@ import android.graphics.PointF;
 
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.LineData;
+import com.telegram.chart.view.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,14 @@ public class Graph {
 
     public int getColor(int index) {
         return lines[index].getColor();
+    }
+
+    public String getInfoDate(int index) {
+        return DateUtils.getInfoDate(getX(index));
+    }
+
+    public String getValue(int id, int index) {
+        return String.valueOf(lines[id].getY(index));
     }
 
     public long getMaxY(int index) {
@@ -103,6 +112,16 @@ public class Graph {
         return visible[index];
     }
 
+    public int countVisible() {
+        int count = 0;
+        for (int id = 0; id < size(); id++) {
+            if (isVisible(id)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private final ArrayList<InvalidateListener> invalidateListeners = new ArrayList<>();
 
     public Graph(ChartData chartData) {
@@ -111,7 +130,7 @@ public class Graph {
         visible = new boolean[lines.length];
         maxCount = 0;
         for (int i = 0; i < lines.length; i++) {
-            visible[i] = false;
+            visible[i] = true;
             if (maxCount < lines[i].size()) {
                 maxCount = lines[i].size();
             }
@@ -169,21 +188,6 @@ public class Graph {
         }
     }
 
-    /*
-       private void changeMatrix(Bound bound, float start, float end, float maxY) {
-        matrix.reset();
-        final float scaleRange = 1f / (end - start);
-        final float scaleX = scaleRange * sectionWidth(bound.width());
-        final float scaleY = 1f / (maxY / bound.height());
-        final float dx = (-bound.width() * start) * scaleRange;
-        final float offsetX = bound.left + dx + bound.offsetX;
-        final float offsetY = bound.bottom + bound.offsetY;
-        matrix.setScale(scaleX, scaleY, 0f, 0f);
-        matrix.postTranslate(offsetX, offsetY);
-        path.transform(matrix, transitionPath);
-    }
-     */
-
     public void calculateMatrix(int id, Bound bound, Path path, Path matrixPath, Matrix matrix) {
         matrix.reset();
         final float width = bound.width();
@@ -226,6 +230,10 @@ public class Graph {
             return width / (getY(id).length - 1);
         }
         return width;
+    }
+
+    public int size() {
+        return lines.length;
     }
 
     public List<LineRender> initRenders() {
