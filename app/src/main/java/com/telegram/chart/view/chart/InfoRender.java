@@ -4,15 +4,16 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.os.Build;
 
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
 import com.telegram.chart.view.utils.DateUtils;
 
+import static com.telegram.chart.view.utils.ViewUtils.drawRoundRectSupport;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
@@ -26,15 +27,17 @@ public class InfoRender implements Themable<Theme> {
     private final Paint paintName = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private final RectF infoRect = new RectF();
+    private final Path infoPathSupport = new Path();
     private final float PADDING = pxFromDp(8f);
     private final float SPACING_HORIZONTAL = pxFromDp(10f);
     private final float SPACING_VERTICAL = pxFromDp(2f);
 
-    private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float RADIUS = pxFromDp(3f);
     private final float OFFSET = pxFromDp(1f);
     private final float BLUR_RADIUS = pxFromDp(2f);
     private final RectF shadowRect = new RectF();
+    private final Path shadowPathSupport = new Path();
     private final float xLineOffset = pxFromDp(16f);
 
     private final float dateHeight;
@@ -76,11 +79,12 @@ public class InfoRender implements Themable<Theme> {
 
         paintRect.setStyle(Paint.Style.FILL);
 
-        shadowPaint.setColor(Color.BLACK);
-        shadowPaint.setStyle(Paint.Style.FILL);
+        paintShadow.setColor(Color.BLACK);
+        paintShadow.setStyle(Paint.Style.FILL);
         float SHADOW_DEPTH = 0.9f;
-        shadowPaint.setAlpha((int) (100f + 150f * (1f - SHADOW_DEPTH)));
-        shadowPaint.setMaskFilter(new BlurMaskFilter(BLUR_RADIUS, BlurMaskFilter.Blur.NORMAL));
+        paintShadow.setAlpha((int) (100f + 150f * (1f - SHADOW_DEPTH)));
+        paintShadow.setMaskFilter(new BlurMaskFilter(BLUR_RADIUS, BlurMaskFilter.Blur.NORMAL));
+
 
     }
 
@@ -139,10 +143,8 @@ public class InfoRender implements Themable<Theme> {
         infoRect.set(leftRect, bound.top, leftRect + width, bound.top + height);
         shadowRect.set(infoRect.left + OFFSET, infoRect.top + OFFSET, infoRect.right - OFFSET, infoRect.bottom);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            canvas.drawRoundRect(shadowRect, RADIUS, RADIUS, shadowPaint);
-            canvas.drawRoundRect(infoRect, RADIUS, RADIUS, paintRect);
-        }
+        drawRoundRectSupport(canvas, paintShadow, shadowRect, shadowPathSupport, RADIUS);
+        drawRoundRectSupport(canvas, paintRect,  infoRect, infoPathSupport, RADIUS);
 
         final float left = infoRect.left + PADDING;
         final float top = infoRect.top + PADDING;

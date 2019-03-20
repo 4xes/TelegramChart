@@ -3,6 +3,7 @@ package com.telegram.chart.view.utils;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.os.Build;
@@ -37,6 +38,16 @@ public class ViewUtils {
             canvas.clipOutRect(rect);
         } else {
             canvas.clipRect(rect, Region.Op.DIFFERENCE);
+        }
+    }
+
+    public static void drawRoundRectSupport(Canvas canvas, Paint paint, RectF rect, Path path, float radius) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            canvas.drawRoundRect(rect, radius, radius, paint);
+        } else {
+            path.reset();
+            path.addRoundRect(rect, radius, radius, Path.Direction.CW);
+            canvas.drawPath(path, paint);
         }
     }
 
