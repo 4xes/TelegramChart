@@ -29,6 +29,7 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
     private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private PointF point = new PointF();
+    private boolean debug = false;
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
 
@@ -116,11 +117,11 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
         if (lineRenders.size() > 0) {
-            int touchIndex = graph.getIndex(event.getX(), chartBound);
+            int touchIndex = graph.getIndex(x, chartBound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
-                graph.calculatePoint(0, selectIndex, chartBound, point);
                 invalidate();
             }
         }
@@ -141,6 +142,7 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
         }
         canvas.restoreToCount(save);
         if (selectIndex != NONE_INDEX) {
+            graph.calculateLine(selectIndex, chartBound, point);
             canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
             for (LineRender render: lineRenders) {
                 render.renderCircle(canvas, selectIndex, chartBound);
@@ -148,6 +150,14 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
             if (infoRender != null) {
                 infoRender.render(canvas, selectIndex, chartBound, point);
             }
+        }
+        if (debug) {
+            int index = graph.getIndex(chartBound.left, chartBound);
+            graph.calculateLine(index, chartBound, point);
+            canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
+            index = graph.getIndex(chartBound.right, chartBound);
+            graph.calculateLine(index, chartBound, point);
+            canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
         }
         canvas.drawLine( bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
     }

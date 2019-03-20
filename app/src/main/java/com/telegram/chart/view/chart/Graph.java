@@ -175,7 +175,7 @@ public class Graph {
         if (maxCount > 1) {
             float percent = (range.start) + (dx) / bound.width() * (range.end - range.start);
             final int maxIndex = maxCount - 1;
-            int index = (int) (percent * maxIndex);
+            int index = (int) (percent * (maxIndex + 1));
             if (index > maxIndex) {
                 return maxIndex;
             }
@@ -192,7 +192,7 @@ public class Graph {
         matrix.reset();
         final float width = bound.width();
         final float scaleRange = 1f / (range.end - range.start);
-        final float scaleX = scaleRange * sectionWidth(id, width);
+        final float scaleX = scaleRange * sectionWidth(width);
         final float scaleY = 1f / (maxY / bound.height());
         final float dx = (-bound.width() * range.start) * scaleRange;
         final float offsetX = bound.left + dx + bound.offsetX;
@@ -205,7 +205,7 @@ public class Graph {
     public void calculateMatrixPreview(int id, Bound bound, Path path, Path matrixPath, Matrix matrix) {
         matrix.reset();
         final float width = bound.width();
-        final float scaleX = sectionWidth(id, width);
+        final float scaleX = sectionWidth(width);
         final float scaleY = 1f / (maxY / bound.height());
         final float offsetX = bound.left + bound.offsetX;
         final float offsetY = bound.bottom + bound.offsetY;
@@ -214,10 +214,14 @@ public class Graph {
         path.transform(matrix, matrixPath);
     }
 
+    public void calculateLine(int index, Bound bound, PointF point) {
+        calculatePoint(0, index, bound, point);
+    }
+
     public void calculatePoint(int id, int index, Bound bound, PointF point) {
         final float width = bound.width();
         final float scaleRange = 1f / (range.end - range.start);
-        final float scaleX = scaleRange * sectionWidth(id, width);
+        final float scaleX = scaleRange * sectionWidth(width);
         final float dx = (-width * range.start) * scaleRange;
         final float offsetX = bound.left + dx + bound.offsetX;
         final float scaleY = 1f / (maxY / bound.height());
@@ -225,9 +229,9 @@ public class Graph {
         point.set(index * scaleX + offsetX, -(getY(id)[index] * scaleY) + offsetY);
     }
 
-    public float sectionWidth(int id, float width) {
-        if (getY(id).length > 1) {
-            return width / (getY(id).length - 1);
+    public float sectionWidth(float width) {
+        if (x.length > 1) {
+            return width / (x.length - 1);
         }
         return width;
     }

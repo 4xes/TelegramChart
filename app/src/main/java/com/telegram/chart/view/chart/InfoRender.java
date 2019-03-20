@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.os.Build;
 
 import com.telegram.chart.view.base.Themable;
@@ -26,26 +27,31 @@ public class InfoRender implements Themable<Theme> {
 
     private final RectF infoRect = new RectF();
     private final float PADDING = pxFromDp(8f);
-    private final float SPACING_HORIZONTAL = pxFromDp(12f);
-    private final float SPACING_VERTICAL = pxFromDp(8f);
+    private final float SPACING_HORIZONTAL = pxFromDp(10f);
+    private final float SPACING_VERTICAL = pxFromDp(4f);
 
     private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float RADIUS = pxFromDp(3f);
+    private final float OFFSET = pxFromDp(1f);
     private final float BLUR_RADIUS = pxFromDp(2f);
     private final RectF shadowRect = new RectF();
 
     private final float dateHeight;
+    private final String[] names;
     private final String[] values;
     private final float[] valuesWidth;
     private final float valuesHeight;
     private final float[] namesWidth;
+    private final int[] colors;
     private final float namesHeight;
 
     public InfoRender(Graph graph) {
         this.graph = graph;
         values = new String[graph.size()];
+        names = new String[graph.size()];
         valuesWidth = new float[graph.size()];
         namesWidth = new float[graph.size()];
+        colors = new int[graph.size()];
         initPaints();
 
         dateHeight = measureHeightText(paintDate);
@@ -56,9 +62,16 @@ public class InfoRender implements Themable<Theme> {
     private void initPaints() {
         paintDate.setStyle(Paint.Style.FILL);
         paintDate.setTextSize(pxFromSp(12f));
-        paintDate.setTextAlign(Paint.Align.CENTER);
+        paintDate.setTextAlign(Paint.Align.LEFT);
+
         paintValue.setStyle(Paint.Style.FILL);
+        paintValue.setTextSize(pxFromSp(14f));
+        paintValue.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        paintValue.setTextAlign(Paint.Align.LEFT);
+
         paintName.setStyle(Paint.Style.FILL);
+        paintName.setTextSize(pxFromSp(11f));
+        paintName.setTextAlign(Paint.Align.LEFT);
 
         paintRect.setStyle(Paint.Style.FILL);
 
@@ -82,8 +95,10 @@ public class InfoRender implements Themable<Theme> {
         for (int id = 0; id < graph.size(); id++) {
             if (graph.isVisible(id)) {
                 values[n] = graph.getValue(id, index);
+                names[n] = graph.getName(id);
                 valuesWidth[n] = paintValue.measureText(values[n]);
-                namesWidth[n] = paintName.measureText(graph.getName(id));
+                namesWidth[n] = paintName.measureText(names[n]);
+                colors[n] = graph.getColor(id);
                 n++;
             }
         }
@@ -91,7 +106,7 @@ public class InfoRender implements Themable<Theme> {
         float maxColumnW1 = 0f;
         float maxColumnW2 = 0f;
         for (int i = 0; i < visible; i++) {
-            if ((n & 1) == 0) {
+            if ((i & 1) == 0) {
                 if (maxColumnW1 < valuesWidth[i]) {
                     maxColumnW1 = valuesWidth[i];
                 }
@@ -109,22 +124,35 @@ public class InfoRender implements Themable<Theme> {
         }
 
         final float spacingHorizontal = visible > 1 ? SPACING_HORIZONTAL : 0;
-        final int rows = (visible % 2) + visible / 2;
+        final int rows = visible / 2;
         final float width = PADDING + Math.max(dateWidth, maxColumnW1 + spacingHorizontal + maxColumnW2) + PADDING;
-        final float height = PADDING + dateHeight  + ((SPACING_VERTICAL + valuesHeight + namesHeight) * rows) + PADDING;
+        final float height = PADDING + dateHeight  + (rows * (SPACING_VERTICAL + valuesHeight + namesHeight)) + PADDING;
 
-        infoRect.set(bound);
-        infoRect.left = infoRect.left + width;
-        infoRect.bottom = infoRect.top + height;
+        infoRect.set(bound.left, bound.top, bound.left + width, bound.top + height);
+        shadowRect.set(infoRect.left + OFFSET, infoRect.top + OFFSET, infoRect.right - OFFSET, infoRect.bottom);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            canvas.drawRoundRect(infoRect, RADIUS, RADIUS, shadowPaint);
+            canvas.drawRoundRect(shadowRect, RADIUS, RADIUS, shadowPaint);
             canvas.drawRoundRect(infoRect, RADIUS, RADIUS, paintRect);
+        }
 
-            final float dateX = infoRect.left + PADDING + (dateWidth / 2f);
-            final float dateY = infoRect.top + PADDING + (dateHeight / 2f) + paintDate.descent();
+        final float left = infoRect.left + PADDING;
+        final float top = infoRect.top + PADDING;
+        final float dateY = top + (dateHeight / 2f) + paintDate.descent();
+        canvas.drawText(date, left, dateY, paintDate);
 
-            canvas.drawText(date, dateX, dateY, paintDate);
+        for (int i = 0; i < visible; i++) {
+            final int iRow = i / 2;
+            final int iColumn = (i & 1) == 0 ? 0 : 1;
+            final float x = left + (iColumn * (maxColumnW1 + spacingHorizontal));
+            final float offsetValuesY = (valuesHeight / 2f) + paintValue.descent();
+            final float yValues = top + dateHeight + offsetValuesY + (iRow * (SPACING_VERTICAL + namesHeight + valuesHeight));
+            final float offsetNamesY = (namesHeight / 2f) + paintName.descent();
+            final float yNames = yValues - offsetValuesY + valuesHeight + offsetNamesY;
+            paintValue.setColor(colors[i]);
+            canvas.drawText(values[i], x, yValues, paintValue);
+            paintName.setColor(colors[i]);
+            canvas.drawText(names[i], x, yNames, paintName);
         }
     }
 
