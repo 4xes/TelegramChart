@@ -53,6 +53,11 @@ public class Graph {
         return lines[index].getColor();
     }
 
+    public void setVisible(int id, boolean isVisible) {
+        visible[id] = isVisible;
+        notifyInvalidate();
+    }
+
     public String getInfoDate(int index) {
         return DateUtils.getInfoDate(getX(index));
     }

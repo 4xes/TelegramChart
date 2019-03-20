@@ -66,7 +66,7 @@ public class InfoRender implements Themable<Theme> {
 
     private void initPaints() {
         paintDate.setStyle(Paint.Style.FILL);
-        paintDate.setTextSize(pxFromSp(13f));
+        paintDate.setTextSize(pxFromSp(12f));
         paintDate.setTextAlign(Paint.Align.LEFT);
 
         paintValue.setStyle(Paint.Style.FILL);
@@ -75,7 +75,7 @@ public class InfoRender implements Themable<Theme> {
         paintValue.setTextAlign(Paint.Align.LEFT);
 
         paintName.setStyle(Paint.Style.FILL);
-        paintName.setTextSize(pxFromSp(12f));
+        paintName.setTextSize(pxFromSp(11f));
         paintName.setTextAlign(Paint.Align.LEFT);
 
         paintRect.setStyle(Paint.Style.FILL);

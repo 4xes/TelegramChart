@@ -57,18 +57,24 @@ class LineRender {
     }
 
     public void render(Canvas canvas, Bound bound) {
-        graph.calculateMatrix(id, bound, path, matrixPath, matrix);
-        canvas.drawPath(matrixPath, paintLine);
+        if (graph.isVisible(id)) {
+            graph.calculateMatrix(id, bound, path, matrixPath, matrix);
+            canvas.drawPath(matrixPath, paintLine);
+        }
     }
 
     public void renderPreview(Canvas canvas, Bound bound) {
-        graph.calculateMatrixPreview(id, bound, path, matrixPath, matrix);
-        canvas.drawPath(matrixPath, paintLine);
+        if (graph.isVisible(id)) {
+            graph.calculateMatrixPreview(id, bound, path, matrixPath, matrix);
+            canvas.drawPath(matrixPath, paintLine);
+        }
     }
 
     public void renderCircle(Canvas canvas, int index, Bound bound) {
-        graph.calculatePoint(id, index, bound, point);
-        canvas.drawCircle(point.x, point.y, outerRadius, paintCircle);
-        canvas.drawCircle(point.x, point.y, innerRadius, paintInsideCircle);
+        if (graph.isVisible(id)) {
+            graph.calculatePoint(id, index, bound, point);
+            canvas.drawCircle(point.x, point.y, outerRadius, paintCircle);
+            canvas.drawCircle(point.x, point.y, innerRadius, paintInsideCircle);
+        }
     }
 }

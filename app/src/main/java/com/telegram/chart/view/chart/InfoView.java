@@ -27,6 +27,10 @@ public class InfoView extends BaseMeasureView implements Themable<Theme> {
         init();
     }
 
+    public boolean isShowing() {
+        return index != NONE_INDEX;
+    }
+
     public InfoView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
@@ -64,8 +68,8 @@ public class InfoView extends BaseMeasureView implements Themable<Theme> {
     }
 
     public void hide() {
-        setVisibility(View.GONE);
         index = NONE_INDEX;
+        setVisibility(View.GONE);
         invalidate();
     }
 

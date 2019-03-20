@@ -1,92 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/chart_followers"
-        android:textAppearance="@style/Text.Body2"
-        android:layout_marginTop="@dimen/normal"
-        android:layout_marginStart="@dimen/normal"
-        android:layout_marginLeft="@dimen/normal"
-        />
-
-    <FrameLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.telegram.chart.view.chart.ChartView
-            android:id="@+id/chart"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:paddingTop="@dimen/normal"
-            android:paddingLeft="@dimen/normal"
-            android:paddingStart="@dimen/normal"
-            android:paddingRight="@dimen/normal"
-            android:paddingEnd="@dimen/normal"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity"
+        android:id="@+id/main">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chart_followers"
+            android:textAppearance="@style/Text.Body2"
+            android:layout_marginTop="@dimen/normal"
+            android:layout_marginStart="@dimen/normal"
+            android:layout_marginLeft="@dimen/normal"
             />
 
-        <com.telegram.chart.view.chart.InfoView
-            android:id="@+id/info"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:paddingTop="@dimen/normal"
-            android:paddingLeft="@dimen/normal"
-            android:paddingStart="@dimen/normal"
-            android:paddingRight="@dimen/normal"
-            android:paddingEnd="@dimen/normal"
-            />
-    </FrameLayout>
+            android:layout_height="wrap_content">
+            <com.telegram.chart.view.chart.ChartView
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:paddingTop="@dimen/normal"
+                android:paddingLeft="@dimen/normal"
+                android:paddingStart="@dimen/normal"
+                android:paddingRight="@dimen/normal"
+                android:paddingEnd="@dimen/normal"
+                />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/normal"
-        >
-        <com.telegram.chart.view.chart.PreviewChartView
-            android:id="@+id/preview"
+            <com.telegram.chart.view.chart.InfoView
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:paddingTop="@dimen/normal"
+                android:paddingLeft="@dimen/normal"
+                android:paddingStart="@dimen/normal"
+                android:paddingRight="@dimen/normal"
+                android:paddingEnd="@dimen/normal"
+                />
+        </FrameLayout>
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/preview_height"
-            android:paddingLeft="@dimen/normal"
-            android:paddingStart="@dimen/normal"
-            android:paddingRight="@dimen/normal"
-            android:paddingEnd="@dimen/normal"
-            />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/normal"
+            >
+            <com.telegram.chart.view.chart.PreviewChartView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/preview_height"
+                android:paddingLeft="@dimen/normal"
+                android:paddingStart="@dimen/normal"
+                android:paddingRight="@dimen/normal"
+                android:paddingEnd="@dimen/normal"
+                />
 
-        <!-- padding for touch zone -->
-        <com.telegram.chart.view.range.RangeView
-            android:id="@+id/range"
+            <!-- padding for touch zone -->
+            <com.telegram.chart.view.range.RangeView
+                android:id="@+id/range"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/preview_height"
+                android:paddingLeft="@dimen/normal"
+                android:paddingStart="@dimen/normal"
+                android:paddingRight="@dimen/normal"
+                android:paddingEnd="@dimen/normal"
+                />
+        </FrameLayout>
+
+        <View
+            android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/preview_height"
-            android:paddingLeft="@dimen/normal"
-            android:paddingStart="@dimen/normal"
-            android:paddingRight="@dimen/normal"
-            android:paddingEnd="@dimen/normal"
+            android:layout_height="1dp"
             />
-    </FrameLayout>
 
-    <View
-        android:id="@+id/controls"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        />
+        <View
+            android:id="@+id/secondaryBackground"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        />
+    </LinearLayout>
 
-    <View
-        android:id="@+id/secondaryBackground"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-
-</LinearLayout>
+</ScrollView>
