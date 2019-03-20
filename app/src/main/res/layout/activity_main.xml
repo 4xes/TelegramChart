@@ -17,16 +17,31 @@
         android:layout_marginLeft="@dimen/normal"
         />
 
-    <com.telegram.chart.view.chart.ChartView
-        android:id="@+id/chart"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:paddingTop="@dimen/normal"
-        android:paddingLeft="@dimen/normal"
-        android:paddingStart="@dimen/normal"
-        android:paddingRight="@dimen/normal"
-        android:paddingEnd="@dimen/normal"
-        />
+        android:layout_height="wrap_content">
+        <com.telegram.chart.view.chart.ChartView
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:paddingTop="@dimen/normal"
+            android:paddingLeft="@dimen/normal"
+            android:paddingStart="@dimen/normal"
+            android:paddingRight="@dimen/normal"
+            android:paddingEnd="@dimen/normal"
+            />
+
+        <com.telegram.chart.view.chart.InfoView
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:paddingTop="@dimen/normal"
+            android:paddingLeft="@dimen/normal"
+            android:paddingStart="@dimen/normal"
+            android:paddingRight="@dimen/normal"
+            android:paddingEnd="@dimen/normal"
+            />
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

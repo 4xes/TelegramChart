@@ -247,4 +247,6 @@ public class Graph {
         }
         return lineRenders;
     }
+
+    public static final int NONE_INDEX = -1;
 }

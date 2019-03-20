@@ -12,9 +12,9 @@ import java.util.List;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class PreviewChartView extends BaseChartView implements Graph.InvalidateListener {
+public class PreviewChartView extends BaseMeasureView implements Graph.InvalidateListener {
 
-    private Bound chartBound = new Bound();
+    private final Bound chartBound = new Bound();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
     private List<LineRender> lineRenders = new ArrayList<>();

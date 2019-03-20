@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.view.View;
 
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
@@ -84,8 +85,6 @@ public class InfoRender implements Themable<Theme> {
         float SHADOW_DEPTH = 0.9f;
         paintShadow.setAlpha((int) (100f + 150f * (1f - SHADOW_DEPTH)));
         paintShadow.setMaskFilter(new BlurMaskFilter(BLUR_RADIUS, BlurMaskFilter.Blur.NORMAL));
-
-
     }
 
     public void render(Canvas canvas, int index, RectF bound, PointF pointF) {

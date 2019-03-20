@@ -1,5 +1,7 @@
 package com.telegram.chart;
 
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Menu;
@@ -13,6 +15,7 @@ import com.telegram.chart.data.DataInteractorImpl;
 import com.telegram.chart.view.base.Theme;
 import com.telegram.chart.view.chart.ChartView;
 import com.telegram.chart.view.chart.Graph;
+import com.telegram.chart.view.chart.InfoView;
 import com.telegram.chart.view.chart.PreviewChartView;
 import com.telegram.chart.view.range.BaseRangeView;
 import com.telegram.chart.view.range.RangeView;
@@ -22,6 +25,7 @@ public class MainActivity extends ThemeBaseActivity {
     private ChartView chartView;
     private PreviewChartView previewView;
     private RangeView rangeView;
+    private InfoView infoView;
     private View divider;
     private View secondBackground;
 
@@ -42,6 +46,7 @@ public class MainActivity extends ThemeBaseActivity {
         divider = findViewById(R.id.divider);
         secondBackground = findViewById(R.id.secondaryBackground);
         rangeView = findViewById(R.id.range);
+        infoView = findViewById(R.id.info);
     }
 
     private void renderChart(ChartData chart) {
@@ -50,12 +55,20 @@ public class MainActivity extends ThemeBaseActivity {
             @Override
             public void onChangeRange(Float start, Float end) {
                 chartView.resetIndex();
+                infoView.hide();
                 graph.setStartAndMin(start, end);
             }
         });
         chartView.seGraph(graph);
         previewView.seGraph(graph);
         rangeView.seGraph(graph);
+        infoView.seGraph(graph);
+        chartView.setOnShowInfoListener(new ChartView.OnShowInfoListener() {
+            @Override
+            public void showInfo(int index, RectF bound, PointF point) {
+                infoView.showInfo(index, bound, point);
+            }
+        });
     }
 
     private void loadChart() {
@@ -89,6 +102,7 @@ public class MainActivity extends ThemeBaseActivity {
         secondBackground.setBackgroundColor(theme.getBackgroundSecondColor());
         rangeView.applyTheme(theme);
         chartView.applyTheme(theme);
+        infoView.applyTheme(theme);
     }
 
     @Override

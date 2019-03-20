@@ -5,12 +5,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
@@ -18,27 +18,32 @@ import com.telegram.chart.view.base.Theme;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
-public class ChartView extends BaseChartView implements Themable<Theme>, Graph.InvalidateListener {
+public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph.InvalidateListener {
 
-    protected Bound chartBound = new Bound();
-    protected Bound datesBound = new Bound();
-    private TextPaint valuesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private PointF point = new PointF();
+    protected final Bound chartBound = new Bound();
+    protected final Bound datesBound = new Bound();
+    private final TextPaint valuesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final PointF point = new PointF();
     private boolean debug = false;
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
 
     private List<LineRender> lineRenders = new ArrayList<>();
-    private InfoRender infoRender;
+    private OnShowInfoListener onShowInfoListener;
     private Theme theme;
     private Graph graph;
     private int selectIndex = NONE_INDEX;
+
+    public void setOnShowInfoListener(OnShowInfoListener onShowInfoListener) {
+        this.onShowInfoListener = onShowInfoListener;
+    }
 
     public ChartView(Context context) {
         super(context);
@@ -70,9 +75,6 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
         for (LineRender renderer: lineRenders) {
             renderer.setWindowColor(theme.getBackgroundWindowColor());
         }
-        if (infoRender != null) {
-            infoRender.applyTheme(theme);
-        }
         invalidate();
     }
 
@@ -94,7 +96,6 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
         for (LineRender renderer: lineRenders) {
             renderer.setLineWidth(pxFromDp(2f));
         }
-        infoRender = new InfoRender(graph);
         graph.addListener(this);
         if (theme != null){
             applyTheme(theme);
@@ -123,6 +124,10 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
             int touchIndex = graph.getIndex(x, chartBound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
+                if (onShowInfoListener != null) {
+                    graph.calculateLine(selectIndex, chartBound, point);
+                    onShowInfoListener.showInfo(selectIndex, chartBound, point);
+                }
                 invalidate();
             }
         }
@@ -148,9 +153,6 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
             for (LineRender render: lineRenders) {
                 render.renderCircle(canvas, selectIndex, chartBound);
             }
-            if (infoRender != null) {
-                infoRender.render(canvas, selectIndex, bound, point);
-            }
         }
         if (debug) {
             int index = graph.getIndex(chartBound.left, chartBound);
@@ -168,5 +170,7 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
         invalidate();
     }
 
-    private static final int NONE_INDEX = -1;
+    public interface OnShowInfoListener {
+        void showInfo(int index, RectF bound, PointF point);
+    }
 }

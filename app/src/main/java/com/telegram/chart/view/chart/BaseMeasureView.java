@@ -12,24 +12,24 @@ import android.view.View;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.reconcileSize;
 
-public abstract class BaseChartView extends View {
+public abstract class BaseMeasureView extends View {
 
     protected RectF bound = new RectF();
 
-    public BaseChartView(Context context) {
+    public BaseMeasureView(Context context) {
         super(context);
     }
 
-    public BaseChartView(Context context, @Nullable AttributeSet attrs) {
+    public BaseMeasureView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public BaseChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BaseMeasureView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public BaseChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BaseMeasureView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
