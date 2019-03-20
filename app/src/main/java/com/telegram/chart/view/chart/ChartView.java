@@ -148,7 +148,7 @@ public class ChartView extends BaseChartView implements Themable<Theme>, Graph.I
                 render.renderCircle(canvas, selectIndex, chartBound);
             }
             if (infoRender != null) {
-                infoRender.render(canvas, selectIndex, chartBound, point);
+                infoRender.render(canvas, selectIndex, bound, point);
             }
         }
         if (debug) {

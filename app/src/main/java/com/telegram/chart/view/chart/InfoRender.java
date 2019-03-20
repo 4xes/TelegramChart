@@ -28,13 +28,14 @@ public class InfoRender implements Themable<Theme> {
     private final RectF infoRect = new RectF();
     private final float PADDING = pxFromDp(8f);
     private final float SPACING_HORIZONTAL = pxFromDp(10f);
-    private final float SPACING_VERTICAL = pxFromDp(4f);
+    private final float SPACING_VERTICAL = pxFromDp(2f);
 
     private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float RADIUS = pxFromDp(3f);
     private final float OFFSET = pxFromDp(1f);
     private final float BLUR_RADIUS = pxFromDp(2f);
     private final RectF shadowRect = new RectF();
+    private final float xLineOffset = pxFromDp(16f);
 
     private final float dateHeight;
     private final String[] names;
@@ -61,7 +62,7 @@ public class InfoRender implements Themable<Theme> {
 
     private void initPaints() {
         paintDate.setStyle(Paint.Style.FILL);
-        paintDate.setTextSize(pxFromSp(12f));
+        paintDate.setTextSize(pxFromSp(13f));
         paintDate.setTextAlign(Paint.Align.LEFT);
 
         paintValue.setStyle(Paint.Style.FILL);
@@ -70,7 +71,7 @@ public class InfoRender implements Themable<Theme> {
         paintValue.setTextAlign(Paint.Align.LEFT);
 
         paintName.setStyle(Paint.Style.FILL);
-        paintName.setTextSize(pxFromSp(11f));
+        paintName.setTextSize(pxFromSp(12f));
         paintName.setTextAlign(Paint.Align.LEFT);
 
         paintRect.setStyle(Paint.Style.FILL);
@@ -83,7 +84,7 @@ public class InfoRender implements Themable<Theme> {
 
     }
 
-    public void render(Canvas canvas, int index, Bound bound, PointF pointF) {
+    public void render(Canvas canvas, int index, RectF bound, PointF pointF) {
         int visible = graph.countVisible();
         if (visible == 0) {
             return;
@@ -124,11 +125,18 @@ public class InfoRender implements Themable<Theme> {
         }
 
         final float spacingHorizontal = visible > 1 ? SPACING_HORIZONTAL : 0;
-        final int rows = visible / 2;
+        final int rows = (visible - 1) / 2;
         final float width = PADDING + Math.max(dateWidth, maxColumnW1 + spacingHorizontal + maxColumnW2) + PADDING;
-        final float height = PADDING + dateHeight  + (rows * (SPACING_VERTICAL + valuesHeight + namesHeight)) + PADDING;
+        final float height = PADDING + dateHeight  + valuesHeight + namesHeight + SPACING_VERTICAL + (rows * (valuesHeight + namesHeight + SPACING_VERTICAL)) + PADDING - paintName.descent();
 
-        infoRect.set(bound.left, bound.top, bound.left + width, bound.top + height);
+        float leftRect = pointF.x - xLineOffset;
+        if (leftRect < bound.left) {
+            leftRect = bound.left;
+        }
+        if (leftRect + width > bound.right) {
+            leftRect = bound.right - width;
+        }
+        infoRect.set(leftRect, bound.top, leftRect + width, bound.top + height);
         shadowRect.set(infoRect.left + OFFSET, infoRect.top + OFFSET, infoRect.right - OFFSET, infoRect.bottom);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -138,6 +146,7 @@ public class InfoRender implements Themable<Theme> {
 
         final float left = infoRect.left + PADDING;
         final float top = infoRect.top + PADDING;
+
         final float dateY = top + (dateHeight / 2f) + paintDate.descent();
         canvas.drawText(date, left, dateY, paintDate);
 
@@ -146,7 +155,7 @@ public class InfoRender implements Themable<Theme> {
             final int iColumn = (i & 1) == 0 ? 0 : 1;
             final float x = left + (iColumn * (maxColumnW1 + spacingHorizontal));
             final float offsetValuesY = (valuesHeight / 2f) + paintValue.descent();
-            final float yValues = top + dateHeight + offsetValuesY + (iRow * (SPACING_VERTICAL + namesHeight + valuesHeight));
+            final float yValues = top + dateHeight + offsetValuesY + SPACING_VERTICAL + (iRow * (namesHeight + valuesHeight + SPACING_VERTICAL));
             final float offsetNamesY = (namesHeight / 2f) + paintName.descent();
             final float yNames = yValues - offsetValuesY + valuesHeight + offsetNamesY;
             paintValue.setColor(colors[i]);
