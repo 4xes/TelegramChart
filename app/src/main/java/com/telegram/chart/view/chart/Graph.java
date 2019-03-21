@@ -21,6 +21,14 @@ public class Graph {
     private long minY;
     private Range range = new Range();
 
+    public int maxPoints() {
+        int maxSize = 0;
+        for (LineData line : lines) {
+            maxSize = Math.max(maxSize, 4 + (line.size() - 2) * 4);
+        }
+        return maxSize;
+    }
+
     public LineData[] getLines() {
         return lines;
     }
@@ -193,22 +201,41 @@ public class Graph {
         }
     }
 
-    public void calculateMatrix(int id, Bound bound, Path path, Path matrixPath, Matrix matrix) {
-        matrix.reset();
-        final float width = bound.width();
-        final float scaleRange = 1f / (range.end - range.start);
-        final float scaleX = scaleRange * sectionWidth(width);
+    public float getScaleRange(){
+        return 1f / (range.end - range.start);
+    }
+
+    public void recalculateLines(int id, Bound bound, float points[]) {
+        long[] y = getY(id);
+
+        final float scaleX = getScaleRange() * sectionWidth(bound.width());
         final float scaleY = 1f / (maxY / bound.height());
-        final float dx = (-bound.width() * range.start) * scaleRange;
+
+        if (y.length > 0) {
+            for (int i = 0; i < y.length - 1; i++) {
+                final int iX0 = i * 4;
+                final int iY0 = i * 4 + 1;
+                final int iX1 = i * 4 + 2;
+                final int iY1 = i * 4 + 3;
+                points[iX0] = i * scaleX ;
+                points[iY0] = -y[i] * scaleY;
+                points[iX1] = (i + 1) * scaleX;
+                points[iY1] = -y[i + 1] * scaleY;
+            }
+        }
+    }
+
+    public void calculateMatrix(int id, Bound bound, Matrix matrix) {
+        final float scaleX = getScaleRange() * sectionWidth(bound.width());
+        final float scaleY = 1f / (maxY / bound.height());
+        final float dx = (-bound.width() * range.start) * getScaleRange();
         final float offsetX = bound.left + dx + bound.offsetX;
         final float offsetY = bound.bottom + bound.offsetY;
         matrix.setScale(scaleX, scaleY, 0f, 0f);
         matrix.postTranslate(offsetX, offsetY);
-        path.transform(matrix, matrixPath);
     }
 
-    public void calculateMatrixPreview(int id, Bound bound, Path path, Path matrixPath, Matrix matrix) {
-        matrix.reset();
+    public void calculateMatrixPreview(int id, Bound bound, Matrix matrix) {
         final float width = bound.width();
         final float scaleX = sectionWidth(width);
         final float scaleY = 1f / (maxY / bound.height());
@@ -216,7 +243,6 @@ public class Graph {
         final float offsetY = bound.bottom + bound.offsetY;
         matrix.setScale(scaleX, scaleY, 0f, 0f);
         matrix.postTranslate(offsetX, offsetY);
-        path.transform(matrix, matrixPath);
     }
 
     public void calculateLine(int index, Bound bound, PointF point) {
@@ -225,7 +251,7 @@ public class Graph {
 
     public void calculatePoint(int id, int index, Bound bound, PointF point) {
         final float width = bound.width();
-        final float scaleRange = 1f / (range.end - range.start);
+        final float scaleRange = getScaleRange();
         final float scaleX = scaleRange * sectionWidth(width);
         final float dx = (-width * range.start) * scaleRange;
         final float offsetX = bound.left + dx + bound.offsetX;

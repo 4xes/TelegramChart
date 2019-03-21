@@ -8,6 +8,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.view.View;
 
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
@@ -29,14 +30,20 @@ public class RangeView extends BaseRangeView implements Themable<Theme>, Graph.I
 
     public RangeView(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     public RangeView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public RangeView(@Nullable Context context) {
         super(context);
+        init();
+    }
+
+    private void init() {
     }
 
     @Override

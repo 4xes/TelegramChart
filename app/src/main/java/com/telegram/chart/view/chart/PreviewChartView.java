@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +23,27 @@ public class PreviewChartView extends BaseMeasureView implements Graph.Invalidat
 
     public PreviewChartView(Context context) {
         super(context);
+        init();
     }
 
     public PreviewChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public PreviewChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public PreviewChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
+
+    private void init() {
+
     }
 
     public void seGraph(Graph graph) {
