@@ -176,6 +176,12 @@ public class Graph {
         void needInvalidate();
     }
 
+    public void updateState(float deltaMs) {
+        //change deltaMs
+
+        notifyInvalidate();
+    }
+
     public int getIndex(float touchX, Bound bound) {
         float x = touchX;
         if (x < bound.left) {

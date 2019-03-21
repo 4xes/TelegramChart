@@ -121,6 +121,9 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+        }
         if (lineRenders.size() > 0) {
             int touchIndex = graph.getIndex(x, chartBound);
             if (touchIndex != selectIndex) {

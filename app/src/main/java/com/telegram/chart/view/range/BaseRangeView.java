@@ -108,6 +108,7 @@ public abstract class BaseRangeView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                getParent().requestDisallowInterceptTouchEvent(true);
                 currentZone = getZone(x);
                 xDown = x;
                 return true;

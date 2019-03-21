@@ -2,6 +2,7 @@
 <ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:id="@+id/scroll"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -87,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:minHeight="40dp"
             />
 
     </LinearLayout>

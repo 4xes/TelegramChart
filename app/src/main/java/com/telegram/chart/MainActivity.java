@@ -10,9 +10,11 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
@@ -26,6 +28,7 @@ import com.telegram.chart.view.chart.InfoView;
 import com.telegram.chart.view.chart.PreviewChartView;
 import com.telegram.chart.view.range.BaseRangeView;
 import com.telegram.chart.view.range.RangeView;
+import com.telegram.chart.view.utils.ViewUtils;
 
 public class MainActivity extends ThemeBaseActivity {
 
@@ -43,9 +46,9 @@ public class MainActivity extends ThemeBaseActivity {
         setContentView(R.layout.activity_main);
         setTitle(R.string.chart_title);
         initViews();
-        updateTheme();
-
         loadChart();
+
+        applyTheme(getCurrentTheme());
     }
 
     private void initViews() {
@@ -66,10 +69,11 @@ public class MainActivity extends ThemeBaseActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
             int padding = getResources().getDimensionPixelOffset(R.dimen.normal);
+            params.setMargins(padding, 0, 0, 0);
             checkBox.setLayoutParams(params);
             checkBox.setPadding(padding, padding, padding, padding);
             checkBox.setText(graph.getName(id));
-            checkBox.setTextColor(graph.getColor(id));
+            checkBox.setTextColor(getCurrentTheme().getNameColor());
             checkBox.setChecked(true);
             checkBox.setTag(id);
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -83,6 +87,18 @@ public class MainActivity extends ThemeBaseActivity {
             });
             CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(graph.getColor(id)));
             main.addView(checkBox, main.indexOfChild(divider));
+            if (id != graph.size() - 1) {
+                View line = new View(this);
+                LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewUtils.pxFromDp(1)
+                );
+                dividerParams.setMargins(ViewUtils.pxFromDp(64), 0, 0, 0);
+                line.setTag("divider");
+                line.setLayoutParams(dividerParams);
+                line.setBackgroundColor(getCurrentTheme().getDividerColor());
+                main.addView(line, main.indexOfChild(divider));
+            }
         }
     }
 
@@ -107,6 +123,8 @@ public class MainActivity extends ThemeBaseActivity {
             }
         });
         initCheckboxes(graph);
+
+        applyTheme(getCurrentTheme());
     }
 
     private void loadChart() {
@@ -128,19 +146,22 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     @Override
-    protected void toggleNightMode() {
-        super.toggleNightMode();
-        updateTheme();
-    }
-
-    private void updateTheme() {
-        Theme theme = Theme.createTheme(this, !isNightMode() ? Theme.NIGHT : Theme.DAY);
-        applyTheme(theme);
-        divider.setBackgroundColor(theme.getDividerColor());
-        secondBackground.setBackgroundColor(theme.getBackgroundSecondColor());
-        rangeView.applyTheme(theme);
-        chartView.applyTheme(theme);
-        infoView.applyTheme(theme);
+    public void applyTheme(Theme theme) {
+        super.applyTheme(theme);
+        divider.setBackgroundColor(getCurrentTheme().getDividerColor());
+        secondBackground.setBackgroundColor(getCurrentTheme().getBackgroundSecondColor());
+        rangeView.applyTheme(getCurrentTheme());
+        chartView.applyTheme(getCurrentTheme());
+        infoView.applyTheme(getCurrentTheme());
+        for (int i = 0; i < main.getChildCount(); i++) {
+            View child = main.getChildAt(i);
+            if ("divider".equals(child.getTag())) {
+                child.setBackgroundColor(getCurrentTheme().getDividerColor());
+            }
+            if (child instanceof CheckBox) {
+                ((CheckBox) child).setTextColor(getCurrentTheme().getNameColor());
+            }
+        }
     }
 
     @Override
