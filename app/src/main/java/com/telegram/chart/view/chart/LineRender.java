@@ -1,21 +1,22 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.*;
-import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class LineRender {
     private final int id;
     private final Graph graph;
-    private final Path matrixPath = new Path();
+    private final Path drawPath = new Path();
     private final Path path = new Path();
-    private final float[] points;
-    private final float[] transitionPoints;
-    private final Matrix matrix = new Matrix();
     private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintInsideCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Matrix pathMatrix = new Matrix();
+    private final float[] matrix = new float[4];
     private final PointF point = new PointF();
     private final float outerRadius = pxFromDp(7);
     private final float innerRadius = pxFromDp(3);
@@ -25,9 +26,6 @@ class LineRender {
         this.graph = data;
         initPaints();
         initPath();
-        points = new float[graph.maxPoints()];
-        transitionPoints = new float[graph.maxPoints()];
-        initPoints();
     }
 
     private void initPaints() {
@@ -36,7 +34,7 @@ class LineRender {
         paintLine.setStrokeWidth(pxFromDp(1f));
         paintLine.setStrokeJoin(Paint.Join.ROUND);
         paintLine.setStrokeCap(Paint.Cap.ROUND);
-        paintLine.setPathEffect(new CornerPathEffect(pxFromDp(2f)));
+        paintLine.setPathEffect(new CornerPathEffect(pxFromDp(1f)));
 
         paintCircle.setStyle(Paint.Style.FILL);
         paintCircle.setColor(graph.getColor(id));
@@ -62,48 +60,57 @@ class LineRender {
         }
     }
 
-    public void initPoints() {
-        long[] y = graph.getY(id);
-
-        if (y.length > 0) {
-            for (int i = 0; i < y.length - 1; i++) {
-                final int iX0 = i * 4;
-                final int iY0 = i * 4 + 1;
-                final int iX1 = i * 4 + 2;
-                final int iY1 = i * 4 + 3;
-                points[iX0] = i;
-                points[iY0] = -y[i];
-                points[iX1] = (i + 1) ;
-                points[iY1] = -y[i + 1];
-            }
-        }
-    }
-
     public void render(Canvas canvas, Bound bound) {
-        if (graph.isVisible(id)) {
-            graph.calculateMatrix(id, bound, matrix);
-            path.transform(matrix, matrixPath);
-            //matrix.mapPoints(transitionPoints, points);
-            canvas.drawPath(matrixPath, paintLine);
-            //canvas.drawLines(transitionPoints, paintLine);
+        if (graph.state.visible[id]) {
+            graph.matrix(id, bound, matrix);
+            pathMatrix.reset();
+            pathMatrix.setScale(matrix[SCALE_X], matrix[SCALE_Y]);
+            pathMatrix.postTranslate(matrix[OFFSET_X], matrix[OFFSET_Y]);
+            path.transform(pathMatrix, drawPath);
+            canvas.drawPath(drawPath, paintLine);
         }
     }
 
     public void renderPreview(Canvas canvas, Bound bound) {
-        if (graph.isVisible(id)) {
-            graph.calculateMatrixPreview(id, bound, matrix);
-            //matrix.mapPoints(transitionPoints, points);
-            path.transform(matrix, matrixPath);
-            canvas.drawPath(matrixPath, paintLine);
-            //canvas.drawLines(transitionPoints, paintLine);
+        if (graph.state.visible[id]) {
+            graph.matrixPreview(id, bound, matrix);
+            pathMatrix.reset();
+            pathMatrix.setScale(matrix[SCALE_X], matrix[SCALE_Y]);
+            pathMatrix.postTranslate(matrix[OFFSET_X], matrix[OFFSET_Y]);
+            path.transform(pathMatrix, drawPath);
+            canvas.drawPath(drawPath, paintLine);
         }
     }
 
     public void renderCircle(Canvas canvas, int index, Bound bound) {
-        if (graph.isVisible(id)) {
+        if (graph.state.visible[id]) {
             graph.calculatePoint(id, index, bound, point);
             canvas.drawCircle(point.x, point.y, outerRadius, paintCircle);
             canvas.drawCircle(point.x, point.y, innerRadius, paintInsideCircle);
         }
+    }
+
+    private final int SCALE_X = 0;
+    private final int SCALE_Y = 1;
+    private final int OFFSET_X = 2;
+    private final int OFFSET_Y = 3;
+
+
+    public static List<LineRender> createListRender(Graph graph) {
+        List<LineRender> lineRenders = new ArrayList<>();
+        for (int id = 0; id < graph.countLines(); id++) {
+            LineRender lineRender = new LineRender(id, graph);
+            lineRender.setLineWidth(pxFromDp(2f));
+            lineRenders.add(lineRender);
+        }
+        return lineRenders;
+    }
+
+    public static List<LineRender> createListRenderPreview(Graph graph) {
+        List<LineRender> lineRenders = new ArrayList<>();
+        for (int id = 0; id < graph.countLines(); id++) {
+            lineRenders.add(new LineRender(id, graph));
+        }
+        return lineRenders;
     }
 }

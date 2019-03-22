@@ -1,5 +1,6 @@
 package com.telegram.chart.view.chart;
 
+import android.animation.TimeAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,9 +11,8 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
 
@@ -24,7 +24,7 @@ import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
-public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph.InvalidateListener {
+public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph.InvalidateListener, TimeAnimator.TimeListener {
 
     protected final Bound chartBound = new Bound();
     protected final Bound datesBound = new Bound();
@@ -35,6 +35,7 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
     private boolean debug = false;
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
+    private TimeAnimator animator;
 
     private List<LineRender> lineRenders = new ArrayList<>();
     private OnShowInfoListener onShowInfoListener;
@@ -93,10 +94,7 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
     public void seGraph(Graph graph) {
         this.graph = graph;
         lineRenders.clear();
-        lineRenders = graph.initRenders();
-        for (LineRender renderer: lineRenders) {
-            renderer.setLineWidth(pxFromDp(2f));
-        }
+        lineRenders = LineRender.createListRender(graph);
         graph.addListener(this);
         if (theme != null){
             applyTheme(theme);
@@ -145,6 +143,7 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        Log.d("ChartView", "onDraw");
         int save = canvas.save();
         canvas.clipRect(bound);
         for (LineRender render: lineRenders) {
@@ -171,10 +170,58 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
 
     @Override
     public void needInvalidate() {
+        Log.d("ChartView", "needInvalidate");
         invalidate();
     }
 
     public interface OnShowInfoListener {
         void showInfo(int index, RectF bound, PointF point);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        onSubscribe();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        onDescribe();
+    }
+
+    public void onSubscribe() {
+        if (animator != null) {
+            onDescribe();
+        }
+        if (animator == null) {
+            animator = new TimeAnimator();
+            animator.setTimeListener(this);
+            animator.start();
+        }
+    }
+
+    @Override
+    public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (!isLaidOut()) {
+                return;
+            }
+        }
+        if (isReady() && graph != null) {
+            graph.onTimeUpdate(deltaTime);
+        }
+    }
+
+    public void onDescribe() {
+        animator.cancel();
+        animator.setTimeListener(null);
+        animator.removeAllListeners();
+        animator = null;
+    }
+
+    @Override
+    public int getViewId() {
+        return Ids.CHART;
     }
 }

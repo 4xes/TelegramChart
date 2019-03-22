@@ -8,11 +8,9 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.view.View;
 
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
-import com.telegram.chart.view.utils.DateUtils;
 
 import static com.telegram.chart.view.utils.ViewUtils.drawRoundRectSupport;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
@@ -52,11 +50,11 @@ public class InfoRender implements Themable<Theme> {
 
     public InfoRender(Graph graph) {
         this.graph = graph;
-        values = new String[graph.size()];
-        names = new String[graph.size()];
-        valuesWidth = new float[graph.size()];
-        namesWidth = new float[graph.size()];
-        colors = new int[graph.size()];
+        values = new String[graph.countLines()];
+        names = new String[graph.countLines()];
+        valuesWidth = new float[graph.countLines()];
+        namesWidth = new float[graph.countLines()];
+        colors = new int[graph.countLines()];
         initPaints();
 
         dateHeight = measureHeightText(paintDate);
@@ -92,12 +90,12 @@ public class InfoRender implements Themable<Theme> {
         if (visible == 0) {
             return;
         }
-        final String date = DateUtils.getInfoDate(index);
+        final String date = graph.getInfoDate(index);
         final float dateWidth = paintDate.measureText(date);
 
         int n = 0;
-        for (int id = 0; id < graph.size(); id++) {
-            if (graph.isVisible(id)) {
+        for (int id = 0; id < graph.countLines(); id++) {
+            if (graph.state.visible[id]) {
                 values[n] = graph.getValue(id, index);
                 names[n] = graph.getName(id);
                 valuesWidth[n] = paintValue.measureText(values[n]);

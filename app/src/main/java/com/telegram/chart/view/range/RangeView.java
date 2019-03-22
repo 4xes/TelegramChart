@@ -1,36 +1,29 @@
 package com.telegram.chart.view.range;
 
-import android.animation.TimeAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Region;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
 
 import com.telegram.chart.view.base.Themable;
 import com.telegram.chart.view.base.Theme;
 import com.telegram.chart.view.chart.Graph;
-import com.telegram.chart.view.chart.Range;
-import com.telegram.chart.view.utils.ViewUtils;
+import com.telegram.chart.view.chart.Ids;
 
 import static com.telegram.chart.view.utils.ViewUtils.clipSupport;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class RangeView extends BaseRangeView implements Themable<Theme>, Graph.InvalidateListener, TimeAnimator.TimeListener {
+public class RangeView extends BaseRangeView implements Themable<Theme>, Graph.InvalidateListener {
 
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Graph graph;
-    private TimeAnimator animator;
 
     private float selectVerticalWidth = pxFromDp(1f);
     private float selectHorizontalWidth = pxFromDp(4f);
+    boolean needInvalidate = true;
 
     public RangeView(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -58,17 +51,7 @@ public class RangeView extends BaseRangeView implements Themable<Theme>, Graph.I
     }
 
     @Override
-    protected void onChange() {
-        notifyListeners();
-    }
-
-    @Override
     public void needInvalidate() {
-        if (graph != null) {
-            start = graph.getStart();
-            end = graph.getEnd();
-            min = graph.getMin();
-        }
         invalidate();
     }
 
@@ -89,31 +72,11 @@ public class RangeView extends BaseRangeView implements Themable<Theme>, Graph.I
         clipSupport(canvas, selectedRange.left + selectHorizontalWidth, selectedRange.top + selectVerticalWidth, selectedRange.right - selectHorizontalWidth, selectedRange.bottom - selectVerticalWidth);
         canvas.drawRect(selectedRange, selectedPaint);
         canvas.restoreToCount(saveSelected);
+        needInvalidate = false;
     }
 
     @Override
-    public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-        if (graph != null) {
-            graph.updateState(deltaTime);
-        }
+    public int getViewId() {
+        return Ids.RANGE;
     }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        animator = new TimeAnimator();
-        animator.start();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-        animator.cancel();
-        animator.setTimeListener(null);
-        animator.removeAllListeners();
-        animator = null;
-    }
-
-
 }

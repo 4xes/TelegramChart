@@ -4,7 +4,7 @@ public class Range {
     public float start = RANGE_START_INIT;
     public float end = RANGE_END_INIT;
     public float min = RANGE_MIN_INIT;
-    public float length() {
+    public float range() {
         return end - start;
     }
     public static final float RANGE_MIN_INIT = 0.1f;

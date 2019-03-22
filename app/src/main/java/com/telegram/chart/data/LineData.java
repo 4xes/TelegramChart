@@ -39,11 +39,11 @@ public class LineData {
         return minY;
     }
 
+//    public long getMaxY(float lower, float upper) {
+//
+//    }
+
     public int size() {
         return y.length;
-    }
-
-    public boolean isNotEmpty() {
-        return y.length > 0;
     }
 }

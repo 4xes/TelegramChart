@@ -10,10 +10,8 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -39,6 +37,7 @@ public class MainActivity extends ThemeBaseActivity {
     private View divider;
     private View secondBackground;
     private LinearLayout main;
+    private Graph graph;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,7 +61,7 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     private void initCheckboxes(final Graph graph) {
-        for (int id = 0; id < graph.size(); id++) {
+        for (int id = 0; id < graph.countLines(); id++) {
             AppCompatCheckBox checkBox = new AppCompatCheckBox(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -87,7 +86,7 @@ public class MainActivity extends ThemeBaseActivity {
             });
             CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(graph.getColor(id)));
             main.addView(checkBox, main.indexOfChild(divider));
-            if (id != graph.size() - 1) {
+            if (id != graph.countLines() - 1) {
                 View line = new View(this);
                 LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -102,18 +101,31 @@ public class MainActivity extends ThemeBaseActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        chartView.onSubscribe();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        chartView.onDescribe();
+    }
+
     private void renderChart(ChartData chart) {
-        final Graph graph = new Graph(chart);
+        graph = new Graph(chart);
         rangeView.setOnRangeListener(new BaseRangeView.OnRangeListener() {
             @Override
             public void onChangeRange(Float start, Float end) {
                 chartView.resetIndex();
                 infoView.hide();
-                graph.setStartAndMin(start, end);
+                graph.update(rangeView.getViewId(), start, end);
             }
         });
         chartView.seGraph(graph);
-        previewView.seGraph(graph);
+        previewView.initGraph(graph);
         rangeView.seGraph(graph);
         infoView.seGraph(graph);
         chartView.setOnShowInfoListener(new ChartView.OnShowInfoListener() {
@@ -125,6 +137,14 @@ public class MainActivity extends ThemeBaseActivity {
         initCheckboxes(graph);
 
         applyTheme(getCurrentTheme());
+        chartView.onSubscribe();
+
+        findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                graph.state.setAnimationStart();
+            }
+        });
     }
 
     private void loadChart() {
