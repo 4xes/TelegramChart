@@ -61,23 +61,33 @@ class LineRender {
     }
 
     public void render(Canvas canvas, Bound bound) {
-        if (graph.state.visible[id]) {
+        float currentAlpha = graph.state.chart.alphaCurrent[id];
+        if (currentAlpha != 0f) {
             graph.matrix(id, bound, matrix);
             pathMatrix.reset();
             pathMatrix.setScale(matrix[SCALE_X], matrix[SCALE_Y]);
             pathMatrix.postTranslate(matrix[OFFSET_X], matrix[OFFSET_Y]);
             path.transform(pathMatrix, drawPath);
+            int newAlpha = (int)(currentAlpha * 255);
+            if (paintLine.getAlpha() != newAlpha) {
+                paintLine.setAlpha(newAlpha);
+            }
             canvas.drawPath(drawPath, paintLine);
         }
     }
 
     public void renderPreview(Canvas canvas, Bound bound) {
-        if (graph.state.visible[id]) {
+        float currentAlpha = graph.state.preview.alphaCurrent[id];
+        if (currentAlpha != 0f) {
             graph.matrixPreview(id, bound, matrix);
             pathMatrix.reset();
             pathMatrix.setScale(matrix[SCALE_X], matrix[SCALE_Y]);
             pathMatrix.postTranslate(matrix[OFFSET_X], matrix[OFFSET_Y]);
             path.transform(pathMatrix, drawPath);
+            int newAlpha = (int)(currentAlpha * 255);
+            if (paintLine.getAlpha() != newAlpha) {
+                paintLine.setAlpha(newAlpha);
+            }
             canvas.drawPath(drawPath, paintLine);
         }
     }

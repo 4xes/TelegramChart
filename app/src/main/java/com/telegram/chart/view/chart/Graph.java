@@ -14,8 +14,6 @@ public class Graph {
     public final LineData[] lines;
     public final long[] dates;
     public Range range = new Range();
-    public long maxY;
-    public long minY;
 
     public long[] getY(int id) {
         return lines[id].getY();
@@ -38,6 +36,7 @@ public class Graph {
             return;
         }
         state.visible[id] = isVisible;
+        state.setAnimationHide(id);
         for (InvalidateListener listener: invalidateListeners) {
             if (listener.getViewId() != Ids.RANGE) {
                 listener.needInvalidate();
@@ -81,8 +80,6 @@ public class Graph {
     public Graph(ChartData chartData) {
         this.lines = chartData.getLines();
         this.dates = chartData.getX();
-        this.maxY = chartData.getMaxY();
-        this.minY = chartData.getMinY();
         this.state = new StateManager(this);
     }
 
