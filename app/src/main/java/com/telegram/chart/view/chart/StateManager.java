@@ -81,7 +81,11 @@ public class StateManager {
     public void setAnimationHide(int targetId) {
         resetTimeAnimation();
 
-        final long max = getMaxY();
+        long max = getMaxY();
+
+        if (max == Long.MIN_VALUE) {
+            max = graph.lines[targetId].getMaxY();
+        }
 
         for (int id = 0; id < graph.countLines(); id++) {
             preview.alphaStart[id] = chart.alphaCurrent[id];
@@ -91,17 +95,16 @@ public class StateManager {
             chart.alphaEnd[id] = visible[id] ? 1f : 0f;
 
             if ((targetId != id || graph.lines[targetId].getMaxY() == max)) {
-                if (max != Long.MIN_VALUE) {
-                    preview.yMaxStart[id] = preview.yMaxCurrent[id];
-                    preview.yMaxEnd[id] = max;
-                    chart.yMaxStart[id] = chart.yMaxCurrent[id];
-                    chart.yMaxEnd[id] = max;
+                preview.yMaxStart[id] = preview.yMaxCurrent[id];
+                preview.yMaxEnd[id] = max;
 
-                    if (graph.lines[targetId].getMaxY() == max) {
-                        preview.yMaxStart[id] = max;
-                        preview.yMaxCurrent[id] = max;
-                        preview.yMaxEnd[id] = max;
-                    }
+                chart.yMaxStart[id] = chart.yMaxCurrent[id];
+                chart.yMaxEnd[id] = max;
+
+                if (graph.lines[targetId].getMaxY() == max) {
+                    preview.yMaxStart[id] = max;
+                    preview.yMaxCurrent[id] = max;
+                    preview.yMaxEnd[id] = max;
                 }
             }
         }
@@ -156,7 +159,7 @@ public class StateManager {
                 float delta = (float) executedTime / ANIMATION_DURATION;
 
                 for (int id = 0; id < size; id++) {
-                    yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * (double) delta);
+                    yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * delta);
                     if (yMaxStart[id] < yMaxEnd[id]) {
                         yMaxCurrent[id] = Math.min(yMaxCurrent[id], yMaxEnd[id]);
                     } else {
@@ -180,14 +183,20 @@ public class StateManager {
 
                 if (executedTime == ANIMATION_DURATION) {
                     for (int id = 0; id < size; id++) {
-                        yMaxStart[id] = yMaxEnd[id];
-                        yMaxCurrent[id] = yMaxEnd[id];
-                        alphaStart[id] = alphaEnd[id];
-                        alphaCurrent[id] = alphaEnd[id];
-                        multiStart[id] = multiEnd[id];
-                        multiCurrent[id] = multiEnd[id];
+                        endAnimation();
                     }
                 }
+            }
+        }
+
+        private void endAnimation() {
+            for (int id = 0; id < size; id++) {
+                yMaxStart[id] = yMaxEnd[id];
+                yMaxCurrent[id] = yMaxEnd[id];
+                alphaStart[id] = alphaEnd[id];
+                alphaCurrent[id] = alphaEnd[id];
+                multiStart[id] = multiEnd[id];
+                multiCurrent[id] = multiEnd[id];
             }
         }
 
