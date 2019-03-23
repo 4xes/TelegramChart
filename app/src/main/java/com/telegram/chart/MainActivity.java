@@ -114,7 +114,7 @@ public class MainActivity extends ThemeBaseActivity {
         chartView.onDescribe();
     }
 
-    private void renderChart(ChartData chart) {
+    private void renderChart(final ChartData chart) {
         graph = new Graph(chart);
         rangeView.setOnRangeListener(new BaseRangeView.OnRangeListener() {
             @Override
@@ -139,7 +139,7 @@ public class MainActivity extends ThemeBaseActivity {
         applyTheme(getCurrentTheme());
         chartView.onSubscribe();
 
-        findViewById(R.id.start).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.animateStart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 graph.state.setAnimationStart();

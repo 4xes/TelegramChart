@@ -77,17 +77,18 @@
                 />
         </FrameLayout>
 
-        <Button
-            android:id="@+id/start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="start"/>
-
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             />
+
+        <Button
+            android:layout_margin="@dimen/normal"
+            android:id="@+id/animateStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Animate start"/>
 
         <View
             android:id="@+id/secondaryBackground"

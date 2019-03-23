@@ -1,6 +1,9 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.PointF;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import com.telegram.chart.data.ChartData;
@@ -139,7 +142,7 @@ public class Graph {
     public void matrixPreview(int id, Bound bound, float[] matrix) {
         final float width = bound.width();
         final float scaleX = sectionWidth(width);
-        final float scaleY = (1f / (state.chart.yMaxCurrent[id] / bound.height()) * state.chart.multiCurrent[id]);
+        final float scaleY = (1f / (state.preview.yMaxCurrent[id] / bound.height()) * state.preview.multiCurrent[id]);
         final float offsetX = bound.left + bound.offsetX;
         final float offsetY = bound.bottom + bound.offsetY;
         matrix[0] = scaleX;
@@ -173,6 +176,7 @@ public class Graph {
     public int countLines() {
         return lines.length;
     }
+
 
     public void onTimeUpdate(long deltaTime) {
         state.tick();
