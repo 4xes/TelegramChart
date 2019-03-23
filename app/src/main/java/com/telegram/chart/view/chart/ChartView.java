@@ -4,40 +4,37 @@ import android.animation.TimeAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Build;
 import androidx.annotation.Nullable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
+import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
-import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
-import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
 public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph.InvalidateListener, TimeAnimator.TimeListener {
 
     protected final Bound chartBound = new Bound();
     protected final Bound datesBound = new Bound();
-    private final TextPaint valuesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private final TextPaint datesPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    protected final RectF clipBound = new RectF();
+    Paint paint = new Paint();
     private final PointF point = new PointF();
-    private boolean debug = false;
     private final float horizontalPadding = pxFromDp(1f);
-    private final float verticalPadding = pxFromDp(2f);
     private TimeAnimator animator;
 
     private List<LineRender> lineRenders = new ArrayList<>();
+    private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
     private Graph graph;
@@ -49,56 +46,44 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
 
     public ChartView(Context context) {
         super(context);
-        init(context);
     }
 
     public ChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
     }
 
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        valuesPaint.setColor(theme.getAxisValueColor());
-        datesPaint.setColor(theme.getAxisValueColor());
-        dividerPaint.setColor(theme.getDividerColor());
+        if (xyRender != null) {
+            xyRender.applyTheme(theme);
+        }
         for (LineRender renderer: lineRenders) {
-            renderer.setWindowColor(theme.getBackgroundWindowColor());
+            renderer.applyTheme(theme);
         }
         invalidate();
     }
 
-    private void init(Context context) {
-        valuesPaint.setTextSize(pxFromSp(9f));
-        valuesPaint.setTextAlign(Paint.Align.LEFT);
-
-        datesPaint.setTextSize(pxFromSp(9f));
-        datesPaint.setTextAlign(Paint.Align.CENTER);
-
-        dividerPaint.setStrokeWidth(pxFromDp(1f));
-        dividerPaint.setStyle(Paint.Style.STROKE);
-    }
 
     public void seGraph(Graph graph) {
         this.graph = graph;
         lineRenders.clear();
         lineRenders = LineRender.createListRender(graph);
+        xyRender = new XYRender(graph);
         graph.addListener(this);
         if (theme != null){
             applyTheme(theme);
         }
+        paint.setStyle(Paint.Style.STROKE);
         invalidate();
     }
 
@@ -107,13 +92,13 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
         super.onLayout(changed, left, top, right, bottom);
         chartBound.set(bound);
         datesBound.set(bound);
-        datesBound.top = bound.bottom - measureHeightText(datesPaint);
+        datesBound.top = bound.bottom - ViewUtils.pxFromDp(16f);
         chartBound.bottom = datesBound.top;
 
-        chartBound.bottom -= verticalPadding * 2f;
         chartBound.right -= horizontalPadding * 2f;
         chartBound.offsetX = horizontalPadding;
-        chartBound.offsetY = verticalPadding;
+
+        clipBound.set(chartBound.left, 0f, chartBound.right, getHeight());
     }
 
     @Override
@@ -143,29 +128,32 @@ public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("ChartView", "onDraw");
         int save = canvas.save();
-        canvas.clipRect(bound);
+        canvas.clipRect(clipBound);
         for (LineRender render: lineRenders) {
             render.render(canvas, chartBound);
         }
         canvas.restoreToCount(save);
         if (selectIndex != NONE_INDEX) {
-            graph.calculateLine(selectIndex, chartBound, point);
-            canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
             for (LineRender render: lineRenders) {
                 render.renderCircle(canvas, selectIndex, chartBound);
             }
         }
-        if (debug) {
-            int index = graph.getIndex(chartBound.left, chartBound);
-            graph.calculateLine(index, chartBound, point);
-            canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
-            index = graph.getIndex(chartBound.right, chartBound);
-            graph.calculateLine(index, chartBound, point);
-            canvas.drawLine(point.x, chartBound.top, point.x, datesBound.top, dividerPaint);
+//        paint.setColor(Color.GREEN);
+//        canvas.drawRect(bound, paint);
+//        paint.setColor(Color.BLUE);
+//        canvas.drawRect(chartBound, paint);
+//        paint.setColor(Color.CYAN);
+//        canvas.drawRect(datesBound, paint);
+
+        //canvas.drawLine( bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
+        if (xyRender != null) {
+            if (selectIndex != NONE_INDEX) {
+                graph.calculateLine(selectIndex, chartBound, point);
+                xyRender.renderVLine(canvas, chartBound, point.x);
+            }
+            xyRender.renderY(canvas, chartBound);
         }
-        canvas.drawLine( bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
     }
 
     @Override

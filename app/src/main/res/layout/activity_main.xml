@@ -83,21 +83,6 @@
             android:layout_height="1dp"
             />
 
-        <Button
-            android:layout_margin="@dimen/normal"
-            android:id="@+id/animateStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Animate start"/>
-
-        <View
-            android:id="@+id/secondaryBackground"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:minHeight="40dp"
-            />
-
     </LinearLayout>
 
 </ScrollView>

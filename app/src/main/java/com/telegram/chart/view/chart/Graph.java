@@ -128,11 +128,15 @@ public class Graph {
         final float scaleY = (1f / (state.chart.yMaxCurrent[id] / bound.height())) * state.chart.multiCurrent[id];
         final float dx = (-bound.width() * range.start) * getScaleRange();
         final float offsetX = bound.left + dx + bound.offsetX;
-        final float offsetY = bound.bottom + bound.offsetY;
+        final float offsetY = bound.bottom;
         matrix[0] = scaleX;
         matrix[1] = scaleY;
         matrix[2] = offsetX;
         matrix[3] = offsetY;
+    }
+
+    public void getMaxLength() {
+
     }
 
     public void matrixPreview(int id, Bound bound, float[] matrix) {
@@ -140,11 +144,20 @@ public class Graph {
         final float scaleX = sectionWidth(width);
         final float scaleY = (1f / (state.preview.yMaxCurrent[id] / bound.height()) * state.preview.multiCurrent[id]);
         final float offsetX = bound.left + bound.offsetX;
-        final float offsetY = bound.bottom + bound.offsetY;
+        final float offsetY = bound.bottom;
         matrix[0] = scaleX;
         matrix[1] = scaleY;
         matrix[2] = offsetX;
         matrix[3] = offsetY;
+    }
+
+    public void valuesY(Bound bound, float[] values) {
+        final float max = state.getMaxChart();
+        final float scaleY = 1f / (max / bound.height());
+        final float offsetY = bound.bottom;
+        values[0] = max;
+        values[1] = scaleY;
+        values[2] = offsetY;
     }
 
     public void calculateLine(int index, Bound bound, PointF point) {
@@ -158,7 +171,7 @@ public class Graph {
         final float dx = (-width * range.start) * scaleRange;
         final float offsetX = bound.left + dx + bound.offsetX;
         final float scaleY = 1f / (state.chart.yMaxCurrent[id] / bound.height());
-        final float offsetY = bound.bottom + bound.offsetY;
+        final float offsetY = bound.bottom;
         point.set(index * scaleX + offsetX, -(getY(id)[index] * scaleY) + offsetY);
     }
 

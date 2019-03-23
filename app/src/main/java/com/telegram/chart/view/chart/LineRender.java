@@ -2,12 +2,15 @@ package com.telegram.chart.view.chart;
 
 import android.graphics.*;
 
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-class LineRender {
+class LineRender implements Themable<Theme> {
     private final int id;
     private final Graph graph;
     private final Path drawPath = new Path();
@@ -45,8 +48,9 @@ class LineRender {
         paintLine.setStrokeWidth(strokeWidth);
     }
 
-    public void setWindowColor(int windowColor) {
-        paintInsideCircle.setColor(windowColor);
+    @Override
+    public void applyTheme(Theme theme) {
+        paintInsideCircle.setColor(theme.getBackgroundWindowColor());
     }
 
     private void initPath() {
@@ -60,10 +64,10 @@ class LineRender {
         }
     }
 
-    public void render(Canvas canvas, Bound bound) {
+    public void render(Canvas canvas, Bound chartBound) {
         float currentAlpha = graph.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
-            graph.matrix(id, bound, matrix);
+            graph.matrix(id, chartBound, matrix);
             pathMatrix.reset();
             pathMatrix.setScale(matrix[SCALE_X], matrix[SCALE_Y]);
             pathMatrix.postTranslate(matrix[OFFSET_X], matrix[OFFSET_Y]);
