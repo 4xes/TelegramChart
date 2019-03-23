@@ -3,8 +3,8 @@ package com.telegram.chart.view.range;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.Nullable;
-import android.support.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 
 import com.telegram.chart.view.base.Themable;

@@ -1,7 +1,7 @@
 package com.telegram.chart;
 
 import android.app.Application;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 
 public class App extends Application {
     static {

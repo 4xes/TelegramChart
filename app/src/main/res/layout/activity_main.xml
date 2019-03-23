@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/chart_followers"
-            android:textAppearance="@style/Text.Body2"
+            android:textColor="@color/primary_accent"
             android:layout_marginTop="@dimen/normal"
             android:layout_marginStart="@dimen/normal"
             android:layout_marginLeft="@dimen/normal"

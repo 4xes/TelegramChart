@@ -13,8 +13,4 @@
         <item name="colorAccent">@color/primary_accent</item>
         <item name="android:windowBackground">@color/background_night</item>
     </style>
-
-    <style name="Text.Body2" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textColor">@color/primary_accent</item>
-    </style>
 </resources>

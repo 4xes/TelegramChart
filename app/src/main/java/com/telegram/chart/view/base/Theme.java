@@ -1,9 +1,9 @@
 package com.telegram.chart.view.base;
 
 import android.content.Context;
-import android.support.annotation.ColorRes;
-import android.support.annotation.IntDef;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IntDef;
+import androidx.core.content.ContextCompat;
 
 import com.telegram.chart.R;
 
