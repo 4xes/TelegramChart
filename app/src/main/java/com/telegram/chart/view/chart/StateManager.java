@@ -98,16 +98,20 @@ public class StateManager {
                 preview.yMaxStart[id] = preview.yMaxCurrent[id];
                 preview.yMaxEnd[id] = max;
 
-                chart.yMaxStart[id] = chart.yMaxCurrent[id];
-                chart.yMaxEnd[id] = max;
+                if (visible[id]) {
+                    chart.yMaxStart[id] = chart.yMaxCurrent[id];
+                    chart.yMaxEnd[id] = max;
+                }
 
-                if (graph.lines[targetId].getMaxY() == max) {
+                if (graph.lines[targetId].getMaxY() == max && targetId == id) {
                     preview.yMaxStart[id] = max;
                     preview.yMaxCurrent[id] = max;
                     preview.yMaxEnd[id] = max;
                 }
             }
         }
+        chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
+        chart.yMaxEnd[targetId] = visible[targetId] ? max : max / 2L;
 
     }
 
@@ -156,34 +160,31 @@ public class StateManager {
                     executedTime = ANIMATION_DURATION;
                 }
 
-                float delta = (float) executedTime / ANIMATION_DURATION;
-
-                for (int id = 0; id < size; id++) {
-                    yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * delta);
-                    if (yMaxStart[id] < yMaxEnd[id]) {
-                        yMaxCurrent[id] = Math.min(yMaxCurrent[id], yMaxEnd[id]);
-                    } else {
-                        yMaxCurrent[id] = Math.max(yMaxCurrent[id], yMaxEnd[id]);
-                    }
-
-                    alphaCurrent[id] = alphaStart[id] + ((alphaEnd[id] - alphaStart[id]) * delta);
-                    if (alphaStart[id] < alphaEnd[id]) {
-                        alphaCurrent[id] = Math.min(alphaCurrent[id], alphaEnd[id]);
-                    } else {
-                        alphaCurrent[id] = Math.max(alphaCurrent[id], alphaEnd[id]);
-                    }
-
-                    multiCurrent[id] = multiStart[id] + ((multiEnd[id] - multiStart[id]) * delta);
-                    if (multiStart[id] < multiEnd[id]) {
-                        multiCurrent[id] = Math.min(multiCurrent[id], multiEnd[id]);
-                    } else {
-                        multiCurrent[id] = Math.max(multiCurrent[id], multiEnd[id]);
-                    }
-                }
-
                 if (executedTime == ANIMATION_DURATION) {
+                    endAnimation();
+                } else {
                     for (int id = 0; id < size; id++) {
-                        endAnimation();
+                        float delta = (float) executedTime / ANIMATION_DURATION;
+                        yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * delta);
+                        if (yMaxStart[id] < yMaxEnd[id]) {
+                            yMaxCurrent[id] = Math.min(yMaxCurrent[id], yMaxEnd[id]);
+                        } else {
+                            yMaxCurrent[id] = Math.max(yMaxCurrent[id], yMaxEnd[id]);
+                        }
+
+                        alphaCurrent[id] = alphaStart[id] + ((alphaEnd[id] - alphaStart[id]) * delta);
+                        if (alphaStart[id] < alphaEnd[id]) {
+                            alphaCurrent[id] = Math.min(alphaCurrent[id], alphaEnd[id]);
+                        } else {
+                            alphaCurrent[id] = Math.max(alphaCurrent[id], alphaEnd[id]);
+                        }
+
+                        multiCurrent[id] = multiStart[id] + ((multiEnd[id] - multiStart[id]) * delta);
+                        if (multiStart[id] < multiEnd[id]) {
+                            multiCurrent[id] = Math.min(multiCurrent[id], multiEnd[id]);
+                        } else {
+                            multiCurrent[id] = Math.max(multiCurrent[id], multiEnd[id]);
+                        }
                     }
                 }
             }
