@@ -138,13 +138,6 @@ public class MainActivity extends ThemeBaseActivity {
 
         applyTheme(getCurrentTheme());
         chartView.onSubscribe();
-
-        findViewById(R.id.animateStart).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                graph.state.setAnimationStart();
-            }
-        });
     }
 
     private void loadChart() {
