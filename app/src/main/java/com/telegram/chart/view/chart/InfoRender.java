@@ -9,8 +9,8 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 
-import com.telegram.chart.view.base.Themable;
-import com.telegram.chart.view.base.Theme;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.utils.ViewUtils.drawRoundRectSupport;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;

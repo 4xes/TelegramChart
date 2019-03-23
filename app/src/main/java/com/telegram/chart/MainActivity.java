@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.ChartsInteractor;
 import com.telegram.chart.data.DataInteractorImpl;
-import com.telegram.chart.view.base.Theme;
+import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.chart.ChartView;
 import com.telegram.chart.view.chart.Graph;
 import com.telegram.chart.view.chart.InfoView;

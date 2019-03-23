@@ -13,8 +13,8 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import com.telegram.chart.view.base.Themable;
-import com.telegram.chart.view.base.Theme;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
 
 import java.util.ArrayList;
 import java.util.List;

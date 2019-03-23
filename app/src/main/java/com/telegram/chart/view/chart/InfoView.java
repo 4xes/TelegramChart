@@ -10,8 +10,8 @@ import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.telegram.chart.view.base.Themable;
-import com.telegram.chart.view.base.Theme;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
 

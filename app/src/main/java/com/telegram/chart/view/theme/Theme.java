@@ -1,4 +1,4 @@
-package com.telegram.chart.view.base;
+package com.telegram.chart.view.theme;
 
 import android.content.Context;
 import androidx.annotation.ColorRes;
@@ -138,5 +138,5 @@ public class Theme {
 
     @IntDef({DAY, NIGHT})
     @Retention(RetentionPolicy.SOURCE)
-    @interface ThemeId { }
+    public @interface ThemeId { }
 }

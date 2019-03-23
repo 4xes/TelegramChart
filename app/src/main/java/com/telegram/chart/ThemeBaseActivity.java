@@ -7,25 +7,27 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.telegram.chart.view.base.Themable;
-import com.telegram.chart.view.base.Theme;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
+import com.telegram.chart.view.theme.ThemePreferences;
 
 abstract class ThemeBaseActivity extends AppCompatActivity implements Themable<Theme> {
 
     private Theme theme;
+    private ThemePreferences themePreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        theme = Theme.createTheme(this, !isNightMode() ? Theme.NIGHT : Theme.DAY);
+        themePreferences = new ThemePreferences(getApplicationContext());
+        theme = Theme.createTheme(this, isNightMode() ? Theme.NIGHT : Theme.DAY);
     }
 
     public boolean isNightMode() {
-        return AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES;
+        return themePreferences.getMode() == Theme.NIGHT;
     }
 
     public Theme getCurrentTheme() {
@@ -65,13 +67,11 @@ abstract class ThemeBaseActivity extends AppCompatActivity implements Themable<T
 
     protected void toggleNightMode() {
         if (isNightMode()) {
-            AppCompatDelegate
-                    .setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            themePreferences.setMode(Theme.DAY);
             theme = Theme.createTheme(this, Theme.DAY);
             applyTheme(theme);
         } else {
-            AppCompatDelegate
-                    .setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            themePreferences.setMode(Theme.NIGHT);
             theme = Theme.createTheme(this, Theme.NIGHT);
             applyTheme(theme);
         }

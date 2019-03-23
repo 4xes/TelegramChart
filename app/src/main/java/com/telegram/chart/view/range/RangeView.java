@@ -7,8 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 
-import com.telegram.chart.view.base.Themable;
-import com.telegram.chart.view.base.Theme;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.chart.Graph;
 import com.telegram.chart.view.chart.Ids;
 
