@@ -82,8 +82,8 @@ public class StateManager {
     }
 
     public void setAnimationStart() {
-        chart.resetAnimation(ANIMATION_DURATION_LONG);
-        preview.resetAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
 
         for (int id = 0; id < graph.countLines(); id++) {
             preview.multiStart[id] = 0f;
@@ -97,7 +97,7 @@ public class StateManager {
     }
 
     public void updateRange() {
-        chart.resetAnimation(ANIMATION_DURATION_SHORT);
+        chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
         long maxChart = getMaxChart();
         for (int id = 0; id < graph.countLines(); id++) {
@@ -110,8 +110,10 @@ public class StateManager {
     }
 
     public void setAnimationHide(int targetId) {
-        chart.resetAnimation(ANIMATION_DURATION_LONG);
-        preview.resetAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        chart.resetFadingAnimation(ANIMATION_DURATION_LONG);
+        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
 
         long maxPreview = getMaxPreview();
         long maxChart = getMaxChart();
@@ -166,8 +168,10 @@ public class StateManager {
     public void tick() {
         chart.needInvalidate = chart.isNeedInvalidate();
         preview.needInvalidate = preview.isNeedInvalidate();
-        chart.tick();
-        preview.tick();
+        chart.tickScale();
+        chart.tickFading();
+        preview.tickScale();
+        preview.tickFading();
     }
 
     private final static long ANIMATION_DURATION_LONG = 300L;
@@ -184,35 +188,62 @@ public class StateManager {
         public final float[] alphaStart;
         public final float[] alphaCurrent;
         public final float[] alphaEnd;
-        public long executedTime = 0;
-        public long duration = ANIMATION_DURATION_LONG;
+        public long executedScaleTime = 0;
+        public long durationScale = ANIMATION_DURATION_LONG;
+        public long executedFadingTime = 0;
+        public long durationFading = ANIMATION_DURATION_LONG;
         public boolean needInvalidate = true;
 
-        public void tick() {
-            if (executedTime < duration) {
-                executedTime += 16;
+        public void tickFading() {
+            if (executedFadingTime < durationFading) {
+                executedFadingTime += 16;
 
-                if (executedTime > duration) {
-                    executedTime = duration;
+                if (executedFadingTime > durationFading) {
+                    executedFadingTime = durationFading;
                 }
 
-                if (executedTime == duration) {
-                    endAnimation();
+                if (executedFadingTime == durationFading) {
+                    for (int id = 0; id < size; id++) {
+                        alphaStart[id] = alphaEnd[id];
+                        alphaCurrent[id] = alphaEnd[id];
+                    }
                 } else {
                     for (int id = 0; id < size; id++) {
-                        float delta = (float) executedTime / duration;
-                        yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * delta);
-                        if (yMaxStart[id] < yMaxEnd[id]) {
-                            yMaxCurrent[id] = Math.min(yMaxCurrent[id], yMaxEnd[id]);
-                        } else {
-                            yMaxCurrent[id] = Math.max(yMaxCurrent[id], yMaxEnd[id]);
-                        }
-
+                        float delta = (float) executedFadingTime / durationFading;
                         alphaCurrent[id] = alphaStart[id] + ((alphaEnd[id] - alphaStart[id]) * delta);
                         if (alphaStart[id] < alphaEnd[id]) {
                             alphaCurrent[id] = Math.min(alphaCurrent[id], alphaEnd[id]);
                         } else {
                             alphaCurrent[id] = Math.max(alphaCurrent[id], alphaEnd[id]);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void tickScale() {
+            if (executedScaleTime < durationScale) {
+                executedScaleTime += 16;
+
+                if (executedScaleTime > durationScale) {
+                    executedScaleTime = durationScale;
+                }
+
+                if (executedScaleTime == durationScale) {
+                    for (int id = 0; id < size; id++) {
+                        yMaxStart[id] = yMaxEnd[id];
+                        yMaxCurrent[id] = yMaxEnd[id];
+                        multiStart[id] = multiEnd[id];
+                        multiCurrent[id] = multiEnd[id];
+                    }
+                } else {
+                    for (int id = 0; id < size; id++) {
+                        float delta = (float) executedScaleTime / durationScale;
+                        yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * delta);
+                        if (yMaxStart[id] < yMaxEnd[id]) {
+                            yMaxCurrent[id] = Math.min(yMaxCurrent[id], yMaxEnd[id]);
+                        } else {
+                            yMaxCurrent[id] = Math.max(yMaxCurrent[id], yMaxEnd[id]);
                         }
 
                         multiCurrent[id] = multiStart[id] + ((multiEnd[id] - multiStart[id]) * delta);
@@ -226,16 +257,6 @@ public class StateManager {
             }
         }
 
-        private void endAnimation() {
-            for (int id = 0; id < size; id++) {
-                yMaxStart[id] = yMaxEnd[id];
-                yMaxCurrent[id] = yMaxEnd[id];
-                alphaStart[id] = alphaEnd[id];
-                alphaCurrent[id] = alphaEnd[id];
-                multiStart[id] = multiEnd[id];
-                multiCurrent[id] = multiEnd[id];
-            }
-        }
 
         public State(int countLines) {
             size = countLines;
@@ -250,9 +271,14 @@ public class StateManager {
             multiEnd = new float[size];
         }
 
-        public void resetAnimation(long newDuration) {
-            executedTime = 0;
-            duration = newDuration;
+        public void resetScaleAnimation(long newDuration) {
+            executedScaleTime = 0;
+            durationScale = newDuration;
+        }
+
+        public void resetFadingAnimation(long newDuration) {
+            executedFadingTime = 0;
+            durationFading = newDuration;
         }
 
         public boolean isNeedInvalidate() {

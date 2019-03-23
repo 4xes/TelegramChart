@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.os.Build;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.telegram.chart.view.theme.Themable;
@@ -74,6 +75,9 @@ public class InfoView extends BaseMeasureView implements Themable<Theme> {
     }
 
     public void showInfo(int index, RectF bound, PointF point) {
+        if (getVisibility() == View.VISIBLE && this.index == index) {
+            return;
+        }
         setVisibility(View.VISIBLE);
         this.index = index;
         this.drawBound.set(bound);
