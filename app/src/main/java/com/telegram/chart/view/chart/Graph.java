@@ -1,11 +1,6 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.PointF;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.utils.DateUtils;
@@ -60,6 +55,7 @@ public class Graph {
             this.range.start = start;
             this.range.end = end;
 
+            state.updateRange();
             for (InvalidateListener listener: invalidateListeners) {
                 if (listener.getViewId() == Ids.CHART || (id != Ids.RANGE && listener.getViewId() == Ids.RANGE)) {
                     listener.needInvalidate();

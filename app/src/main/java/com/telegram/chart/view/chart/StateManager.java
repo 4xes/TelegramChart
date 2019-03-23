@@ -1,7 +1,5 @@
 package com.telegram.chart.view.chart;
 
-import android.util.Log;
-
 import com.telegram.chart.data.LineData;
 
 import java.util.Arrays;
@@ -20,11 +18,12 @@ public class StateManager {
         this.visible = new boolean[graph.countLines()];
         Arrays.fill(visible, true);
 
-        long max = getMaxY();
+        long maxPreview = getMaxPreview();
+        long maxChart = getMaxChart();
         for (int id = 0; id < graph.countLines(); id++) {
-            preview.yMaxStart[id] = max;
+            preview.yMaxStart[id] = maxPreview;
             preview.yMaxCurrent[id] = preview.yMaxStart[id];
-            preview.yMaxEnd[id] = max;
+            preview.yMaxEnd[id] = maxPreview;
 
             preview.alphaStart[id] = 1f;
             preview.alphaCurrent[id] = preview.alphaStart[id];
@@ -38,9 +37,9 @@ public class StateManager {
             chart.alphaCurrent[id] = chart.alphaStart[id];
             chart.alphaEnd[id] = 1f;
 
-            chart.yMaxStart[id] = max;
+            chart.yMaxStart[id] = maxChart;
             chart.yMaxCurrent[id] = chart.yMaxStart[id];
-            chart.yMaxEnd[id] = max;
+            chart.yMaxEnd[id] = maxChart;
 
             chart.multiStart[id] = 0f;
             chart.multiCurrent[id] = chart.multiStart[id];
@@ -49,22 +48,7 @@ public class StateManager {
         setAnimationStart();
     }
 
-
-    public void setAnimationStart() {
-        resetTimeAnimation();
-
-        for (int id = 0; id < graph.countLines(); id++) {
-            preview.multiStart[id] = 0f;
-            preview.multiCurrent[id] = preview.multiStart[id];
-            preview.multiEnd[id] = 1f;
-
-            chart.multiStart[id] = 0f;
-            chart.multiCurrent[id] = chart.multiStart[id];
-            chart.multiEnd[id] = 1f;
-        }
-    }
-
-    public long getMaxY() {
+    public long getMaxPreview() {
         long max = Long.MIN_VALUE;
 
         for (int id = 0; id < graph.countLines(); id++) {
@@ -78,13 +62,66 @@ public class StateManager {
         return max;
     }
 
+    public long getMaxChart() {
+        long max = Long.MIN_VALUE;
+
+        for (int id = 0; id < graph.countLines(); id++) {
+            if (visible[id]) {
+                final LineData line = graph.lines[id];
+                final long maxLine = line.getMaxY(graph.range.start, graph.range.end);
+                if (max < maxLine) {
+                    max = maxLine;
+                }
+            }
+        }
+        return max;
+    }
+
+    public long getMaxChart(int id) {
+        return graph.lines[id].getMaxY(graph.range.start, graph.range.end);
+    }
+
+    public void setAnimationStart() {
+        chart.resetAnimation(ANIMATION_DURATION_LONG);
+        preview.resetAnimation(ANIMATION_DURATION_LONG);
+
+        for (int id = 0; id < graph.countLines(); id++) {
+            preview.multiStart[id] = 0f;
+            preview.multiCurrent[id] = preview.multiStart[id];
+            preview.multiEnd[id] = 1f;
+
+            chart.multiStart[id] = 0f;
+            chart.multiCurrent[id] = chart.multiStart[id];
+            chart.multiEnd[id] = 1f;
+        }
+    }
+
+    public void updateRange() {
+        chart.resetAnimation(ANIMATION_DURATION_SHORT);
+
+        long maxChart = getMaxChart();
+        for (int id = 0; id < graph.countLines(); id++) {
+            if (visible[id]) {
+                chart.yMaxStart[id] = chart.yMaxCurrent[id];
+                chart.yMaxEnd[id] = maxChart;
+            }
+        }
+
+    }
+
     public void setAnimationHide(int targetId) {
-        resetTimeAnimation();
+        chart.resetAnimation(ANIMATION_DURATION_LONG);
+        preview.resetAnimation(ANIMATION_DURATION_LONG);
 
-        long max = getMaxY();
+        long maxPreview = getMaxPreview();
+        long maxChart = getMaxChart();
 
-        if (max == Long.MIN_VALUE) {
-            max = graph.lines[targetId].getMaxY();
+        if (maxPreview == Long.MIN_VALUE) {
+            maxPreview = graph.lines[targetId].getMaxY();
+        }
+
+        if (maxChart== Long.MIN_VALUE) {
+            maxChart = getMaxChart(targetId);
         }
 
         for (int id = 0; id < graph.countLines(); id++) {
@@ -94,31 +131,29 @@ public class StateManager {
             chart.alphaStart[id] = chart.alphaCurrent[id];
             chart.alphaEnd[id] = visible[id] ? 1f : 0f;
 
-            if ((targetId != id || graph.lines[targetId].getMaxY() == max)) {
+            if ((targetId != id || graph.lines[targetId].getMaxY() == maxPreview)) {
                 preview.yMaxStart[id] = preview.yMaxCurrent[id];
-                preview.yMaxEnd[id] = max;
+                preview.yMaxEnd[id] = maxPreview;
 
+                if (graph.lines[targetId].getMaxY() == maxPreview && targetId == id) {
+                    preview.yMaxStart[id] = maxPreview;
+                    preview.yMaxCurrent[id] = maxPreview;
+                    preview.yMaxEnd[id] = maxPreview;
+                }
+            }
+
+            if ((targetId != id || getMaxChart(id) == maxChart)) {
                 if (visible[id]) {
                     chart.yMaxStart[id] = chart.yMaxCurrent[id];
-                    chart.yMaxEnd[id] = max;
-                }
-
-                if (graph.lines[targetId].getMaxY() == max && targetId == id) {
-                    preview.yMaxStart[id] = max;
-                    preview.yMaxCurrent[id] = max;
-                    preview.yMaxEnd[id] = max;
+                    chart.yMaxEnd[id] = maxChart;
                 }
             }
         }
+
         chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
-        chart.yMaxEnd[targetId] = visible[targetId] ? max : max / 2L;
-
+        chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 2L;
     }
 
-    public void resetTimeAnimation() {
-        preview.executedTime = 0;
-        chart.executedTime = 0;
-    }
 
     public State getChart() {
         return chart;
@@ -135,7 +170,8 @@ public class StateManager {
         preview.tick();
     }
 
-    private final static long ANIMATION_DURATION = 400L;
+    private final static long ANIMATION_DURATION_LONG = 300L;
+    private final static long ANIMATION_DURATION_SHORT = 100L;
 
     public class State {
         private final int size;
@@ -149,7 +185,7 @@ public class StateManager {
         public final float[] alphaCurrent;
         public final float[] alphaEnd;
         public long executedTime = 0;
-        public long duration = ANIMATION_DURATION;
+        public long duration = ANIMATION_DURATION_LONG;
         public boolean needInvalidate = true;
 
         public void tick() {
@@ -157,14 +193,14 @@ public class StateManager {
                 executedTime += 16;
 
                 if (executedTime > duration) {
-                    executedTime = ANIMATION_DURATION;
+                    executedTime = duration;
                 }
 
-                if (executedTime == ANIMATION_DURATION) {
+                if (executedTime == duration) {
                     endAnimation();
                 } else {
                     for (int id = 0; id < size; id++) {
-                        float delta = (float) executedTime / ANIMATION_DURATION;
+                        float delta = (float) executedTime / duration;
                         yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * delta);
                         if (yMaxStart[id] < yMaxEnd[id]) {
                             yMaxCurrent[id] = Math.min(yMaxCurrent[id], yMaxEnd[id]);
@@ -212,6 +248,11 @@ public class StateManager {
             multiStart = new float[size];
             multiCurrent = new float[size];
             multiEnd = new float[size];
+        }
+
+        public void resetAnimation(long newDuration) {
+            executedTime = 0;
+            duration = newDuration;
         }
 
         public boolean isNeedInvalidate() {
