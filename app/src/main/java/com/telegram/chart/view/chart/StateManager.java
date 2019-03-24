@@ -19,7 +19,7 @@ public class StateManager {
         Arrays.fill(visible, true);
 
         long maxPreview = getMaxPreview();
-        long maxChart = getMaxChart();
+        long maxChart = getMaxChartStepped();
         for (int id = 0; id < graph.countLines(); id++) {
             preview.yMaxStart[id] = maxPreview;
             preview.yMaxCurrent[id] = preview.yMaxStart[id];
@@ -77,8 +77,22 @@ public class StateManager {
         return max;
     }
 
-    public long getMaxChart(int id) {
-        return graph.lines[id].getMaxY(graph.range.start, graph.range.end);
+    public long getMaxChartStepped() {
+        long max = getMaxChart();
+        if (max != Long.MIN_VALUE) {
+            float step = XYRender.calculateStep(0, max, XYRender.GRID);
+            max = (int) Math.floor(step * (XYRender.GRID));
+        }
+        return max;
+    }
+
+    public long getMaxChartStepped(int id) {
+        long max = graph.lines[id].getMaxY(graph.range.start, graph.range.end);
+        if (max != Long.MIN_VALUE) {
+            float step = XYRender.calculateStep(0, max, XYRender.GRID);
+            max = (int) Math.floor(step * (XYRender.GRID));
+        }
+        return max;
     }
 
     public void setAnimationStart() {
@@ -99,7 +113,7 @@ public class StateManager {
     public void updateRange() {
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
-        long maxChart = getMaxChart();
+        long maxChart = getMaxChartStepped();
         for (int id = 0; id < graph.countLines(); id++) {
             if (visible[id]) {
                 chart.yMaxStart[id] = chart.yMaxCurrent[id];
@@ -116,14 +130,14 @@ public class StateManager {
         preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
 
         long maxPreview = getMaxPreview();
-        long maxChart = getMaxChart();
+        long maxChart = getMaxChartStepped();
 
         if (maxPreview == Long.MIN_VALUE) {
             maxPreview = graph.lines[targetId].getMaxY();
         }
 
         if (maxChart== Long.MIN_VALUE) {
-            maxChart = getMaxChart(targetId);
+            maxChart = getMaxChartStepped(targetId);
         }
 
         for (int id = 0; id < graph.countLines(); id++) {
@@ -144,7 +158,7 @@ public class StateManager {
                 }
             }
 
-            if ((targetId != id || getMaxChart(id) == maxChart)) {
+            if ((targetId != id || getMaxChartStepped(id) == maxChart)) {
                 if (visible[id]) {
                     chart.yMaxStart[id] = chart.yMaxCurrent[id];
                     chart.yMaxEnd[id] = maxChart;
@@ -153,7 +167,7 @@ public class StateManager {
         }
 
         chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
-        chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 2L;
+        chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 4L;
     }
 
 

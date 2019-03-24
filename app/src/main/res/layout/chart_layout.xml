@@ -8,7 +8,7 @@
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:paddingTop="80dp"
+        android:paddingTop="24dp"
         android:paddingLeft="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingRight="@dimen/normal"
@@ -17,13 +17,13 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/chart_title"
         android:textColor="@color/text_color"
-        android:layout_marginTop="@dimen/normal"
-        android:layout_marginStart="@dimen/normal"
-        android:layout_marginLeft="@dimen/normal"
+        android:paddingTop="@dimen/normal"
+        android:paddingStart="@dimen/normal"
+        android:paddingEnd="@dimen/normal"
         />
 
     <com.telegram.chart.view.chart.InfoView

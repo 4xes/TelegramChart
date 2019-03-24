@@ -146,15 +146,6 @@ public class Graph {
         matrix[3] = offsetY;
     }
 
-    public void valuesY(RectF bound, float[] values) {
-        final float max = state.getMaxChart();
-        final float scaleY = 1f / (max / bound.height());
-        final float offsetY = bound.bottom;
-        values[0] = max;
-        values[1] = scaleY;
-        values[2] = offsetY;
-    }
-
     public void calculateLine(int index, RectF r, PointF point) {
         calculatePoint(0, index, r, point);
     }

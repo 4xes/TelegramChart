@@ -140,12 +140,6 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
                 render.renderCircle(canvas, selectIndex, chartBound);
             }
         }
-        int index1 = graph.getIndex(chartBound.left, chartBound);
-        if (index1 != -1) {
-            graph.calculatePoint(0, index1, chartBound, point);
-            paint.setColor(Color.GREEN);
-            canvas.drawLine( point.x, clipBound.top, point.x, clipBound.bottom, paint);
-        }
         if (xyRender != null) {
             if (selectIndex != NONE_INDEX) {
                 graph.calculateLine(selectIndex, chartBound, point);

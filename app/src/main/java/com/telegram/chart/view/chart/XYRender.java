@@ -46,12 +46,13 @@ class XYRender implements Themable {
     }
 
     public void renderY(Canvas canvas, RectF r) {
-        graph.valuesY(r, values);
-        final int grid = 18;
-        final float step = calculateStep(0f, values[MAX], grid);
+        final float max = graph.state.getMaxChart();
+        final float scaleY = 1f / (graph.state.getMaxChartStepped() / r.height());
+        final float offsetY = r.bottom;
+        final float step = calculateStep(0f, max, GRID);
 
-        for (int i = 0; i < grid; i++) {
-            final float y = (-step * i * values[SCALE]) + values[OFFSET];
+        for (int i = 0; i < GRID; i = i + 3) {
+            final float y = (-step * i * scaleY) + offsetY;
             final int value = i * (int) step;
             final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
             canvas.drawText(String.valueOf(value), r.left, valueY, valuePaint);
@@ -63,7 +64,7 @@ class XYRender implements Themable {
         canvas.drawLine(x, r.top, x, r.bottom, linePaint);
     }
 
-    private static float calculateStep(float start, float end, int grid) {
+    public static float calculateStep(float start, float end, int grid) {
         long avg = (long) Math.ceil((end - start) / (float) grid);
         if (avg < 1L) {
             avg = 1L;
@@ -90,7 +91,5 @@ class XYRender implements Themable {
         return step;
     }
 
-    private static final int MAX = 0;
-    private static final int SCALE = 1;
-    private static final int OFFSET = 2;
+    public static final int GRID = 18;
 }
