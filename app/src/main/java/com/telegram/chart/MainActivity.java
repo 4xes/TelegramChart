@@ -135,6 +135,7 @@ public class MainActivity extends ThemeBaseActivity {
         final TextView titleView = chartWrapper.findViewById(R.id.title);
         titleView.setText(getString(R.string.chart_title, number));
 
+        chartViews.add(chartView);
         themables.add(infoView);
         themables.add(chartView);
         themables.add(rangeView);
@@ -212,6 +213,13 @@ public class MainActivity extends ThemeBaseActivity {
                 themable.applyTheme(getCurrentTheme());
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        chartViews.clear();
+        themables.clear();
     }
 
     @Override
