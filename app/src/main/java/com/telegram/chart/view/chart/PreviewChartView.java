@@ -36,7 +36,7 @@ public class PreviewChartView extends BaseMeasureView implements Graph.Invalidat
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void initGraph(Graph graph) {
+    public void setGraph(Graph graph) {
         lineRenders.clear();
         lineRenders = LineRender.createListRenderPreview(graph);
         graph.addListener(this);

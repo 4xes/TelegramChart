@@ -15,7 +15,7 @@ import com.telegram.chart.view.chart.Ids;
 import static com.telegram.chart.view.utils.ViewUtils.clipSupport;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class RangeView extends BaseRangeView implements Themable<Theme>, Graph.InvalidateListener {
+public class RangeView extends BaseRangeView implements Themable, Graph.InvalidateListener {
 
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);

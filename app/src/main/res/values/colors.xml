@@ -2,8 +2,8 @@
 <resources>
     <color name="background_night">#1F2732</color>
     <color name="background_day">#FFFFFF</color>
-    <color name="background_second_night">#171E26</color>
-    <color name="background_second_day">#F0F0F0</color>
+    <color name="background_spacing_night">#171E26</color>
+    <color name="background_spacing_day">#F0F0F0</color>
     <color name="primary_night">#232D3A</color>
     <color name="primary_day">#5A7C9F</color>
     <color name="primary_dark_day">#49627F</color>
@@ -20,8 +20,7 @@
     <color name="column_name_day">#212121</color>
     <color name="column_name_night">#FFFFFF</color>
 
-    <color name="primary_accent">#5295CF</color>
-    <color name="primary_text_color">#5295CF</color>
+    <color name="text_color">#5295CF</color>
 
     <color name="range_day">#B3F3F7F9</color>
     <color name="range_night">#B31A222B</color>

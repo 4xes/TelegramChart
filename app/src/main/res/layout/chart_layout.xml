@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="match_parent"
+<FrameLayout
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
     <com.telegram.chart.view.chart.ChartView
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:paddingTop="@dimen/normal"
+        android:paddingTop="80dp"
         android:paddingLeft="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingRight="@dimen/normal"
         android:paddingEnd="@dimen/normal"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chart_title"
+        android:textColor="@color/text_color"
+        android:layout_marginTop="@dimen/normal"
+        android:layout_marginStart="@dimen/normal"
+        android:layout_marginLeft="@dimen/normal"
         />
 
     <com.telegram.chart.view.chart.InfoView

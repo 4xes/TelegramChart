@@ -28,7 +28,7 @@ public class ViewUtils {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, Resources.getSystem().getDisplayMetrics());
     }
 
-    public static float measureHeightText(Paint paint) {
+    public static float measureHeightText(final Paint paint) {
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
         return fontMetrics.bottom - fontMetrics.top;
     }

@@ -4,7 +4,6 @@ import android.animation.TimeAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -23,7 +22,7 @@ import java.util.List;
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class ChartView extends BaseMeasureView implements Themable<Theme>, Graph.InvalidateListener, TimeAnimator.TimeListener {
+public class ChartView extends BaseMeasureView implements Themable, Graph.InvalidateListener, TimeAnimator.TimeListener {
 
     protected final Bound chartBound = new Bound();
     protected final Bound datesBound = new Bound();

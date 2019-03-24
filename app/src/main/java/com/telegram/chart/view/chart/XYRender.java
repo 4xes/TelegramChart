@@ -13,7 +13,7 @@ import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
-class XYRender implements Themable<Theme> {
+class XYRender implements Themable {
     private final Graph graph;
     private final TextPaint valuePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final LongSparseArray<String> sparseArray = new LongSparseArray<>();
@@ -35,6 +35,8 @@ class XYRender implements Themable<Theme> {
         linePaint.setStrokeWidth(pxFromDp(1f));
         linePaint.setStyle(Paint.Style.STROKE);
     }
+
+
 
     @Override
     public void applyTheme(Theme theme) {

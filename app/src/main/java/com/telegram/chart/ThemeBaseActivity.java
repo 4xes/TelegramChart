@@ -14,7 +14,7 @@ import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.theme.ThemePreferences;
 
-abstract class ThemeBaseActivity extends AppCompatActivity implements Themable<Theme> {
+abstract class ThemeBaseActivity extends AppCompatActivity implements Themable {
 
     private Theme theme;
     private ThemePreferences themePreferences;
@@ -39,7 +39,6 @@ abstract class ThemeBaseActivity extends AppCompatActivity implements Themable<T
         this.theme = theme;
         setStatusBarColor(theme.getPrimaryDarkColor());
         setToolbarColor(theme.getPrimaryColor());
-        setWindowBackground(theme.getBackgroundWindowColor());
     }
 
     private void setStatusBarColor(int statusBarColor) {
@@ -59,10 +58,6 @@ abstract class ThemeBaseActivity extends AppCompatActivity implements Themable<T
         if (actionBar != null) {
             actionBar.setBackgroundDrawable(new ColorDrawable(toolbarColor));
         }
-    }
-
-    private void setWindowBackground(int windowBackgroundColor) {
-        getWindow().getDecorView().setBackgroundColor(windowBackgroundColor);
     }
 
     protected void toggleNightMode() {

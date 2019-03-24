@@ -10,7 +10,7 @@ import java.util.List;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-class LineRender implements Themable<Theme> {
+class LineRender implements Themable {
     private final int id;
     private final Graph graph;
     private final Path drawPath = new Path();

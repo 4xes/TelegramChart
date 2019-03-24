@@ -15,7 +15,7 @@ public class Theme {
     private int primaryColor;
     private int primaryDarkColor;
     private int backgroundWindowColor;
-    private int backgroundSecondColor;
+    private int backgroundSpacingColor;
     private int dividerColor;
     private int axisValueColor;
     private int axisColor;
@@ -24,12 +24,12 @@ public class Theme {
     private int rangeSelectedColor;
     private int backgroundInfoColor;
 
-    public Theme(Context context, @ThemeId int id, @ColorRes int primaryColor, @ColorRes  int primaryDarkColor, @ColorRes  int backgroundWindowColor, @ColorRes  int backgroundSecondColor, @ColorRes  int dividerColor, @ColorRes  int axisValueColor, @ColorRes  int axisColor, @ColorRes  int nameColor, @ColorRes  int rangeColor, @ColorRes  int rangeSelectedColor, @ColorRes  int backgroundInfoColor) {
+    public Theme(Context context, @ThemeId int id, @ColorRes int primaryColor, @ColorRes  int primaryDarkColor, @ColorRes  int backgroundWindowColor, @ColorRes  int backgroundSpacingColor, @ColorRes  int dividerColor, @ColorRes  int axisValueColor, @ColorRes  int axisColor, @ColorRes  int nameColor, @ColorRes  int rangeColor, @ColorRes  int rangeSelectedColor, @ColorRes  int backgroundInfoColor) {
         this.id = id;
         this.primaryColor = ContextCompat.getColor(context, primaryColor);
         this.primaryDarkColor = ContextCompat.getColor(context, primaryDarkColor);
         this.backgroundWindowColor = ContextCompat.getColor(context, backgroundWindowColor);
-        this.backgroundSecondColor = ContextCompat.getColor(context, backgroundSecondColor);
+        this.backgroundSpacingColor = ContextCompat.getColor(context, backgroundSpacingColor);
         this.dividerColor = ContextCompat.getColor(context, dividerColor);
         this.axisValueColor = ContextCompat.getColor(context, axisValueColor);
         this.axisColor = ContextCompat.getColor(context, axisColor);
@@ -51,8 +51,8 @@ public class Theme {
         return backgroundWindowColor;
     }
 
-    public int getBackgroundSecondColor() {
-        return backgroundSecondColor;
+    public int getBackgroundSpacingColor() {
+        return backgroundSpacingColor;
     }
 
     public int getDividerColor() {
@@ -83,10 +83,6 @@ public class Theme {
         return backgroundInfoColor;
     }
 
-    public void setBackgroundInfoColor(int backgroundInfoColor) {
-        this.backgroundInfoColor = backgroundInfoColor;
-    }
-
     public static Theme createTheme(Context context, @ThemeId int themeId) {
         switch (themeId) {
             case DAY:
@@ -100,11 +96,11 @@ public class Theme {
     private static Theme createNight(Context context) {
         return new Theme(
                 context,
-                DAY,
+                NIGHT,
                 R.color.primary_night,
                 R.color.primary_dark_night,
                 R.color.background_night,
-                R.color.background_second_night,
+                R.color.background_spacing_night,
                 R.color.divider_night,
                 R.color.axis_value_night,
                 R.color.axis_night,
@@ -122,7 +118,7 @@ public class Theme {
                 R.color.primary_day,
                 R.color.primary_dark_day,
                 R.color.background_day,
-                R.color.background_second_day,
+                R.color.background_spacing_day,
                 R.color.divider_day,
                 R.color.axis_value_day,
                 R.color.axis_day,

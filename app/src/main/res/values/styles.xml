@@ -3,14 +3,12 @@
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/primary_day</item>
         <item name="colorPrimaryDark">@color/primary_dark_day</item>
-        <item name="colorAccent">@color/primary_accent</item>
         <item name="android:windowBackground">@color/background_day</item>
     </style>
 
     <style name="AppThemeDark" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/primary_night</item>
         <item name="colorPrimaryDark">@color/primary_dark_night</item>
-        <item name="colorAccent">@color/primary_accent</item>
         <item name="android:windowBackground">@color/background_night</item>
     </style>
 </resources>

@@ -16,7 +16,7 @@ import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
 
-public class InfoView extends BaseMeasureView implements Themable<Theme> {
+public class InfoView extends BaseMeasureView implements Themable {
     private InfoRender infoRender;
     private Theme theme;
     protected final RectF drawBound = new Bound();

@@ -17,7 +17,7 @@ import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
-public class InfoRender implements Themable<Theme> {
+public class InfoRender implements Themable {
 
     private Graph graph;
     private final Paint paintRect = new Paint(Paint.ANTI_ALIAS_FLAG);
