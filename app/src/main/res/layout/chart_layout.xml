@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:text="@string/chart_title"
         android:textColor="@color/text_color"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif-medium"
         android:paddingTop="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingEnd="@dimen/normal"
