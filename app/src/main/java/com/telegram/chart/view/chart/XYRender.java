@@ -45,20 +45,47 @@ class XYRender implements Themable {
         valuePaint.setColor(theme.getAxisValueColor());
     }
 
-    public void renderY(Canvas canvas, RectF r) {
+    public void renderYLines(Canvas canvas, RectF r) {
         final long max = graph.state.getMaxChart();
         final float step = calculateStep(0f, max, GRID);
         final float percent = graph.state.progressY();
         if (graph.state.previousStep < graph.state.currentStep) {
-            renderY(canvas, r, step, graph.state.previousStep,  - (percent), percent);
-            renderY(canvas, r, step, step, 1f - (percent), 1f - percent);
+            renderYLines(canvas, r, step,  - (percent), percent);
+            renderYLines(canvas, r, step, 1f - (percent), 1f - percent);
         } else {
-            renderY(canvas, r, step, graph.state.previousStep, percent, percent);
-            renderY(canvas, r, step, step, 1f + percent, 1f - percent);
+            renderYLines(canvas, r, step, percent, percent);
+            renderYLines(canvas, r, step, 1f + percent, 1f - percent);
         }
     }
 
-    public void renderY(Canvas canvas, RectF r, float step, float stepText, float offsetPercentage, float alphaPercentage) {
+    public void renderYText(Canvas canvas, RectF r) {
+        final long max = graph.state.getMaxChart();
+        final float step = calculateStep(0f, max, GRID);
+        final float percent = graph.state.progressY();
+        if (graph.state.previousStep < graph.state.currentStep) {
+            renderYText(canvas, r, step, graph.state.previousStep,  - (percent), percent);
+            renderYText(canvas, r, step, step, 1f - (percent), 1f - percent);
+        } else {
+            renderYText(canvas, r, step, graph.state.previousStep, percent, percent);
+            renderYText(canvas, r, step, step, 1f + percent, 1f - percent);
+        }
+    }
+
+    public void renderYLines(Canvas canvas, RectF r, float step, float offsetPercentage, float alphaPercentage) {
+        final float scaleY = 1f / (graph.state.getMaxChartStepped() / r.height());
+        final float offsetY = r.bottom;
+
+        for (int i = 3; i < GRID; i = i + 3) {
+            final float y = (-step * (i + (offsetPercentage * 3f)) * scaleY) + offsetY;
+            final int alpha = 255 - Math.round(255f * alphaPercentage);
+            if (alpha != 0) {
+                linePaint.setAlpha(alpha);
+                canvas.drawLine(r.left, y, r.right, y, linePaint);
+            }
+        }
+    }
+
+    public void renderYText(Canvas canvas, RectF r, float step, float stepText, float offsetPercentage, float alphaPercentage) {
         final float scaleY = 1f / (graph.state.getMaxChartStepped() / r.height());
         final float offsetY = r.bottom;
 
@@ -68,9 +95,7 @@ class XYRender implements Themable {
             final int alpha = 255 - Math.round(255f * alphaPercentage);
             if (alpha != 0) {
                 valuePaint.setAlpha(alpha);
-                linePaint.setAlpha(alpha);
                 canvas.drawText(String.valueOf(i * (int) stepText), r.left, valueY, valuePaint);
-                canvas.drawLine(r.left, y, r.right, y, linePaint);
             }
         }
         valuePaint.setAlpha(255);
@@ -78,8 +103,8 @@ class XYRender implements Themable {
         final float text0Y = offsetY - (valueHeight / 2f) + valuePaint.descent();
         canvas.drawText("0", r.left, text0Y, valuePaint);
         canvas.drawLine(r.left, offsetY, r.right, offsetY, linePaint);
-
     }
+
 
     public void renderVLine(Canvas canvas, RectF r, float x) {
         canvas.drawLine(x, r.top, x, r.bottom, linePaint);

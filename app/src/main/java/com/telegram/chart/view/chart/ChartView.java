@@ -4,7 +4,6 @@ import android.animation.TimeAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -13,6 +12,8 @@ import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
@@ -131,6 +132,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         super.onDraw(canvas);
         int save = canvas.save();
         canvas.clipRect(clipBound);
+        if (xyRender != null) {
+            xyRender.renderYLines(canvas, chartBound);
+        }
         for (LineRender render: lineRenders) {
             render.render(canvas, chartBound);
         }
@@ -145,13 +149,15 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
                 graph.calculateLine(selectIndex, chartBound, point);
                 xyRender.renderVLine(canvas, chartBound, point.x);
             }
-            xyRender.renderY(canvas, chartBound);
+            xyRender.renderYText(canvas, chartBound);
         }
     }
 
     @Override
     public void needInvalidate() {
-        Log.d("ChartView", "needInvalidate");
+        if (BuildConfig.DEBUG) {
+            Log.d("ChartView", "needInvalidate");
+        }
         invalidate();
     }
 

@@ -7,6 +7,9 @@ import android.graphics.RectF;
 import android.os.Build;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
+
+import com.telegram.chart.BuildConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,9 @@ public class PreviewChartView extends BaseMeasureView implements Graph.Invalidat
 
     @Override
     public void needInvalidate() {
+        if (BuildConfig.DEBUG) {
+            Log.d("PreviewChartView", "needInvalidate");
+        }
         invalidate();
     }
 

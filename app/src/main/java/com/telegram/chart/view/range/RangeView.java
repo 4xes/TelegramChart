@@ -6,7 +6,9 @@ import android.graphics.Paint;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 
+import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.chart.Graph;
@@ -52,6 +54,9 @@ public class RangeView extends BaseRangeView implements Themable, Graph.Invalida
 
     @Override
     public void needInvalidate() {
+        if (BuildConfig.DEBUG) {
+            Log.d("RangeView", "needInvalidate");
+        }
         invalidate();
     }
 
