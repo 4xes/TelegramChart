@@ -3,6 +3,7 @@ package com.telegram.chart.view.chart;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.os.Build;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
@@ -14,7 +15,7 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 public class PreviewChartView extends BaseMeasureView implements Graph.InvalidateListener {
 
-    private final Bound chartBound = new Bound();
+    private final RectF chartBound = new RectF();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
     private List<LineRender> lineRenders = new ArrayList<>();
@@ -47,10 +48,7 @@ public class PreviewChartView extends BaseMeasureView implements Graph.Invalidat
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         chartBound.set(bound);
-        chartBound.bottom -= verticalPadding * 2f;
-        chartBound.right -= horizontalPadding * 2f;
-        chartBound.offsetX = horizontalPadding;
-        chartBound.offsetY = verticalPadding;
+        chartBound.inset(horizontalPadding, verticalPadding);
     }
 
     @Override

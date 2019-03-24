@@ -16,10 +16,10 @@ import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
 
-public class InfoView extends BaseMeasureView implements Themable {
+public class InfoView extends BaseMeasureView implements Themable, ChartView.OnShowInfoListener {
     private InfoRender infoRender;
     private Theme theme;
-    protected final RectF drawBound = new Bound();
+    protected final RectF drawBound = new RectF();
     private final PointF point = new PointF();
     private int index = NONE_INDEX;
 
@@ -68,12 +68,7 @@ public class InfoView extends BaseMeasureView implements Themable {
         invalidate();
     }
 
-    public void hide() {
-        index = NONE_INDEX;
-        setVisibility(View.GONE);
-        invalidate();
-    }
-
+    @Override
     public void showInfo(int index, RectF bound, PointF point) {
         if (getVisibility() == View.VISIBLE && this.index == index) {
             return;
@@ -82,6 +77,13 @@ public class InfoView extends BaseMeasureView implements Themable {
         this.index = index;
         this.drawBound.set(bound);
         this.point.set(point);
+        invalidate();
+    }
+
+    @Override
+    public void hideInfo() {
+        index = NONE_INDEX;
+        setVisibility(View.GONE);
         invalidate();
     }
 

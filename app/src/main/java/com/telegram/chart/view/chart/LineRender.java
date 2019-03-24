@@ -64,7 +64,7 @@ class LineRender implements Themable {
         }
     }
 
-    public void render(Canvas canvas, Bound chartBound) {
+    public void render(Canvas canvas, RectF chartBound) {
         float currentAlpha = graph.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
             graph.matrix(id, chartBound, matrix);
@@ -80,10 +80,10 @@ class LineRender implements Themable {
         }
     }
 
-    public void renderPreview(Canvas canvas, Bound bound) {
+    public void renderPreview(Canvas canvas, RectF r) {
         float currentAlpha = graph.state.preview.alphaCurrent[id];
         if (currentAlpha != 0f) {
-            graph.matrixPreview(id, bound, matrix);
+            graph.matrixPreview(id, r, matrix);
             pathMatrix.reset();
             pathMatrix.setScale(matrix[SCALE_X], matrix[SCALE_Y]);
             pathMatrix.postTranslate(matrix[OFFSET_X], matrix[OFFSET_Y]);
@@ -96,9 +96,9 @@ class LineRender implements Themable {
         }
     }
 
-    public void renderCircle(Canvas canvas, int index, Bound bound) {
+    public void renderCircle(Canvas canvas, int index, RectF r) {
         if (graph.state.visible[id]) {
-            graph.calculatePoint(id, index, bound, point);
+            graph.calculatePoint(id, index, r, point);
             canvas.drawCircle(point.x, point.y, outerRadius, paintCircle);
             canvas.drawCircle(point.x, point.y, innerRadius, paintInsideCircle);
         }

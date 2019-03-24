@@ -4,6 +4,7 @@ import android.animation.TimeAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -14,7 +15,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
-import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,8 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 public class ChartView extends BaseMeasureView implements Themable, Graph.InvalidateListener, TimeAnimator.TimeListener {
 
-    protected final Bound chartBound = new Bound();
-    protected final Bound datesBound = new Bound();
+    protected final RectF chartBound = new RectF();
+    protected final RectF datesBound = new RectF();
     protected final RectF clipBound = new RectF();
     Paint paint = new Paint();
     private final PointF point = new PointF();
@@ -91,13 +91,11 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         super.onLayout(changed, left, top, right, bottom);
         chartBound.set(bound);
         datesBound.set(bound);
-        datesBound.top = bound.bottom - ViewUtils.pxFromDp(16f);
+        datesBound.top = bound.bottom - pxFromDp(16f);
         chartBound.bottom = datesBound.top;
+        chartBound.inset(horizontalPadding, 0f);
 
-        chartBound.right -= horizontalPadding * 2f;
-        chartBound.offsetX = horizontalPadding;
-
-        clipBound.set(chartBound.left, 0f, chartBound.right, getHeight());
+        clipBound.set(bound.left, 0f, bound.right, getHeight());
     }
 
     @Override
@@ -107,12 +105,16 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
             getParent().requestDisallowInterceptTouchEvent(true);
         }
         if (lineRenders.size() > 0) {
-            int touchIndex = graph.getIndex(x, chartBound);
+            int touchIndex = graph.getIndex(x, bound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
                 if (onShowInfoListener != null) {
-                    graph.calculateLine(selectIndex, chartBound, point);
-                    onShowInfoListener.showInfo(selectIndex, chartBound, point);
+                    if (selectIndex == NONE_INDEX) {
+                        onShowInfoListener.hideInfo();
+                    } else {
+                        graph.calculateLine(selectIndex, chartBound, point);
+                        onShowInfoListener.showInfo(selectIndex, chartBound, point);
+                    }
                 }
                 invalidate();
             }
@@ -138,14 +140,12 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
                 render.renderCircle(canvas, selectIndex, chartBound);
             }
         }
-//        paint.setColor(Color.GREEN);
-//        canvas.drawRect(bound, paint);
-//        paint.setColor(Color.BLUE);
-//        canvas.drawRect(chartBound, paint);
-//        paint.setColor(Color.CYAN);
-//        canvas.drawRect(datesBound, paint);
-
-        //canvas.drawLine( bound.left, datesBound.top, bound.right, datesBound.top, dividerPaint);
+        int index1 = graph.getIndex(chartBound.left, chartBound);
+        if (index1 != -1) {
+            graph.calculatePoint(0, index1, chartBound, point);
+            paint.setColor(Color.GREEN);
+            canvas.drawLine( point.x, clipBound.top, point.x, clipBound.bottom, paint);
+        }
         if (xyRender != null) {
             if (selectIndex != NONE_INDEX) {
                 graph.calculateLine(selectIndex, chartBound, point);
@@ -163,6 +163,8 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     public interface OnShowInfoListener {
         void showInfo(int index, RectF bound, PointF point);
+
+        void hideInfo();
     }
 
     @Override

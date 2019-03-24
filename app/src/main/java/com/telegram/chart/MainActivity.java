@@ -153,16 +153,11 @@ public class MainActivity extends ThemeBaseActivity {
             @Override
             public void onChangeRange(Float start, Float end) {
                 chartView.resetIndex();
-                infoView.hide();
+                infoView.hideInfo();
                 graph.update(rangeView.getViewId(), start, end);
             }
         });
-        chartView.setOnShowInfoListener(new ChartView.OnShowInfoListener() {
-            @Override
-            public void showInfo(int index, RectF bound, PointF point) {
-                infoView.showInfo(index, bound, point);
-            }
-        });
+        chartView.setOnShowInfoListener(infoView);
     }
 
     private void loadChart() {

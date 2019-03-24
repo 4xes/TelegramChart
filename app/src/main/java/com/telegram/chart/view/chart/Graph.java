@@ -1,6 +1,8 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.PointF;
+import android.graphics.RectF;
+
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.utils.DateUtils;
@@ -97,61 +99,54 @@ public class Graph {
         int getViewId();
     }
 
-    public int getIndex(float touchX, Bound bound) {
-        float x = touchX;
-        if (x < bound.left) {
-            x = bound.left;
+    public int getIndex(float x, RectF r) {
+        if (x < r.left) {
+            x = r.left;
         }
-        if (x > bound.right) {
-            x = bound.right;
+        if (x > r.right) {
+            x = r.right;
         }
-        final float dx = (x - bound.left);
-        if (countVisible() > 1) {
-            float percent = (range.start) + (dx) / bound.width() * (range.end - range.start);
-            final int maxIndex = dates.length - 1;
-            int index = (int) (percent * (maxIndex + 1));
-            if (index > maxIndex) {
-                return maxIndex;
-            }
-            return index;
-        } else {
-            return -1;
+        int lower = LineData.getLowerIndex(range.start, dates.length - 1);
+        int upper =  LineData.getUpperIndex(range.end, dates.length - 1);
+        int index = (int) (Math.ceil(x - (-r.width() * range.start) * getScaleRange()) / (getScaleRange() * sectionWidth(r.width())));
+        if (index < lower) {
+            return lower;
         }
+        if (index > upper) {
+            return upper;
+        }
+        return index;
     }
 
     public float getScaleRange(){
         return 1f / (range.end - range.start);
     }
 
-    public void matrix(int id, Bound bound, float[] matrix) {
-        final float scaleX = getScaleRange() * sectionWidth(bound.width());
-        final float scaleY = (1f / (state.chart.yMaxCurrent[id] / bound.height())) * state.chart.multiCurrent[id];
-        final float dx = (-bound.width() * range.start) * getScaleRange();
-        final float offsetX = bound.left + dx + bound.offsetX;
-        final float offsetY = bound.bottom;
+    public void matrix(int id, RectF r, float[] matrix) {
+        final float scaleX = getScaleRange() * sectionWidth(r.width());
+        final float scaleY = (1f / (state.chart.yMaxCurrent[id] / r.height())) * state.chart.multiCurrent[id];
+        final float dx = (-r.width() * range.start) * getScaleRange();
+        final float offsetX = r.left + dx;
+        final float offsetY = r.bottom;
         matrix[0] = scaleX;
         matrix[1] = scaleY;
         matrix[2] = offsetX;
         matrix[3] = offsetY;
     }
 
-    public void getMaxLength() {
-
-    }
-
-    public void matrixPreview(int id, Bound bound, float[] matrix) {
-        final float width = bound.width();
+    public void matrixPreview(int id, RectF r, float[] matrix) {
+        final float width = r.width();
         final float scaleX = sectionWidth(width);
-        final float scaleY = (1f / (state.preview.yMaxCurrent[id] / bound.height()) * state.preview.multiCurrent[id]);
-        final float offsetX = bound.left + bound.offsetX;
-        final float offsetY = bound.bottom;
+        final float scaleY = (1f / (state.preview.yMaxCurrent[id] / r.height()) * state.preview.multiCurrent[id]);
+        final float offsetX = r.left;
+        final float offsetY = r.bottom;
         matrix[0] = scaleX;
         matrix[1] = scaleY;
         matrix[2] = offsetX;
         matrix[3] = offsetY;
     }
 
-    public void valuesY(Bound bound, float[] values) {
+    public void valuesY(RectF bound, float[] values) {
         final float max = state.getMaxChart();
         final float scaleY = 1f / (max / bound.height());
         final float offsetY = bound.bottom;
@@ -160,18 +155,18 @@ public class Graph {
         values[2] = offsetY;
     }
 
-    public void calculateLine(int index, Bound bound, PointF point) {
-        calculatePoint(0, index, bound, point);
+    public void calculateLine(int index, RectF r, PointF point) {
+        calculatePoint(0, index, r, point);
     }
 
-    public void calculatePoint(int id, int index, Bound bound, PointF point) {
-        final float width = bound.width();
+    public void calculatePoint(int id, int index, RectF r, PointF point) {
+        final float width = r.width();
         final float scaleRange = getScaleRange();
         final float scaleX = scaleRange * sectionWidth(width);
         final float dx = (-width * range.start) * scaleRange;
-        final float offsetX = bound.left + dx + bound.offsetX;
-        final float scaleY = 1f / (state.chart.yMaxCurrent[id] / bound.height());
-        final float offsetY = bound.bottom;
+        final float offsetX = r.left + dx;
+        final float scaleY = 1f / (state.chart.yMaxCurrent[id] / r.height());
+        final float offsetY = r.bottom;
         point.set(index * scaleX + offsetX, -(getY(id)[index] * scaleY) + offsetY);
     }
 

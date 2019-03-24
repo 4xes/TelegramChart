@@ -2,6 +2,7 @@ package com.telegram.chart.view.chart;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.text.TextPaint;
 
 import com.telegram.chart.view.theme.Themable;
@@ -44,8 +45,8 @@ class XYRender implements Themable {
         valuePaint.setColor(theme.getAxisValueColor());
     }
 
-    public void renderY(Canvas canvas, Bound bound) {
-        graph.valuesY(bound, values);
+    public void renderY(Canvas canvas, RectF r) {
+        graph.valuesY(r, values);
         final int grid = 18;
         final float step = calculateStep(0f, values[MAX], grid);
 
@@ -53,13 +54,13 @@ class XYRender implements Themable {
             final float y = (-step * i * values[SCALE]) + values[OFFSET];
             final int value = i * (int) step;
             final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
-            canvas.drawText(String.valueOf(value), bound.left, valueY, valuePaint);
-            canvas.drawLine(bound.left, y, bound.right, y, linePaint);
+            canvas.drawText(String.valueOf(value), r.left, valueY, valuePaint);
+            canvas.drawLine(r.left, y, r.right, y, linePaint);
         }
     }
 
-    public void renderVLine(Canvas canvas, Bound bound, float x) {
-        canvas.drawLine(x, bound.top, x, bound.bottom, linePaint);
+    public void renderVLine(Canvas canvas, RectF r, float x) {
+        canvas.drawLine(x, r.top, x, r.bottom, linePaint);
     }
 
     private static float calculateStep(float start, float end, int grid) {

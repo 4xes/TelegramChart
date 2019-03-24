@@ -43,9 +43,17 @@ public class LineData {
         return minY;
     }
 
+    public static int getLowerIndex(float lower, int maxIndex) {
+        return (int) Math.ceil(lower * (float)(maxIndex));
+    }
+
+    public static int getUpperIndex(float upper, int maxIndex) {
+        return (int) Math.floor(upper * (float)(maxIndex));
+    }
+
     public long getMaxY(float lower, float upper) {
-        int loverId = (int) (lower * (y.length - 1));
-        int upperId = (int) (upper * (y.length - 1));
+        int loverId = LineData.getLowerIndex(lower, y.length - 1);
+        int upperId = LineData.getUpperIndex(upper, y.length - 1);
 
         if (tempRangeMaxY != Long.MIN_VALUE) {
             if (tempLowerId == loverId && tempUpperId == upperId) {
@@ -56,7 +64,7 @@ public class LineData {
             return y[loverId];
         }
         long max = y[loverId];
-        for (int i = loverId + 1; i < upperId; i++) {
+        for (int i = loverId + 1; i <= upperId; i++) {
             if (max < y[i]) {
                 max = y[i];
             }
@@ -65,9 +73,5 @@ public class LineData {
         tempUpperId = upperId;
         tempRangeMaxY = max;
         return max;
-    }
-
-    public int size() {
-        return y.length;
     }
 }
