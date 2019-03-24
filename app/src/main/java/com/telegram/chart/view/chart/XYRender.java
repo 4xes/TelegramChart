@@ -46,18 +46,39 @@ class XYRender implements Themable {
     }
 
     public void renderY(Canvas canvas, RectF r) {
-        final float max = graph.state.getMaxChart();
+        final long max = graph.state.getMaxChart();
+        final float step = calculateStep(0f, max, GRID);
+        final float percent = graph.state.progressY();
+        if (graph.state.previousStep < graph.state.currentStep) {
+            renderY(canvas, r, step, graph.state.previousStep,  - (percent), percent);
+            renderY(canvas, r, step, step, 1f - (percent), 1f - percent);
+        } else {
+            renderY(canvas, r, step, graph.state.previousStep, percent, percent);
+            renderY(canvas, r, step, step, 1f + percent, 1f - percent);
+        }
+    }
+
+    public void renderY(Canvas canvas, RectF r, float step, float stepText, float offsetPercentage, float alphaPercentage) {
         final float scaleY = 1f / (graph.state.getMaxChartStepped() / r.height());
         final float offsetY = r.bottom;
-        final float step = calculateStep(0f, max, GRID);
 
-        for (int i = 0; i < GRID; i = i + 3) {
-            final float y = (-step * i * scaleY) + offsetY;
-            final int value = i * (int) step;
+        for (int i = 3; i < GRID; i = i + 3) {
+            final float y = (-step * (i + (offsetPercentage * 3f)) * scaleY) + offsetY;
             final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
-            canvas.drawText(String.valueOf(value), r.left, valueY, valuePaint);
-            canvas.drawLine(r.left, y, r.right, y, linePaint);
+            final int alpha = 255 - Math.round(255f * alphaPercentage);
+            if (alpha != 0) {
+                valuePaint.setAlpha(alpha);
+                linePaint.setAlpha(alpha);
+                canvas.drawText(String.valueOf(i * (int) stepText), r.left, valueY, valuePaint);
+                canvas.drawLine(r.left, y, r.right, y, linePaint);
+            }
         }
+        valuePaint.setAlpha(255);
+        linePaint.setAlpha(255);
+        final float text0Y = offsetY - (valueHeight / 2f) + valuePaint.descent();
+        canvas.drawText("0", r.left, text0Y, valuePaint);
+        canvas.drawLine(r.left, offsetY, r.right, offsetY, linePaint);
+
     }
 
     public void renderVLine(Canvas canvas, RectF r, float x) {

@@ -10,6 +10,14 @@ public class StateManager {
     public State chart;
     public State preview;
     public boolean[] visible;
+    public long executedYTime = 0;
+
+
+    public long durationY = ANIMATION_DURATION_LONG;
+    public long previousMaxY;
+    public long currentMaxY;
+    public float previousStep;
+    public float currentStep;
 
     public StateManager(Graph graph) {
         this.graph = graph;
@@ -20,6 +28,14 @@ public class StateManager {
 
         long maxPreview = getMaxPreview();
         long maxChart = getMaxChartStepped();
+        long newCurrent = getMaxChart();
+        float step = step(newCurrent);
+
+        previousMaxY = newCurrent;
+        currentMaxY = previousMaxY;
+        previousStep = step;
+        currentStep = previousStep;
+
         for (int id = 0; id < graph.countLines(); id++) {
             preview.yMaxStart[id] = maxPreview;
             preview.yMaxCurrent[id] = preview.yMaxStart[id];
@@ -78,12 +94,20 @@ public class StateManager {
     }
 
     public long getMaxChartStepped() {
-        long max = getMaxChart();
+        return toMaxChartStepped(getMaxChart());
+    }
+
+    public static long toMaxChartStepped(long maxChart) {
+        long max = maxChart;
         if (max != Long.MIN_VALUE) {
             float step = XYRender.calculateStep(0, max, XYRender.GRID);
             max = (int) Math.floor(step * (XYRender.GRID));
         }
         return max;
+    }
+
+    public static float step(long maxChart) {
+        return XYRender.calculateStep(0, maxChart, XYRender.GRID);
     }
 
     public long getMaxChartStepped(int id) {
@@ -94,6 +118,8 @@ public class StateManager {
         }
         return max;
     }
+
+
 
     public void setAnimationStart() {
         chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
@@ -113,7 +139,17 @@ public class StateManager {
     public void updateRange() {
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
-        long maxChart = getMaxChartStepped();
+        long newCurrent = getMaxChart();
+        float step = step(newCurrent);
+        if (currentStep != step) {
+            previousStep = currentStep;
+            currentStep = step;
+            previousMaxY = currentMaxY;
+            currentMaxY = newCurrent;
+            resetYAnimation();
+        }
+
+        long maxChart = toMaxChartStepped(newCurrent);
         for (int id = 0; id < graph.countLines(); id++) {
             if (visible[id]) {
                 chart.yMaxStart[id] = chart.yMaxCurrent[id];
@@ -180,16 +216,42 @@ public class StateManager {
     }
 
     public void tick() {
-        chart.needInvalidate = chart.isNeedInvalidate();
+        chart.needInvalidate = chart.isNeedInvalidate() || currentStep != previousStep ;
         preview.needInvalidate = preview.isNeedInvalidate();
         chart.tickScale();
         chart.tickFading();
         preview.tickScale();
         preview.tickFading();
+        tickYChange();
+    }
+
+    public void tickYChange() {
+        if (executedYTime < durationY) {
+            executedYTime += ANIMATION_TICK;
+
+            if (executedYTime > durationY) {
+                executedYTime = durationY;
+            }
+
+
+
+            if (executedYTime == durationY) {
+                previousStep = currentStep;
+            }
+        }
+    }
+
+    public float progressY() {
+        return Math.min(1f, 1f - (executedYTime / (float) durationY));
+    }
+
+    public void resetYAnimation() {
+        executedYTime = 0;
     }
 
     private final static long ANIMATION_DURATION_LONG = 300L;
     private final static long ANIMATION_DURATION_SHORT = 100L;
+    private final static long ANIMATION_TICK = 16L;
 
     public class State {
         private final int size;
@@ -210,7 +272,7 @@ public class StateManager {
 
         public void tickFading() {
             if (executedFadingTime < durationFading) {
-                executedFadingTime += 16;
+                executedFadingTime += ANIMATION_TICK;
 
                 if (executedFadingTime > durationFading) {
                     executedFadingTime = durationFading;
@@ -235,9 +297,10 @@ public class StateManager {
             }
         }
 
+
         public void tickScale() {
             if (executedScaleTime < durationScale) {
-                executedScaleTime += 16;
+                executedScaleTime += ANIMATION_TICK;
 
                 if (executedScaleTime > durationScale) {
                     executedScaleTime = durationScale;
