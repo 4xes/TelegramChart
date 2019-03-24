@@ -150,6 +150,8 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
                 xyRender.renderVLine(canvas, chartBound, point.x);
             }
             xyRender.renderYText(canvas, chartBound);
+//            xyRender.renderXLines(canvas, datesBound, chartBound);
+            xyRender.renderXTempLines(canvas, datesBound, chartBound);
         }
     }
 

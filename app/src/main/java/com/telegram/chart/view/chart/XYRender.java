@@ -1,14 +1,16 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.text.TextPaint;
 
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
+import com.telegram.chart.view.utils.DateUtils;
 
-import androidx.collection.LongSparseArray;
+
 
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
@@ -17,15 +19,17 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 class XYRender implements Themable {
     private final Graph graph;
     private final TextPaint valuePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private final LongSparseArray<String> sparseArray = new LongSparseArray<>();
+    private final TextPaint datePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint linePaint = new Paint();
-    private final float[] values = new float[3];
+    private final Paint lineDebug = new Paint();
     private final float valueHeight;
+    private final float dateWidth;
 
     public XYRender(Graph data) {
         this.graph = data;
         initPaints();
         valueHeight = measureHeightText(valuePaint);
+        dateWidth = datePaint.measureText(DateUtils.X_FORMAT);
     }
 
     private void initPaints() {
@@ -33,8 +37,15 @@ class XYRender implements Themable {
         valuePaint.setTextSize(pxFromSp(11f));
         valuePaint.setTextAlign(Paint.Align.LEFT);
 
+        datePaint.setStyle(Paint.Style.FILL);
+        datePaint.setTextSize(pxFromSp(11f));
+        datePaint.setTextAlign(Paint.Align.CENTER);
+
         linePaint.setStrokeWidth(pxFromDp(1f));
         linePaint.setStyle(Paint.Style.STROKE);
+
+        lineDebug.setStrokeWidth(pxFromDp(1f));
+        lineDebug.setStyle(Paint.Style.STROKE);
     }
 
 
@@ -43,6 +54,7 @@ class XYRender implements Themable {
     public void applyTheme(Theme theme) {
         linePaint.setColor(theme.getAxisColor());
         valuePaint.setColor(theme.getAxisValueColor());
+        datePaint.setColor(theme.getAxisValueColor());
     }
 
     public void renderYLines(Canvas canvas, RectF r) {
@@ -105,9 +117,96 @@ class XYRender implements Themable {
         canvas.drawLine(r.left, offsetY, r.right, offsetY, linePaint);
     }
 
+    /*
+        final float scaleX = getScaleRange() * sectionWidth(r.width());
+        final float scaleY = (1f / (state.chart.yMaxCurrent[id] / r.height())) * state.chart.multiCurrent[id];
+        final float dx = (-r.width() * range.start) * getScaleRange();
+        final float offsetX = r.left + dx;
+        final float offsetY = r.bottom;
+     */
+    public void renderXLines(Canvas canvas, RectF d, RectF c) {
+        lineDebug.setColor(Color.BLUE);
+        canvas.drawRect(c.left, d.top, c.right, d.bottom, lineDebug);
+
+        final float w = c.width();
+//        int count = ((int) (w / 5));
+//        int datesCount = count;
+//        int allDatesCount = ((datesCount + (datesCount)) * Range.RANGE_MULTI);
+//
+//        final float sectionW = (w) / (allDatesCount);
+//        final float scaleRange = graph.getScaleRange();
+//        final float scaleX = scaleRange * sectionW;
+//        final float dx = (-c.width() * graph.range.start) * scaleRange;
+//        final float offsetX = c.left + dx;
+//        final float halfText = dateWidth / 2f;
+//
+//        for (int i = 1 ;i < allDatesCount; i + co) {
+//            lineDebug.setColor(Color.GREEN);
+//            float x = i * scaleX + offsetX;
+//            canvas.drawText(String.valueOf(i), x + halfText / 2, d.centerY() + datePaint.descent(), datePaint);
+//            canvas.drawRect(x, d.top, x, d.bottom, lineDebug);
+//        }
+
+        int count = ((int) (w / (dateWidth * 2f))) + 1;
+
+        float datesWidth = (dateWidth * count);
+        float newDatesWidth = dateWidth * (count - 1);
+        float sum = datesWidth + newDatesWidth;
+        float additionalSpaces = (w - sum) / (count - 1);
+        float scaleY = graph.getScaleRange();
+        float blockWidth = (additionalSpaces + dateWidth + dateWidth);
+        final float dx = (-w * graph.range.start) * scaleY;
+
+        for (int i = 0; i < count; i++) {
+            float left = c.left + ((blockWidth) * i * scaleY) + dx;
+            float right = left + dateWidth;
+            lineDebug.setColor(Color.GREEN);
+            renderXLines(canvas, d, (int) (left + datesWidth / 2f));
+            //canvas.drawRect(left, d.top, right, d.bottom, lineDebug);
+        }
+    }
+
+    public void renderXLines(Canvas canvas, RectF r, int i) {
+        int w = (int)r.width();
+        int count = w;
+        float scaleRange = graph.getScaleRange();
+        float sectionWidth = 1;
+        final float dx = (-w * graph.range.start) * scaleRange;
+        final float offsetX = r.left + dx;
+        //canvas.drawRect(left, d.top, right, d.bottom, lineDebug);
+        /*
+        final float width = r.width();
+        final float scaleRange = getScaleRange();
+        final float scaleX = scaleRange * sectionWidth(width);
+        final float dx = (-width * range.start) * scaleRange;
+        final float offsetX = r.left + dx;
+        final float scaleY = 1f / (state.chart.yMaxCurrent[id] / r.height());
+        final float offsetY = r.bottom;
+         */
+    }
+
 
     public void renderVLine(Canvas canvas, RectF r, float x) {
         canvas.drawLine(x, r.top, x, r.bottom, linePaint);
+    }
+
+    public void renderXTempLines(Canvas canvas, RectF d, RectF c) {
+        final float w = c.width();
+        int count = ((int) (w / (dateWidth * 2f))) + 1;
+
+        float datesWidth = (dateWidth * count);
+        float newDatesWidth = dateWidth * (count - 1);
+        float sum = datesWidth + newDatesWidth;
+        float additionalSpaces = (w - sum) / (count - 1);
+        float blockWidth = (additionalSpaces + dateWidth + dateWidth);
+
+        for (int i = 0; i < count; i++) {
+            float left = c.left + ((blockWidth) * i);
+            float x = left + dateWidth / 2f;
+
+            int index = graph.getIndex(x, c);
+            canvas.drawText(graph.getXDate(index), x, d.centerY() + valueHeight / 2f, datePaint);
+        }
     }
 
     public static float calculateStep(float start, float end, int grid) {

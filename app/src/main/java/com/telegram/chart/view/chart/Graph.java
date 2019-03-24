@@ -48,6 +48,10 @@ public class Graph {
         return DateUtils.getInfoDate(getDate(index));
     }
 
+    public String getXDate(int index) {
+        return DateUtils.getDateX(getDate(index));
+    }
+
     public String getValue(int id, int index) {
         return String.valueOf(lines[id].getY(index));
     }
