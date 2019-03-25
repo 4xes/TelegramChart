@@ -26,6 +26,7 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 public class ChartView extends BaseMeasureView implements Themable, Graph.InvalidateListener, TimeAnimator.TimeListener {
 
     protected final RectF chartBound = new RectF();
+    protected final RectF visibleBound = new RectF();
     protected final RectF datesBound = new RectF();
     protected final RectF clipBound = new RectF();
     Paint paint = new Paint();
@@ -90,6 +91,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
+        visibleBound.set(0, 0, getWidth(), getHeight());
         chartBound.set(bound);
         datesBound.set(bound);
         datesBound.top = bound.bottom - pxFromDp(16f);
@@ -132,7 +134,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         super.onDraw(canvas);
         int save = canvas.save();
         canvas.clipRect(clipBound);
-        if (xyRender != null) {
+
+        boolean hasContent = graph.countVisible() > 0;
+        if (xyRender != null && hasContent) {
             xyRender.renderYLines(canvas, chartBound);
         }
         for (LineRender render: lineRenders) {
@@ -144,15 +148,21 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
                 render.renderCircle(canvas, selectIndex, chartBound);
             }
         }
-        if (xyRender != null) {
-            if (selectIndex != NONE_INDEX) {
-                graph.calculateLine(selectIndex, chartBound, point);
-                xyRender.renderVLine(canvas, chartBound, point.x);
+
+        if (hasContent) {
+            if (xyRender != null) {
+                if (selectIndex != NONE_INDEX) {
+                    graph.calculateLine(selectIndex, chartBound, point);
+                    xyRender.renderVLine(canvas, chartBound, point.x);
+                }
+                xyRender.renderYText(canvas, chartBound);
+                xyRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
             }
-            xyRender.renderYText(canvas, chartBound);
-//            xyRender.renderXLines(canvas, datesBound, chartBound);
-            xyRender.renderXTempLines(canvas, datesBound, chartBound);
         }
+        if (xyRender != null) {
+            xyRender.renderY0TextAndLine(canvas,chartBound);
+        }
+
     }
 
     @Override

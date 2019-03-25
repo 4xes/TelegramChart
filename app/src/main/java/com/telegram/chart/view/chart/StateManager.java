@@ -140,14 +140,7 @@ public class StateManager {
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
         long newCurrent = getMaxChart();
-        float step = step(newCurrent);
-        if (currentStep != step) {
-            previousStep = currentStep;
-            currentStep = step;
-            previousMaxY = currentMaxY;
-            currentMaxY = newCurrent;
-            resetYAnimation();
-        }
+        updateCurrentAnimation(newCurrent);
 
         long maxChart = toMaxChartStepped(newCurrent);
         for (int id = 0; id < graph.countLines(); id++) {
@@ -157,6 +150,18 @@ public class StateManager {
             }
         }
 
+    }
+
+
+    public void updateCurrentAnimation(long maxChart) {
+        float step = step(maxChart);
+        if (currentStep != step) {
+            previousStep = currentStep;
+            currentStep = step;
+            previousMaxY = currentMaxY;
+            currentMaxY = maxChart;
+            resetYAnimation();
+        }
     }
 
     public void setAnimationHide(int targetId) {
@@ -204,6 +209,10 @@ public class StateManager {
 
         chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
         chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 4L;
+
+
+        long newCurrent = getMaxChart();
+        updateCurrentAnimation(newCurrent);
     }
 
 
