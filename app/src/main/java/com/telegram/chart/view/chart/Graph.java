@@ -105,6 +105,12 @@ public class Graph {
 
     public int getIndex(float x, RectF r) {
         x = x - r.left;
+        if (x < r.left) {
+            x = r.left;
+        }
+        if (x > r.right) {
+            x = r.right;
+        }
         int lower = LineData.getLowerIndex(range.start, dates.length - 1);
         int upper =  LineData.getUpperIndex(range.end, dates.length - 1);
         int index = (int) (Math.floor(x - (-r.width() * range.start) * getScaleRange()) / (getScaleRange() * sectionWidth(r.width())));
