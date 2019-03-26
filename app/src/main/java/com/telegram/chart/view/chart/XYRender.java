@@ -104,7 +104,7 @@ class XYRender implements Themable {
                 String value = sparseValues.get(key);
                 if (value == null) {
                     value = String.valueOf(key);
-                    sparseDates.put(key, value);
+                    sparseValues.put(key, value);
                 }
                 canvas.drawText(value, r.left, valueY, valuePaint);
             }

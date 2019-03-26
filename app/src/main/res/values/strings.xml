@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Telegram Chart Contest</string>
+    <string name="app_name">Telegram Charts</string>
     <string name="app_title">Statistics</string>
     <string name="chart_title">Chart %1$d</string>
     <string name="chart_night_mode">Night mode</string>
