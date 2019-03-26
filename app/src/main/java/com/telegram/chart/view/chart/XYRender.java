@@ -1,17 +1,14 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.text.TextPaint;
-import android.util.Log;
+import android.util.SparseArray;
 
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.utils.DateUtils;
-
-
 
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
@@ -22,6 +19,8 @@ class XYRender implements Themable {
     private final TextPaint valuePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint datePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint linePaint = new Paint();
+    private final SparseArray<String> sparseDates = new SparseArray<>();
+    private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valueHeight;
     private final float dateWidth;
 
@@ -29,7 +28,7 @@ class XYRender implements Themable {
         this.graph = data;
         initPaints();
         valueHeight = measureHeightText(valuePaint);
-        dateWidth = datePaint.measureText(DateUtils.X_FORMAT);
+        dateWidth = datePaint.measureText(DateUtils.XMAX);
     }
 
     private void initPaints() {
@@ -57,11 +56,11 @@ class XYRender implements Themable {
         final float step = calculateStep(0f, max, GRID);
         final float percent = graph.state.progressY();
         if (graph.state.previousStep < graph.state.currentStep) {
-            renderYLines(canvas, r, step,  - (percent), percent);
-            renderYLines(canvas, r, step, 1f - (percent), 1f - percent);
+            renderYLines(canvas, r, step, 1f - percent, percent);
+            renderYLines(canvas, r, step,  1f / percent, 1f - percent);
         } else {
-            renderYLines(canvas, r, step, percent, percent);
-            renderYLines(canvas, r, step, 1f + percent, 1f - percent);
+            renderYLines(canvas, r, step, 1f + (percent), percent);
+            renderYLines(canvas, r, step,  percent, 1f - percent);
         }
     }
 
@@ -70,20 +69,22 @@ class XYRender implements Themable {
         final float step = calculateStep(0f, max, GRID);
         final float percent = graph.state.progressY();
         if (graph.state.previousStep < graph.state.currentStep) {
-            renderYText(canvas, r, step, graph.state.previousStep,  - (percent), percent);
-            renderYText(canvas, r, step, step, 1f - (percent), 1f - percent);
+            renderYText(canvas, r, step, step, 1f - percent, percent);
+            renderYText(canvas, r, step, step, 1f / percent, 1f - percent);
         } else {
-            renderYText(canvas, r, step, graph.state.previousStep, percent, percent);
-            renderYText(canvas, r, step, step, 1f + percent, 1f - percent);
+            renderYText(canvas, r, step, step, 1f + (percent), percent);
+            renderYText(canvas, r, step, step, percent, 1f - percent);
         }
+        // reverse renderYText(canvas, r, step, graph.state.previousStep, 1f - percent, percent);
+        //current
     }
 
     public void renderYLines(Canvas canvas, RectF r, float step, float offsetPercentage, float alphaPercentage) {
-        final float scaleY = 1f / (graph.state.getMaxChartStepped() / r.height());
+        final float scaleY = 1f / ((graph.state.getMaxChartStepped() * Math.max(offsetPercentage, 0.0000001f)) / r.height());
         final float offsetY = r.bottom;
 
         for (int i = 3; i < GRID; i = i + 3) {
-            final float y = (-step * (i + (offsetPercentage * 3f)) * scaleY) + offsetY;
+            final float y = (-step * i * scaleY) + offsetY;
             final int alpha = 255 - Math.round(255f * alphaPercentage);
             if (alpha != 0) {
                 linePaint.setAlpha(alpha);
@@ -94,23 +95,29 @@ class XYRender implements Themable {
 
     public void renderYText(Canvas canvas, RectF r, float step, float stepText, float offsetPercentage, float alphaPercentage) {
         final float offsetY = r.bottom;
-            final float scaleY = 1f / (graph.state.getMaxChartStepped() / r.height());
-            for (int i = 3; i < GRID; i = i + 3) {
-                final float y = (-step * (i + (offsetPercentage * 3f)) * scaleY) + offsetY;
-                final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
-                final int alpha = 255 - Math.round(255f * alphaPercentage);
-                if (alpha != 0) {
-                    valuePaint.setAlpha(alpha);
-                    canvas.drawText(String.valueOf(i * (int) stepText), r.left, valueY, valuePaint);
+        final float scaleY = 1f / ((graph.state.getMaxChartStepped() * Math.max(offsetPercentage, 0.0000001f)) / r.height());
+        for (int i = 3; i < GRID; i = i + 3) {
+            final float y = (-step * i * scaleY) + offsetY;
+            final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
+            final int alpha = 255 - Math.round(255f * alphaPercentage);
+            if (alpha != 0) {
+                valuePaint.setAlpha(alpha);
+                int key = i * (int) stepText;
+                String value = sparseValues.get(key);
+                if (value == null) {
+                    value = String.valueOf(key);
+                    sparseDates.put(key, value);
                 }
+                canvas.drawText(value, r.left, valueY, valuePaint);
             }
-            valuePaint.setAlpha(255);
-            linePaint.setAlpha(255);
+        }
+        valuePaint.setAlpha(255);
+        linePaint.setAlpha(255);
     }
 
     public void renderY0TextAndLine(Canvas canvas, RectF r) {
         final float text0Y = r.bottom - (valueHeight / 2f) + valuePaint.descent();
-        canvas.drawText("0", r.left, text0Y, valuePaint);
+        canvas.drawText(ZERO_Y, r.left, text0Y, valuePaint);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
     }
 
@@ -124,6 +131,7 @@ class XYRender implements Themable {
         final float dx = (-w * graph.range.start) * graph.getScaleRange();
         final float scaleX = graph.getScaleRange();
 
+        //magic and need to create better solution
         final float multi = Range.RANGE_MULTI * 2f;
         final float blockCount = count * multi;
         final float blockW = w / blockCount;
@@ -151,8 +159,12 @@ class XYRender implements Themable {
                 if ((right < visibleBound.left) || (left > visibleBound.right)) {
                     continue;
                 }
-                //canvas.drawRect(x - dateWidth / 2, chartBound.top, x + dateWidth /2, chartBound.bottom, linePaint);
-                canvas.drawText(graph.getXDate(index), x, chartBound.centerY() + valueHeight / 2f, datePaint);
+                String date = sparseDates.get(index);
+                if (date == null) {
+                    date = graph.getXDate(index);
+                    sparseDates.put(index, date);
+                }
+                canvas.drawText(date, x, chartBound.centerY() + valueHeight / 2f, datePaint);
             }
         }
     }
@@ -185,4 +197,5 @@ class XYRender implements Themable {
     }
 
     public static final int GRID = 18;
+    public static final String ZERO_Y = "0";
 }

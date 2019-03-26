@@ -113,7 +113,7 @@ public class Graph {
         }
         int lower = LineData.getLowerIndex(range.start, dates.length - 1);
         int upper =  LineData.getUpperIndex(range.end, dates.length - 1);
-        int index = (int) (Math.floor(x - (-r.width() * range.start) * getScaleRange()) / (getScaleRange() * sectionWidth(r.width())));
+        int index = (int) (Math.ceil(x - (-r.width() * range.start) * getScaleRange()) / (getScaleRange() * sectionWidth(r.width())));
         if (index < lower) {
             return lower;
         }

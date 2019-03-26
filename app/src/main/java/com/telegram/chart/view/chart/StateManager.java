@@ -10,7 +10,7 @@ public class StateManager {
     public State chart;
     public State preview;
     public boolean[] visible;
-    public long executedYTime = 0;
+    public long executedYTime = ANIMATION_DURATION_LONG;
 
 
     public long durationY = ANIMATION_DURATION_LONG;
@@ -242,8 +242,6 @@ public class StateManager {
                 executedYTime = durationY;
             }
 
-
-
             if (executedYTime == durationY) {
                 previousStep = currentStep;
             }
@@ -251,7 +249,7 @@ public class StateManager {
     }
 
     public float progressY() {
-        return Math.min(1f, 1f - (executedYTime / (float) durationY));
+        return Math.min(1f, executedYTime / (float) durationY);
     }
 
     public void resetYAnimation() {

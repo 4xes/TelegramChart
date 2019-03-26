@@ -8,7 +8,7 @@ import java.util.TimeZone;
 public class DateUtils {
 	public static String INFO_FORMAT = "EEE, MMM d";
 	public static String X_FORMAT = "MMM d";
-	public static int XMAX_LENGTH = X_FORMAT.length() + 1;
+	public static String XMAX = "MMM dd";
 	private static SimpleDateFormat INFO_DATE_FORMAT = new SimpleDateFormat(INFO_FORMAT, Locale.ENGLISH);
 	private static SimpleDateFormat X_DATE_FORMAT = new SimpleDateFormat(X_FORMAT, Locale.ENGLISH);
 	private static Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
