@@ -75,8 +75,6 @@ class XYRender implements Themable {
             renderYText(canvas, r, step, step, 1f + (percent), percent);
             renderYText(canvas, r, step, step, percent, 1f - percent);
         }
-        // reverse renderYText(canvas, r, step, graph.state.previousStep, 1f - percent, percent);
-        //current
     }
 
     public void renderYLines(Canvas canvas, RectF r, float step, float offsetPercentage, float alphaPercentage) {
