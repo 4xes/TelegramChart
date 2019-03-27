@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="394px" height="130px" viewBox="0 0 394 130" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.2 (67145) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-16.7%" y="-16.7%" width="133.3%" height="133.3%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <rect id="path-2" x="0" y="0" width="72" height="72" rx="8"></rect>
+        <rect id="path-4" x="0" y="0" width="108" height="108"></rect>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="group" filter="url(#filter-1)" transform="translate(26.000000, 33.000000)">
+            <mask id="mask-3" fill="white">
+                <use xlink:href="#path-2"></use>
+            </mask>
+            <g id="mask-rounded-square"></g>
+            <g id="adaptive-icon" mask="url(#mask-3)">
+                <g transform="translate(-18.000000, -18.000000)">
+                    <g>
+                        <g id="background" fill="#2196F3">
+                            <rect id="base" x="0" y="0" width="108" height="108"></rect>
+                        </g>
+                        <g id="foregraund">
+                            <mask id="mask-5" fill="white">
+                                <use xlink:href="#path-4"></use>
+                            </mask>
+                            <use id="base" fill="#2196F3" xlink:href="#path-4"></use>
+                            <g id="Group" mask="url(#mask-5)" fill="#FFFFFF">
+                                <g transform="translate(10.000000, 40.000000)" id="Path">
+                                    <path d="M-5.33007919,72.3330501 C-10.1729806,72.3330501 -14.0979735,68.288162 -14.0979735,63.4958935 C-14.0979735,58.703625 -10.177134,54.6628434 -5.33007919,54.6628434 C-3.38882656,54.6628434 34.0545332,54.6628434 107,54.6628434 L107,49 C34.3502362,49 -3.09450802,49 -5.33423262,49 C-13.4334245,49 -20,55.4923534 -20,63.5 C-20,71.5076466 -13.4334245,78 -5.33423262,78 C0.311665551,78 37.7564098,78 107,78 L107,72.3330501 C35.0428344,72.3330501 -2.40052536,72.3330501 -5.33007919,72.3330501 Z" transform="translate(43.500000, 63.500000) rotate(90.000000) translate(-43.500000, -63.500000) "></path>
+                                    <path d="M58.6699208,69.3330501 C53.8270194,69.3330501 49.9020265,65.288162 49.9020265,60.4958935 C49.9020265,55.703625 53.822866,51.6628434 58.6699208,51.6628434 C60.6111734,51.6628434 74.7211998,51.6628434 101,51.6628434 L101,46 C75.0169028,46 60.905492,46 58.6657674,46 C50.5665755,46 44,52.4923534 44,60.5 C44,68.5076466 50.5665755,75 58.6657674,75 C64.3116656,75 78.4230764,75 101,75 L101,69.3330501 C75.709501,69.3330501 61.5994746,69.3330501 58.6699208,69.3330501 Z" transform="translate(72.500000, 60.500000) rotate(90.000000) translate(-72.500000, -60.500000) "></path>
+                                    <path d="M0.669920809,69.3330501 C-4.17298057,69.3330501 -8.09797354,65.288162 -8.09797354,60.4958935 C-8.09797354,55.703625 -4.177134,51.6628434 0.669920809,51.6628434 C2.61117344,51.6628434 16.7211998,51.6628434 43,51.6628434 L43,46 C17.0169028,46 2.90549198,46 0.665767377,46 C-7.43342446,46 -14,52.4923534 -14,60.5 C-14,68.5076466 -7.43342446,75 0.665767377,75 C6.31166555,75 20.4230764,75 43,75 L43,69.3330501 C17.709501,69.3330501 3.59947464,69.3330501 0.669920809,69.3330501 Z" transform="translate(14.500000, 60.500000) rotate(90.000000) translate(-14.500000, -60.500000) "></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <text id="Telegram-Coding-Cont" font-family="Roboto-Regular, Roboto" font-size="24" font-weight="normal" letter-spacing="-0.207999974" fill="#000000">
+            <tspan x="107" y="78">Telegram Coding Contest</tspan>
+        </text>
+    </g>
+</svg>
