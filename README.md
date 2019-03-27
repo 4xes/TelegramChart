@@ -4,6 +4,6 @@
 A simple solution on Canvas, using drawing via ```canvas.drawPaths()```.
 You can download demo from this [link](/app/release/app.apk?raw=true).
 
-<img src="/images/preview.gif?raw=true" width=300 height=620 alt="Demo">
-<img src="/images/chart_day.jpg?raw=true" width=300 height=620 alt="Demo">
-<img src="/images/chart_night.jpg?raw=true" width=300 height=620 alt="Demo">
+<img src="/images/demo.gif?raw=true" width=300 height=620 alt="Demo">
+<img src="/images/screen_day.jpg?raw=true" width=300 height=620 alt="Demo">
+<img src="/images/screen_night.jpg?raw=true" width=300 height=620 alt="Demo">
