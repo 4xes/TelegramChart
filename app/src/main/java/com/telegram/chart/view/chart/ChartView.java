@@ -104,9 +104,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            getParent().requestDisallowInterceptTouchEvent(true);
-        }
+//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//            getParent().requestDisallowInterceptTouchEvent(true);
+//        }
         if (lineRenders.size() > 0) {
             int touchIndex = graph.getIndex(x, bound);
             if (touchIndex != selectIndex) {
@@ -192,9 +192,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     }
 
     public void onSubscribe() {
-        if (animator != null) {
-            onDescribe();
-        }
+        onDescribe();
         if (animator == null) {
             animator = new TimeAnimator();
             animator.setTimeListener(this);
@@ -215,10 +213,12 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     }
 
     public void onDescribe() {
-        animator.cancel();
-        animator.setTimeListener(null);
-        animator.removeAllListeners();
-        animator = null;
+        if (animator != null) {
+            animator.cancel();
+            animator.setTimeListener(null);
+            animator.removeAllListeners();
+            animator = null;
+        }
     }
 
     @Override
