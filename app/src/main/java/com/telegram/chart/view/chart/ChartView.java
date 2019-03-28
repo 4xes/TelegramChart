@@ -94,7 +94,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         visibleBound.set(0, 0, getWidth(), getHeight());
         chartBound.set(bound);
         datesBound.set(bound);
-        datesBound.top = bound.bottom - pxFromDp(16f);
+        datesBound.top = bound.bottom - pxFromDp(28f);
         chartBound.bottom = datesBound.top;
         chartBound.inset(horizontalPadding, 0f);
 
@@ -143,11 +143,6 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
             render.render(canvas, chartBound);
         }
         canvas.restoreToCount(save);
-        if (selectIndex != NONE_INDEX) {
-            for (LineRender render: lineRenders) {
-                render.renderCircle(canvas, selectIndex, chartBound);
-            }
-        }
 
         if (hasContent) {
             if (xyRender != null) {
@@ -161,6 +156,12 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         }
         if (xyRender != null) {
             xyRender.renderY0TextAndLine(canvas,chartBound);
+        }
+
+        if (selectIndex != NONE_INDEX) {
+            for (LineRender render: lineRenders) {
+                render.renderCircle(canvas, selectIndex, chartBound);
+            }
         }
 
     }
