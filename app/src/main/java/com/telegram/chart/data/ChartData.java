@@ -2,9 +2,9 @@ package com.telegram.chart.data;
 
 public class ChartData {
     private final LineData[] lines;
-    private final long[] x;
+    private final int[] x;
 
-    public ChartData(LineData[] lines, long[] x) {
+    public ChartData(LineData[] lines, int[] x) {
         this.lines = lines;
         this.x = x;
     }
@@ -13,11 +13,11 @@ public class ChartData {
         return lines;
     }
 
-    public long[] getX() {
+    public int[] getX() {
         return x;
     }
 
-    public long getY(int num) {
+    public int getY(int num) {
         return x[num];
     }
 }

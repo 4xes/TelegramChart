@@ -12,10 +12,10 @@ import java.util.ArrayList;
 public class Graph {
     public final StateManager state;
     public final LineData[] lines;
-    public final long[] dates;
+    public final int[] dates;
     public Range range = new Range();
 
-    public long[] getY(int id) {
+    public int[] getY(int id) {
         return lines[id].getY();
     }
 
@@ -23,7 +23,7 @@ public class Graph {
         return lines[index].getName();
     }
 
-    public long getDate(int index) {
+    public int getDate(int index) {
         return dates[index];
     }
 
@@ -45,11 +45,11 @@ public class Graph {
     }
 
     public String getInfoDate(int index) {
-        return DateUtils.getInfoDate(getDate(index));
+        return DateUtils.getInfoDate(getDate(index) * 1000L);
     }
 
     public String getXDate(int index) {
-        return DateUtils.getDateX(getDate(index));
+        return DateUtils.getDateX(getDate(index) * 1000L);
     }
 
     public String getValue(int id, int index) {

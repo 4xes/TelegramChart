@@ -3,15 +3,15 @@ package com.telegram.chart.data;
 public class LineData {
     private final String name;
     private final int color;
-    private final long[] y;
-    private final long maxY;
-    private final long minY;
+    private final int[] y;
+    private final int maxY;
+    private final int minY;
 
     int tempLowerId = -1;
     int tempUpperId = -1;
-    long tempRangeMaxY = Long.MIN_VALUE;
+    int tempRangeMaxY = Integer.MIN_VALUE;
 
-    public LineData(String name, int color, long[] points, long maxY, long minY) {
+    public LineData(String name, int color, int[] points, int maxY, int minY) {
         this.name = name;
         this.color = color;
         this.y = points;
@@ -27,19 +27,19 @@ public class LineData {
         return color;
     }
 
-    public long[] getY() {
+    public int[] getY() {
         return y;
     }
 
-    public long getY(int num) {
+    public int getY(int num) {
         return y[num];
     }
 
-    public long getMaxY() {
+    public int getMaxY() {
         return maxY;
     }
 
-    public long getMinY() {
+    public int getMinY() {
         return minY;
     }
 
@@ -51,11 +51,11 @@ public class LineData {
         return (int) Math.floor(upper * (float)(maxIndex));
     }
 
-    public long getMaxY(float lower, float upper) {
+    public int getMaxY(float lower, float upper) {
         int loverId = LineData.getLowerIndex(lower, y.length - 1);
         int upperId = LineData.getUpperIndex(upper, y.length - 1);
 
-        if (tempRangeMaxY != Long.MIN_VALUE) {
+        if (tempRangeMaxY != Integer.MIN_VALUE) {
             if (tempLowerId == loverId && tempUpperId == upperId) {
                 return tempRangeMaxY;
             }
@@ -63,7 +63,7 @@ public class LineData {
         if (loverId == upperId) {
             return y[loverId];
         }
-        long max = y[loverId];
+        int max = y[loverId];
         for (int i = loverId + 1; i <= upperId; i++) {
             if (max < y[i]) {
                 max = y[i];

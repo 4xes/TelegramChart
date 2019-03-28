@@ -23,7 +23,7 @@ class LineDataJsonMapper implements Mapper<List<ChartData>,JSONArray> {
             final JSONObject colors = jsonObject.getJSONObject(COLORS);
 
             final ArrayList<LineData> lines = new ArrayList<>();
-            long[] xPoints = new long[0];
+            int[] xPoints = new int[0];
 
             for (int ci = 0; ci < columns.length(); ci++) {
                 final JSONArray columnJson = columns.getJSONArray(ci);
@@ -33,11 +33,11 @@ class LineDataJsonMapper implements Mapper<List<ChartData>,JSONArray> {
                 final String key = columnJson.getString(0);
                 switch (types.getString(key)) {
                     case TYPE_LINE:
-                        final long[] yPoints = new long[columnJson.length() - 1];
-                        long minY = Long.MAX_VALUE;
-                        long maxY = Long.MIN_VALUE;
+                        final int[] yPoints = new int[columnJson.length() - 1];
+                        int minY = Integer.MAX_VALUE;
+                        int maxY = Integer.MIN_VALUE;
                         for (int vi = 1; vi < columnJson.length(); vi++) {
-                            long point = columnJson.getLong(vi);
+                            int point = columnJson.getInt(vi);
                             if (point < minY) {
                                 minY = point;
                             }
@@ -55,9 +55,9 @@ class LineDataJsonMapper implements Mapper<List<ChartData>,JSONArray> {
                         ));
                         break;
                     case TYPE_X:
-                        xPoints = new long[columnJson.length() - 1];
+                        xPoints = new int[columnJson.length() - 1];
                         for (int vi = 1; vi < columnJson.length(); vi++) {
-                            xPoints[vi - 1] = columnJson.getLong(vi);
+                            xPoints[vi - 1] = (int) (columnJson.getLong(vi) / 1000L);
                         }
                         break;
                 }
