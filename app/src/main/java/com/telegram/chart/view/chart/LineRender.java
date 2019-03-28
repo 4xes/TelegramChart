@@ -54,7 +54,7 @@ class LineRender implements Themable {
     }
 
     private void initPath() {
-        long[] y = graph.getY(id);
+        int[] y = graph.getY(id);
 
         if (y.length > 0) {
             path.moveTo(0, -y[0]);

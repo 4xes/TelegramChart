@@ -26,9 +26,9 @@ public class StateManager {
         this.visible = new boolean[graph.countLines()];
         Arrays.fill(visible, true);
 
-        long maxPreview = getMaxPreview();
-        long maxChart = getMaxChartStepped();
-        long newCurrent = getMaxChart();
+        int maxPreview = getMaxPreview();
+        int maxChart = getMaxChartStepped();
+        int newCurrent = getMaxChart();
         float step = step(newCurrent);
 
         previousMaxY = newCurrent;
@@ -64,8 +64,8 @@ public class StateManager {
         setAnimationStart();
     }
 
-    public long getMaxPreview() {
-        long max = Long.MIN_VALUE;
+    public int getMaxPreview() {
+        int max = Integer.MIN_VALUE;
 
         for (int id = 0; id < graph.countLines(); id++) {
             if (visible[id]) {
@@ -78,13 +78,13 @@ public class StateManager {
         return max;
     }
 
-    public long getMaxChart() {
-        long max = Long.MIN_VALUE;
+    public int getMaxChart() {
+        int max = Integer.MIN_VALUE;
 
         for (int id = 0; id < graph.countLines(); id++) {
             if (visible[id]) {
                 final LineData line = graph.lines[id];
-                final long maxLine = line.getMaxY(graph.range.start, graph.range.end);
+                final int maxLine = line.getMaxY(graph.range.start, graph.range.end);
                 if (max < maxLine) {
                     max = maxLine;
                 }
@@ -93,13 +93,13 @@ public class StateManager {
         return max;
     }
 
-    public long getMaxChartStepped() {
+    public int getMaxChartStepped() {
         return toMaxChartStepped(getMaxChart());
     }
 
-    public static long toMaxChartStepped(long maxChart) {
-        long max = maxChart;
-        if (max != Long.MIN_VALUE) {
+    public static int toMaxChartStepped(int maxChart) {
+        int max = maxChart;
+        if (max != Integer.MIN_VALUE) {
             float step = XYRender.calculateStep(0, max, XYRender.GRID);
             max = (int) Math.floor(step * (XYRender.GRID));
         }
@@ -110,9 +110,9 @@ public class StateManager {
         return XYRender.calculateStep(0, maxChart, XYRender.GRID);
     }
 
-    public long getMaxChartStepped(int id) {
-        long max = graph.lines[id].getMaxY(graph.range.start, graph.range.end);
-        if (max != Long.MIN_VALUE) {
+    public int getMaxChartStepped(int id) {
+        int max = graph.lines[id].getMaxY(graph.range.start, graph.range.end);
+        if (max != Integer.MIN_VALUE) {
             float step = XYRender.calculateStep(0, max, XYRender.GRID);
             max = (int) Math.floor(step * (XYRender.GRID));
         }
@@ -139,10 +139,10 @@ public class StateManager {
     public void updateRange() {
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
-        long newCurrent = getMaxChart();
+        int newCurrent = getMaxChart();
         updateCurrentAnimation(newCurrent);
 
-        long maxChart = toMaxChartStepped(newCurrent);
+        int maxChart = toMaxChartStepped(newCurrent);
         for (int id = 0; id < graph.countLines(); id++) {
             if (visible[id]) {
                 chart.yMaxStart[id] = chart.yMaxCurrent[id];
@@ -153,7 +153,7 @@ public class StateManager {
     }
 
 
-    public void updateCurrentAnimation(long maxChart) {
+    public void updateCurrentAnimation(int maxChart) {
         float step = step(maxChart);
         if (currentStep != step) {
             previousStep = currentStep;
@@ -170,14 +170,14 @@ public class StateManager {
         preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
         preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
 
-        long maxPreview = getMaxPreview();
-        long maxChart = getMaxChartStepped();
+        int maxPreview = getMaxPreview();
+        int maxChart = getMaxChartStepped();
 
-        if (maxPreview == Long.MIN_VALUE) {
+        if (maxPreview == Integer.MIN_VALUE) {
             maxPreview = graph.lines[targetId].getMaxY();
         }
 
-        if (maxChart== Long.MIN_VALUE) {
+        if (maxChart== Integer.MIN_VALUE) {
             maxChart = getMaxChartStepped(targetId);
         }
 
@@ -208,10 +208,10 @@ public class StateManager {
         }
 
         chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
-        chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 4L;
+        chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 4;
 
 
-        long newCurrent = getMaxChart();
+        int newCurrent = getMaxChart();
         updateCurrentAnimation(newCurrent);
     }
 
@@ -262,9 +262,9 @@ public class StateManager {
 
     public class State {
         private final int size;
-        public final long[] yMaxStart;
-        public final long[] yMaxCurrent;
-        public final long[] yMaxEnd;
+        public final int[] yMaxStart;
+        public final int[] yMaxCurrent;
+        public final int[] yMaxEnd;
         public final float[] multiStart;
         public final float[] multiCurrent;
         public final float[] multiEnd;
@@ -323,7 +323,7 @@ public class StateManager {
                 } else {
                     for (int id = 0; id < size; id++) {
                         float delta = (float) executedScaleTime / durationScale;
-                        yMaxCurrent[id] = yMaxStart[id] + (long) ((yMaxEnd[id] - yMaxStart[id]) * delta);
+                        yMaxCurrent[id] = yMaxStart[id] + (int) ((yMaxEnd[id] - yMaxStart[id]) * delta);
                         if (yMaxStart[id] < yMaxEnd[id]) {
                             yMaxCurrent[id] = Math.min(yMaxCurrent[id], yMaxEnd[id]);
                         } else {
@@ -344,9 +344,9 @@ public class StateManager {
 
         public State(int countLines) {
             size = countLines;
-            yMaxStart = new long[size];
-            yMaxCurrent = new long[size];
-            yMaxEnd = new long[size];
+            yMaxStart = new int[size];
+            yMaxCurrent = new int[size];
+            yMaxEnd = new int[size];
             alphaStart = new float[size];
             alphaCurrent = new float[size];
             alphaEnd = new float[size];
