@@ -42,12 +42,6 @@ public class InfoView extends BaseMeasureView implements Themable, ChartView.OnS
         init();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public InfoView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }

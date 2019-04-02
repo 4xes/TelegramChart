@@ -15,20 +15,28 @@ class LineRender implements Themable {
     private final int id;
     private final Graph graph;
     private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintInsideCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final float[] matrix = new float[4];
-    private final PointF point = new PointF();
+    public final float[] matrixArray = new float[4];
+    public final PointF point = new PointF();
     private final float outerRadius = pxFromDp(7);
     private final float innerRadius = pxFromDp(3);
     public final float[] points;
-    public final float[] transitionPoints;
+    public final float[] drawPoints;
+    public final float[] lines;
+    public final float[] drawLines;
+    public final Matrix matrix = new Matrix();
 
     public LineRender(int id, Graph data) {
         this.id = id;
         this.graph = data;
-        points = new float[graph.maxPoints()];
-        transitionPoints = new float[graph.maxPoints()];
+        final int pointsLength = graph.dates.length * 2;
+        final int linePointsLength = 4 + (graph.dates.length - 2) * 4;
+        lines = new float[linePointsLength];
+        drawLines = new float[linePointsLength];
+        points = new float[pointsLength];
+        drawPoints = new float[pointsLength];
         initPaints();
         initPoints();
     }
@@ -42,29 +50,39 @@ class LineRender implements Themable {
                 final int iY0 = i * 4 + 1;
                 final int iX1 = i * 4 + 2;
                 final int iY1 = i * 4 + 3;
-                points[iX0] = i;
-                points[iY0] = -y[i];
-                points[iX1] = (i + 1) ;
-                points[iY1] = -y[i + 1];
+                lines[iX0] = i;
+                lines[iY0] = -y[i];
+                lines[iX1] = (i + 1) ;
+                lines[iY1] = -y[i + 1];
+
+                points[i * 2] = i;
+                points[(i * 2) + 1] = -y[i];
             }
+            final int lastI = (y.length - 1) * 2;
+            points[lastI] = y.length - 1;
+            points[lastI + 1] = -y[y.length - 1];
         }
     }
 
     private void initPaints() {
-        paintLine.setColor(graph.getColor(id));
+        final int color = graph.getColor(id);
+        final float stroke = pxFromDp(1f);
         paintLine.setStyle(Paint.Style.STROKE);
-        paintLine.setStrokeWidth(pxFromDp(1f));
-        //paintLine.setStrokeJoin(Paint.Join.ROUND);
-        paintLine.setStrokeCap(Paint.Cap.SQUARE);
-//        paintLine.setPathEffect(new CornerPathEffect(pxFromDp(1f)));
-
+        paintLine.setColor(color);
+        paintLine.setStrokeWidth(stroke);
+        paintLine.setStrokeCap(Paint.Cap.BUTT);
+        paintPoint.setStyle(Paint.Style.STROKE);
+        paintPoint.setColor(color);
+        paintPoint.setStrokeCap(Paint.Cap.ROUND);
+        paintPoint.setStrokeWidth(stroke);
         paintCircle.setStyle(Paint.Style.FILL);
-        paintCircle.setColor(graph.getColor(id));
+        paintCircle.setColor(color);
         paintInsideCircle.setStyle(Paint.Style.FILL);
     }
 
     public void setLineWidth(float strokeWidth) {
         paintLine.setStrokeWidth(strokeWidth);
+        paintPoint.setStrokeWidth(strokeWidth);
     }
 
     @Override
@@ -72,38 +90,32 @@ class LineRender implements Themable {
         paintInsideCircle.setColor(theme.getBackgroundWindowColor());
     }
 
-    public void calculatePoints(RectF r, int lower, int upper) {
-        graph.matrix(id, r, matrix);
-        for (int i = lower; i < upper; i = i + 2) {
-            final int iY0 = i + 1;
-            transitionPoints[i] = points[i] * matrix[SCALE_X] + matrix[OFFSET_X];
-            transitionPoints[iY0] = points[iY0] * matrix[SCALE_Y] + matrix[OFFSET_Y];
-        }
+    public void recalculateLines(RectF r, int lower, int upper) {
+        graph.matrix(id, r, matrixArray);
+        matrix.setScale(matrixArray[SCALE_X], matrixArray[SCALE_Y]);
+        matrix.postTranslate(matrixArray[OFFSET_X], matrixArray[OFFSET_Y]);
+        matrix.mapPoints(drawLines, lower * 4, lines, lower * 4, (upper - lower) * 2);
+        matrix.mapPoints(drawPoints, lower * 2, points, lower * 2, (upper - lower) + 1);
     }
 
     public void calculatePreviewPoints(RectF r) {
-        graph.matrixPreview(id, r, matrix);
-        for (int i = 0; i < (graph.getY(id).length - 1) * 4; i = i + 2) {
-            final int iY0 = i + 1;
-            transitionPoints[i] = (float) Math.ceil(points[i] * matrix[SCALE_X] + matrix[OFFSET_X]);
-            transitionPoints[iY0] = (float) Math.ceil(points[iY0] * matrix[SCALE_Y] + matrix[OFFSET_Y]);
-        }
+        graph.matrixPreview(id, r, matrixArray);
+        matrix.setScale(matrixArray[SCALE_X], matrixArray[SCALE_Y]);
+        matrix.postTranslate(matrixArray[OFFSET_X], matrixArray[OFFSET_Y]);
+        matrix.mapPoints(drawLines, lines);
     }
 
     public void render(Canvas canvas, RectF r) {
-        int lowerId = LineData.getLowerIndex(graph.range.start, graph.getY(id).length - 1) * 4;
-        int upperId = LineData.getUpperIndex(graph.range.end, graph.getY(id).length - 1) * 4;
+        int lowerId = LineData.getLowerIndex(graph.range.start, graph.getY(id).length - 1);
+        int upperId = LineData.getUpperIndex(graph.range.end, graph.getY(id).length - 1);
         float currentAlpha = graph.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
-            calculatePoints(r, lowerId, upperId);
+            recalculateLines(r, lowerId, upperId);
             int newAlpha = (int)(currentAlpha * 255);
             paintLine.setAlpha(newAlpha);
-            if (upperId - lowerId < 80) {
-                paintLine.setStrokeCap(Paint.Cap.ROUND);
-            } else {
-                paintLine.setStrokeCap(Paint.Cap.SQUARE);
-            }
-            canvas.drawLines(transitionPoints, lowerId, upperId - lowerId, paintLine);
+            paintPoint.setAlpha(newAlpha);
+            canvas.drawLines(drawLines, lowerId * 4, (upperId - lowerId) * 4, paintLine);
+            canvas.drawPoints(drawPoints, lowerId * 2, (upperId - lowerId) * 2 + 2, paintPoint);
         }
     }
 
@@ -113,7 +125,7 @@ class LineRender implements Themable {
             calculatePreviewPoints(r);
             int newAlpha = (int)(currentAlpha * 255);
             paintLine.setAlpha(newAlpha);
-            canvas.drawLines(transitionPoints, paintLine);
+            canvas.drawLines(drawLines, paintLine);
         }
     }
 

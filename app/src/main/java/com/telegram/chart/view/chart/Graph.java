@@ -15,14 +15,6 @@ public class Graph {
     public final int[] dates;
     public Range range = new Range();
 
-    public int maxPoints() {
-        int maxSize = 0;
-        for (LineData line : lines) {
-            maxSize = Math.max(maxSize, 4 + (line.getY().length - 2) * 4);
-        }
-        return maxSize;
-    }
-
     public int[] getY(int id) {
         return lines[id].getY();
     }
