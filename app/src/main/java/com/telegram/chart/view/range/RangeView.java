@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.telegram.chart.BuildConfig;
+import com.telegram.chart.view.chart.PreviewChartView;
+import com.telegram.chart.view.chart.Range;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.chart.Graph;
@@ -26,6 +28,7 @@ public class RangeView extends BaseRangeView implements Themable, Graph.Invalida
     private float selectVerticalWidth = pxFromDp(1f);
     private float selectHorizontalWidth = pxFromDp(4f);
     boolean needInvalidate = true;
+    public static final String TAG = RangeView.class.getSimpleName();
 
     public RangeView(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -69,6 +72,9 @@ public class RangeView extends BaseRangeView implements Themable, Graph.Invalida
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "onDraw");
+        }
         final int saveRange = canvas.save();
         clipSupport(canvas, selectedRange);
         canvas.drawRect(line, rangePaint);
