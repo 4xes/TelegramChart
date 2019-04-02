@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.chart.ChartView;
 import com.telegram.chart.view.chart.Graph;
 import com.telegram.chart.view.chart.InfoView;
-import com.telegram.chart.view.range.BaseRangeView;
 import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -60,7 +58,7 @@ public class MainActivity extends ThemeBaseActivity {
         for (int id = 0; id < graph.countLines(); id++) {
             AppCompatCheckBox checkBox = new AppCompatCheckBox(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
             int padding = getResources().getDimensionPixelOffset(R.dimen.normal);
@@ -71,13 +69,10 @@ public class MainActivity extends ThemeBaseActivity {
             checkBox.setTextColor(getCurrentTheme().getNameColor());
             checkBox.setChecked(true);
             checkBox.setTag(id);
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    graph.setVisible((int) buttonView.getTag(), isChecked);
-                    if (infoView.isShowing()) {
-                       infoView.invalidate();
-                    }
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                graph.setVisible((int) buttonView.getTag(), isChecked);
+                if (infoView.isShowing()) {
+                   infoView.invalidate();
                 }
             });
             CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(graph.getColor(id)));
@@ -149,13 +144,10 @@ public class MainActivity extends ThemeBaseActivity {
         previewChartView.setGraph(graph);
         rangeView.seGraph(graph);
         infoView.seGraph(graph);
-        rangeView.setOnRangeListener(new BaseRangeView.OnRangeListener() {
-            @Override
-            public void onChangeRange(Float start, Float end) {
-                chartView.resetIndex();
-                infoView.hideInfo();
-                graph.update(rangeView.getViewId(), start, end);
-            }
+        rangeView.setOnRangeListener((start, end) -> {
+            chartView.resetIndex();
+            infoView.hideInfo();
+            graph.update(rangeView.getViewId(), start, end);
         });
         chartView.setOnShowInfoListener(infoView);
     }
@@ -164,14 +156,11 @@ public class MainActivity extends ThemeBaseActivity {
         ChartsInteractor interactor = new DataInteractorImpl(getApplicationContext());
         try {
             final List<ChartData> chart = interactor.getCharts();
-            ll.post(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < chart.size(); i++) {
-                        renderChart(i + 1, chart.get(i));
-                    }
-                    applyTheme(getCurrentTheme());
+            ll.post(() -> {
+                for (int i = 0; i < chart.size(); i++) {
+                    renderChart(i + 1, chart.get(i));
                 }
+                applyTheme(getCurrentTheme());
             });
         } catch (Throwable throwable) {
             throwable.printStackTrace();
