@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.theme.Themable;
@@ -47,19 +48,21 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     public ChartView(Context context) {
         super(context);
+        init();
     }
 
     public ChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    private void init() {
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
     @Override
@@ -168,10 +171,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     @Override
     public void needInvalidate() {
-        if (BuildConfig.DEBUG) {
-            Log.d("ChartView", "needInvalidate");
-        }
-        invalidate();
+        postInvalidate();
     }
 
     public interface OnShowInfoListener {
