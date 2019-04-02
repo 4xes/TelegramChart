@@ -21,6 +21,7 @@ public class PreviewChartView extends BaseMeasureView implements Graph.Invalidat
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
     private List<LineRender> lineRenders = new ArrayList<>();
+    public static final String TAG = PreviewChartView.class.getSimpleName();
 
     public PreviewChartView(Context context) {
         super(context);
@@ -57,23 +58,18 @@ public class PreviewChartView extends BaseMeasureView implements Graph.Invalidat
 
     @Override
     public void needInvalidate() {
-        if (BuildConfig.DEBUG) {
-            Log.d("PreviewChartView", "needInvalidate");
-        }
-        //setDrawingCacheEnabled(false);
         invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        Log.e("invalidate", "invalidate preview");
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "onDraw");
+        }
         for (LineRender render: lineRenders) {
             render.renderPreview(canvas, chartBound);
         }
-
-        //setDrawingCacheEnabled(true);
     }
 
     @Override

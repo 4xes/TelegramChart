@@ -41,6 +41,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     private Theme theme;
     private Graph graph;
     private int selectIndex = NONE_INDEX;
+    public static final String TAG = ChartView.class.getSimpleName();
 
     public void setOnShowInfoListener(OnShowInfoListener onShowInfoListener) {
         this.onShowInfoListener = onShowInfoListener;
@@ -135,6 +136,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "onDraw");
+        }
         int save = canvas.save();
         canvas.clipRect(clipBound);
 
