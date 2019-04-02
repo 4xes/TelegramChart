@@ -92,6 +92,7 @@ class LineRender implements Themable {
 
     public void recalculateLines(RectF r, int lower, int upper) {
         graph.matrix(id, r, matrixArray);
+        matrix.reset();
         matrix.setScale(matrixArray[SCALE_X], matrixArray[SCALE_Y]);
         matrix.postTranslate(matrixArray[OFFSET_X], matrixArray[OFFSET_Y]);
         matrix.mapPoints(drawLines, lower * 4, lines, lower * 4, (upper - lower) * 2);
@@ -100,6 +101,7 @@ class LineRender implements Themable {
 
     public void calculatePreviewPoints(RectF r) {
         graph.matrixPreview(id, r, matrixArray);
+        matrix.reset();
         matrix.setScale(matrixArray[SCALE_X], matrixArray[SCALE_Y]);
         matrix.postTranslate(matrixArray[OFFSET_X], matrixArray[OFFSET_Y]);
         matrix.mapPoints(drawLines, lines);
