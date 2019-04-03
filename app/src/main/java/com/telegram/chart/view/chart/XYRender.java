@@ -9,6 +9,7 @@ import android.util.SparseArray;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.utils.DateUtils;
+import com.telegram.chart.view.utils.ViewUtils;
 
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
@@ -23,6 +24,9 @@ class XYRender implements Themable {
     private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valueHeight;
     private final float dateWidth;
+    public int lineColor;
+    public int textColor;
+    public int backgroundColor;
 
     public XYRender(Graph data) {
         this.graph = data;
@@ -46,9 +50,9 @@ class XYRender implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        linePaint.setColor(theme.getAxisColor());
-        valuePaint.setColor(theme.getAxisValueColor());
-        datePaint.setColor(theme.getAxisValueColor());
+        lineColor = theme.getAxisColor();
+        textColor = theme.getAxisValueColor();
+        backgroundColor = theme.getBackgroundWindowColor();
     }
 
     public void renderYLines(Canvas canvas, RectF r) {
@@ -56,11 +60,11 @@ class XYRender implements Themable {
         final float step = calculateStep(0f, max, GRID);
         final float percent = graph.state.progressY();
         if (graph.state.previousStep < graph.state.currentStep) {
-            renderYLines(canvas, r, step, 1f - percent, percent);
-            renderYLines(canvas, r, step,  1f / percent, 1f - percent);
+            renderYLines(canvas, r, step, 1f - percent, 1f - percent);
+            renderYLines(canvas, r, step,  1f / percent, percent);
         } else {
-            renderYLines(canvas, r, step, 1f + (percent), percent);
-            renderYLines(canvas, r, step,  percent, 1f - percent);
+            renderYLines(canvas, r, step, 1f + (percent), 1f - percent);
+            renderYLines(canvas, r, step,  percent, percent);
         }
     }
 
@@ -69,11 +73,11 @@ class XYRender implements Themable {
         final float step = calculateStep(0f, max, GRID);
         final float percent = graph.state.progressY();
         if (graph.state.previousStep < graph.state.currentStep) {
-            renderYText(canvas, r, step, step, 1f - percent, percent);
-            renderYText(canvas, r, step, step, 1f / percent, 1f - percent);
+            renderYText(canvas, r, step, step, 1f - percent, 1f - percent);
+            renderYText(canvas, r, step, step, 1f / percent, percent);
         } else {
-            renderYText(canvas, r, step, step, 1f + (percent), percent);
-            renderYText(canvas, r, step, step, percent, 1f - percent);
+            renderYText(canvas, r, step, step, 1f + (percent), 1f - percent);
+            renderYText(canvas, r, step, step, percent, percent);
         }
     }
 
@@ -83,9 +87,9 @@ class XYRender implements Themable {
 
         for (int i = 3; i < GRID; i = i + 3) {
             final float y = (-step * i * scaleY) + offsetY;
-            final int alpha = 255 - Math.round(255f * alphaPercentage);
-            if (alpha != 0) {
-                linePaint.setAlpha(alpha);
+            if (alphaPercentage != 0f) {
+                final int blendColor =  ViewUtils.blendARGB( backgroundColor, lineColor, alphaPercentage);
+                linePaint.setColor(blendColor);
                 canvas.drawLine(r.left, y, r.right, y, linePaint);
             }
         }
@@ -97,20 +101,18 @@ class XYRender implements Themable {
         for (int i = 3; i < GRID; i = i + 3) {
             final float y = (-step * i * scaleY) + offsetY;
             final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
-            final int alpha = 255 - Math.round(255f * alphaPercentage);
-            if (alpha != 0) {
-                valuePaint.setAlpha(alpha);
+            if (alphaPercentage != 0f) {
                 int key = i * (int) stepText;
                 String value = sparseValues.get(key);
                 if (value == null) {
                     value = String.valueOf(key);
                     sparseValues.put(key, value);
                 }
+                final int blendColor =  ViewUtils.blendARGB( backgroundColor, textColor, alphaPercentage);
+                valuePaint.setColor(blendColor);
                 canvas.drawText(value, r.left, valueY, valuePaint);
             }
         }
-        valuePaint.setAlpha(255);
-        linePaint.setAlpha(255);
     }
 
     public void renderY0TextAndLine(Canvas canvas, RectF r) {
@@ -148,9 +150,8 @@ class XYRender implements Themable {
         for (float i = startI; i <= count; i = i + dI) {
             float x = chartBound.left + (blockW * i) * scale + dx + blockW / 2;
 
-            final int alpha = Math.round(255f * Math.max(Math.min(scale - minScale, 1f), 0f));
-            if (alpha != 0) {
-                datePaint.setAlpha(alpha);
+            final float alphaPercentage = Math.max(Math.min(scale - minScale, 1f), 0f);
+            if (alphaPercentage != 0f) {
                 int index = graph.getIndex(x, chartBound);
                 float left = x - dateWidth / 2;
                 float right = x + dateWidth / 2;
@@ -162,6 +163,8 @@ class XYRender implements Themable {
                     date = graph.getXDate(index);
                     sparseDates.put(index, date);
                 }
+                final int blendColor =  ViewUtils.blendARGB( backgroundColor, textColor, alphaPercentage);
+                datePaint.setColor(blendColor);
                 canvas.drawText(date, x, chartBound.centerY() + valueHeight / 2f, datePaint);
             }
         }

@@ -9,19 +9,22 @@ import android.util.Log;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class PreviewChartView extends BaseMeasureView implements Graph.InvalidateListener {
+public class PreviewChartView extends BaseMeasureView implements Themable, Graph.InvalidateListener {
 
     private final RectF chartBound = new RectF();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
     private List<LineRender> lineRenders = new ArrayList<>();
     public static final String TAG = PreviewChartView.class.getSimpleName();
+    private Theme theme;
 
     public PreviewChartView(Context context) {
         super(context);
@@ -46,6 +49,18 @@ public class PreviewChartView extends BaseMeasureView implements Graph.Invalidat
         lineRenders.clear();
         lineRenders = LineRender.createListRenderPreview(graph);
         graph.addListener(this);
+        if (theme != null){
+            applyTheme(theme);
+        }
+        invalidate();
+    }
+
+    @Override
+    public void applyTheme(Theme theme) {
+        this.theme = theme;
+        for (LineRender renderer: lineRenders) {
+            renderer.applyTheme(theme);
+        }
         invalidate();
     }
 

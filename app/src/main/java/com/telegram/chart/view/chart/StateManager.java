@@ -206,7 +206,6 @@ public class StateManager {
                 }
             }
         }
-
         chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
         chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 4;
 

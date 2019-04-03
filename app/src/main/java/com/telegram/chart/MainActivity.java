@@ -134,6 +134,7 @@ public class MainActivity extends ThemeBaseActivity {
         themables.add(infoView);
         themables.add(chartView);
         themables.add(rangeView);
+        themables.add(previewChartView);
         ll.addView(chartWrapper);
         ll.addView(previewWrapper);
         renderCheckboxes(graph, infoView);

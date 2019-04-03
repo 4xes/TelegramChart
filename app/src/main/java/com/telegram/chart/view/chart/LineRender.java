@@ -5,9 +5,12 @@ import android.graphics.*;
 import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
+import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.core.graphics.ColorUtils;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
@@ -27,10 +30,13 @@ class LineRender implements Themable {
     public final float[] lines;
     public final float[] drawLines;
     public final Matrix matrix = new Matrix();
+    public final int lineColor;
+    public int backgroundColor;
 
     public LineRender(int id, Graph data) {
         this.id = id;
         this.graph = data;
+        lineColor = graph.getColor(id);
         final int pointsLength = graph.dates.length * 2;
         final int linePointsLength = 4 + (graph.dates.length - 2) * 4;
         lines = new float[linePointsLength];
@@ -65,18 +71,17 @@ class LineRender implements Themable {
     }
 
     private void initPaints() {
-        final int color = graph.getColor(id);
         final float stroke = pxFromDp(1f);
         paintLine.setStyle(Paint.Style.STROKE);
-        paintLine.setColor(color);
+        paintLine.setColor(lineColor);
         paintLine.setStrokeWidth(stroke);
         paintLine.setStrokeCap(Paint.Cap.BUTT);
         paintPoint.setStyle(Paint.Style.STROKE);
-        paintPoint.setColor(color);
+        paintPoint.setColor(lineColor);
         paintPoint.setStrokeCap(Paint.Cap.ROUND);
         paintPoint.setStrokeWidth(stroke);
         paintCircle.setStyle(Paint.Style.FILL);
-        paintCircle.setColor(color);
+        paintCircle.setColor(lineColor);
         paintInsideCircle.setStyle(Paint.Style.FILL);
     }
 
@@ -87,7 +92,8 @@ class LineRender implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        paintInsideCircle.setColor(theme.getBackgroundWindowColor());
+        backgroundColor = theme.getBackgroundWindowColor();
+        paintInsideCircle.setColor(backgroundColor);
     }
 
     public void recalculateLines(RectF r, int lower, int upper) {
@@ -113,9 +119,9 @@ class LineRender implements Themable {
         float currentAlpha = graph.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
             recalculateLines(r, lowerId, upperId);
-            int newAlpha = (int)(currentAlpha * 255);
-            paintLine.setAlpha(newAlpha);
-            paintPoint.setAlpha(newAlpha);
+            final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
+            paintLine.setColor(blendColor);
+            paintPoint.setColor(blendColor);
             canvas.drawLines(drawLines, lowerId * 4, (upperId - lowerId) * 4, paintLine);
             canvas.drawPoints(drawPoints, lowerId * 2, (upperId - lowerId) * 2 + 2, paintPoint);
         }
@@ -125,15 +131,18 @@ class LineRender implements Themable {
         float currentAlpha = graph.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
             calculatePreviewPoints(r);
-            int newAlpha = (int)(currentAlpha * 255);
-            paintLine.setAlpha(newAlpha);
+            final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
+            paintLine.setColor(blendColor);
             canvas.drawLines(drawLines, paintLine);
         }
     }
 
     public void renderCircle(Canvas canvas, int index, RectF r) {
-        if (graph.state.visible[id]) {
+        float currentAlpha = graph.state.chart.alphaCurrent[id];
+        if (currentAlpha != 0f) {
             graph.calculatePoint(id, index, r, point);
+            final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
+            paintCircle.setColor(blendColor);
             canvas.drawCircle(point.x, point.y, outerRadius, paintCircle);
             canvas.drawCircle(point.x, point.y, innerRadius, paintInsideCircle);
         }
@@ -143,7 +152,6 @@ class LineRender implements Themable {
     private final int SCALE_Y = 1;
     private final int OFFSET_X = 2;
     private final int OFFSET_Y = 3;
-
 
     public static List<LineRender> createListRender(Graph graph) {
         List<LineRender> lineRenders = new ArrayList<>();
