@@ -38,7 +38,6 @@ public class MainActivity extends ThemeBaseActivity {
     private LinearLayout ll;
     private List<ChartView> chartViews = new ArrayList<>();
     private List<Themable> themables = new ArrayList<>();
-    private List<TextView> titleViews = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,10 +125,7 @@ public class MainActivity extends ThemeBaseActivity {
         final ChartView chartView = chartWrapper.findViewById(R.id.chart);
         final RangeView rangeView = previewWrapper.findViewById(R.id.range);
         final PreviewChartView previewChartView = previewWrapper.findViewById(R.id.preview);
-        final TextView titleView = chartWrapper.findViewById(R.id.title);
-        titleView.setText(getString(R.string.chart_title, number));
-        titleViews.add(titleView);
-
+        chartView.setTitleText(getString(R.string.chart_title, number));
         chartViews.add(chartView);
         themables.add(infoView);
         themables.add(chartView);
@@ -192,9 +188,6 @@ public class MainActivity extends ThemeBaseActivity {
             if (child instanceof CheckBox) {
                 ((CheckBox) child).setTextColor(getCurrentTheme().getNameColor());
             }
-        }
-        for (TextView title: titleViews) {
-            title.setBackgroundResource(getCurrentTheme().getBackgroundTitle());
         }
         for (Themable themable: themables) {
             if (themable != null) {

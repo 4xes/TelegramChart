@@ -30,8 +30,8 @@ public class ViewUtils {
     }
 
     public static float measureHeightText(final Paint paint) {
-        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
-        return fontMetrics.bottom - fontMetrics.top;
+        Paint.FontMetrics fm = paint.getFontMetrics();
+        return fm.bottom - fm.top + fm.leading;
     }
 
     public static void clipSupport(Canvas canvas, RectF rect) {

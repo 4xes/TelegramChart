@@ -78,7 +78,6 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "onDraw");
         }

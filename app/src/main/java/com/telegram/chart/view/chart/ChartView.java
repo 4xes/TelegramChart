@@ -4,17 +4,25 @@ import android.animation.TimeAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
+import com.telegram.chart.R;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
@@ -22,7 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
+import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
+import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
 public class ChartView extends BaseMeasureView implements Themable, Graph.InvalidateListener, TimeAnimator.TimeListener {
 
@@ -30,16 +40,20 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     protected final RectF visibleBound = new RectF();
     protected final RectF datesBound = new RectF();
     protected final RectF clipBound = new RectF();
-    Paint paint = new Paint();
+    protected final RectF titleBound = new RectF();
+    private final TextPaint titlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final PointF point = new PointF();
+    private final GradientDrawable gradientDrawable = new GradientDrawable();
+    private int[] gradientColors = new int[2];
     private final float horizontalPadding = pxFromDp(1f);
     private TimeAnimator animator;
-
     private List<LineRender> lineRenders = new ArrayList<>();
     private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
     private Graph graph;
+    private String titleText;
     private int selectIndex = NONE_INDEX;
     public static final String TAG = ChartView.class.getSimpleName();
 
@@ -49,21 +63,35 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     public ChartView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public ChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+        initPaints(context);
+    }
+
+    private void initPaints(Context context) {
+        titlePaint.setStyle(Paint.Style.FILL);
+        titlePaint.setTextSize(pxFromSp(15f));
+        titlePaint.setTextAlign(Paint.Align.LEFT);
+        titlePaint.setColor(ContextCompat.getColor(context, R.color.text_color));
+        titlePaint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
+
+        debugPaint.setStyle(Paint.Style.STROKE);
+
+        gradientColors[1] = Color.TRANSPARENT;
     }
 
     @Override
@@ -75,9 +103,10 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         for (LineRender renderer: lineRenders) {
             renderer.applyTheme(theme);
         }
+        gradientColors[0] = theme.getBackgroundWindowColor();
+        gradientDrawable.setColors(gradientColors);
         invalidate();
     }
-
 
     public void seGraph(Graph graph) {
         this.graph = graph;
@@ -88,29 +117,33 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         if (theme != null){
             applyTheme(theme);
         }
-        paint.setStyle(Paint.Style.STROKE);
+        invalidate();
+    }
+
+    public void setTitleText(String titleText) {
+        this.titleText = titleText;
         invalidate();
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        visibleBound.set(0, 0, getWidth(), getHeight());
+        visibleBound.set(0, getPaddingTop(), getWidth(), getHeight() - getPaddingBottom());
+        titleBound.set(bound);
+        titleBound.bottom = bound.top + measureHeightText(titlePaint);
         chartBound.set(bound);
+        chartBound.top = bound.top + measureHeightText(titlePaint) + pxFromDp(8f);
         datesBound.set(bound);
         datesBound.top = bound.bottom - pxFromDp(28f);
         chartBound.bottom = datesBound.top;
         chartBound.inset(horizontalPadding, 0f);
-
         clipBound.set(bound.left, 0f, bound.right, getHeight());
+        gradientDrawable.setBounds((int) bound.left, (int) bound.top, (int) bound.right, (int) chartBound.top);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
-//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//            getParent().requestDisallowInterceptTouchEvent(true);
-//        }
         if (lineRenders.size() > 0) {
             int touchIndex = graph.getIndex(x, bound);
             if (touchIndex != selectIndex) {
@@ -135,7 +168,6 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "onDraw");
         }
@@ -170,12 +202,13 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
                 render.renderCircle(canvas, selectIndex, chartBound);
             }
         }
-
+        gradientDrawable.draw(canvas);
+        canvas.drawText(titleText, titleBound.left, titleBound.bottom, titlePaint);
     }
 
     @Override
     public void needInvalidate() {
-        postInvalidate();
+        invalidate();
     }
 
     public interface OnShowInfoListener {
@@ -207,10 +240,8 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     @Override
     public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (!isLaidOut()) {
-                return;
-            }
+        if (!isLaidOut()) {
+            return;
         }
         if (isReady() && graph != null) {
             graph.onTimeUpdate(deltaTime);

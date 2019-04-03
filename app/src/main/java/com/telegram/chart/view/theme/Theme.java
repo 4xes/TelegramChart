@@ -3,7 +3,6 @@ package com.telegram.chart.view.theme;
 import android.content.Context;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
-import androidx.annotation.IdRes;
 import androidx.annotation.IntDef;
 import androidx.core.content.ContextCompat;
 
@@ -25,9 +24,8 @@ public class Theme {
     private int rangeColor;
     private int rangeSelectedColor;
     private int backgroundInfoColor;
-    private @DrawableRes int backgroundTitle;
 
-    public Theme(Context context, @ThemeId int id, @ColorRes int primaryColor, @ColorRes  int primaryDarkColor, @ColorRes  int backgroundWindowColor, @ColorRes  int backgroundSpacingColor, @ColorRes  int dividerColor, @ColorRes  int axisValueColor, @ColorRes  int axisColor, @ColorRes  int nameColor, @ColorRes  int rangeColor, @ColorRes  int rangeSelectedColor, @ColorRes  int backgroundInfoColor, @DrawableRes int backgroundTitle) {
+    public Theme(Context context, @ThemeId int id, @ColorRes int primaryColor, @ColorRes  int primaryDarkColor, @ColorRes  int backgroundWindowColor, @ColorRes  int backgroundSpacingColor, @ColorRes  int dividerColor, @ColorRes  int axisValueColor, @ColorRes  int axisColor, @ColorRes  int nameColor, @ColorRes  int rangeColor, @ColorRes  int rangeSelectedColor, @ColorRes  int backgroundInfoColor) {
         this.id = id;
         this.primaryColor = ContextCompat.getColor(context, primaryColor);
         this.primaryDarkColor = ContextCompat.getColor(context, primaryDarkColor);
@@ -40,7 +38,6 @@ public class Theme {
         this.rangeColor = ContextCompat.getColor(context, rangeColor);
         this.rangeSelectedColor = ContextCompat.getColor(context, rangeSelectedColor);
         this.backgroundInfoColor = ContextCompat.getColor(context, backgroundInfoColor);
-        this.backgroundTitle = backgroundTitle;
     }
 
     public int getId() {
@@ -91,10 +88,6 @@ public class Theme {
         return backgroundInfoColor;
     }
 
-    public int getBackgroundTitle() {
-        return backgroundTitle;
-    }
-
     public static Theme createTheme(Context context, @ThemeId int themeId) {
         switch (themeId) {
             case DAY:
@@ -119,8 +112,7 @@ public class Theme {
                 R.color.column_name_night,
                 R.color.range_night,
                 R.color.range_selected_night,
-                R.color.info_bg_night,
-                R.drawable.gb_title_night
+                R.color.info_bg_night
         );
     }
 
@@ -138,8 +130,7 @@ public class Theme {
                 R.color.column_name_day,
                 R.color.range_day,
                 R.color.range_selected_day,
-                R.color.info_bg_day,
-                R.drawable.gb_title_day
+                R.color.info_bg_day
         );
     }
 

@@ -7,35 +7,23 @@
     <com.telegram.chart.view.chart.ChartView
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:paddingTop="24dp"
+        android:layout_height="320dp"
+        android:layout_marginTop="16dp"
         android:paddingLeft="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingRight="@dimen/normal"
-        android:paddingEnd="@dimen/normal"
-        />
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/chart_title"
-        android:textColor="@color/text_color"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif-medium"
-        android:paddingTop="@dimen/normal"
-        android:paddingStart="@dimen/normal"
         android:paddingEnd="@dimen/normal"
         />
 
     <com.telegram.chart.view.chart.InfoView
         android:id="@+id/info"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="320dp"
         android:paddingTop="@dimen/normal"
         android:paddingLeft="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingRight="@dimen/normal"
         android:paddingEnd="@dimen/normal"
+        android:visibility="gone"
         />
 </FrameLayout>
