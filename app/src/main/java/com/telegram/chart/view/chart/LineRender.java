@@ -23,8 +23,7 @@ class LineRender implements Themable {
     private final Paint paintInsideCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     public final float[] matrixArray = new float[4];
     public final PointF point = new PointF();
-    private final float outerRadius = pxFromDp(7);
-    private final float innerRadius = pxFromDp(3);
+    private final float radius = pxFromDp(4);
     public final float[] points;
     public final float[] drawPoints;
     public final float[] lines;
@@ -80,7 +79,7 @@ class LineRender implements Themable {
         paintPoint.setColor(lineColor);
         paintPoint.setStrokeCap(Paint.Cap.ROUND);
         paintPoint.setStrokeWidth(stroke);
-        paintCircle.setStyle(Paint.Style.FILL);
+        paintCircle.setStyle(Paint.Style.STROKE);
         paintCircle.setColor(lineColor);
         paintInsideCircle.setStyle(Paint.Style.FILL);
     }
@@ -88,6 +87,7 @@ class LineRender implements Themable {
     public void setLineWidth(float strokeWidth) {
         paintLine.setStrokeWidth(strokeWidth);
         paintPoint.setStrokeWidth(strokeWidth);
+        paintCircle.setStrokeWidth(strokeWidth);
     }
 
     @Override
@@ -114,8 +114,15 @@ class LineRender implements Themable {
     }
 
     public void render(Canvas canvas, RectF r) {
-        int lowerId = LineData.getLowerIndex(graph.range.start, graph.getY(id).length - 1);
-        int upperId = LineData.getUpperIndex(graph.range.end, graph.getY(id).length - 1);
+        final int maxIndex = graph.getY(id).length - 1;
+        int lowerId = LineData.getLowerIndex(graph.range.start, maxIndex) - 1;
+        if (lowerId < 0) {
+            lowerId = 0;
+        }
+        int upperId = LineData.getUpperIndex(graph.range.end, maxIndex) + 1;
+        if (upperId > maxIndex){
+            upperId = maxIndex;
+        }
         float currentAlpha = graph.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
             recalculateLines(r, lowerId, upperId);
@@ -143,8 +150,8 @@ class LineRender implements Themable {
             graph.calculatePoint(id, index, r, point);
             final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
             paintCircle.setColor(blendColor);
-            canvas.drawCircle(point.x, point.y, outerRadius, paintCircle);
-            canvas.drawCircle(point.x, point.y, innerRadius, paintInsideCircle);
+            canvas.drawCircle(point.x, point.y, radius, paintInsideCircle);
+            canvas.drawCircle(point.x, point.y, radius, paintCircle);
         }
     }
 
@@ -157,7 +164,7 @@ class LineRender implements Themable {
         List<LineRender> lineRenders = new ArrayList<>();
         for (int id = 0; id < graph.countLines(); id++) {
             LineRender lineRender = new LineRender(id, graph);
-            lineRender.setLineWidth(pxFromDp(1.5f));
+            lineRender.setLineWidth(pxFromDp(2f));
             lineRenders.add(lineRender);
         }
         return lineRenders;

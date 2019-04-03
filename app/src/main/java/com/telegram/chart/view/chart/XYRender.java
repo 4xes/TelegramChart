@@ -85,7 +85,7 @@ class XYRender implements Themable {
         final float scaleY = 1f / ((graph.state.getMaxChartStepped() * Math.max(offsetPercentage, 0.0000001f)) / r.height());
         final float offsetY = r.bottom;
 
-        for (int i = 3; i < GRID; i = i + 3) {
+        for (int i = 6; i < GRID; i = i + 6) {
             final float y = (-step * i * scaleY) + offsetY;
             if (alphaPercentage != 0f) {
                 final int blendColor =  ViewUtils.blendARGB( backgroundColor, lineColor, alphaPercentage);
@@ -98,7 +98,7 @@ class XYRender implements Themable {
     public void renderYText(Canvas canvas, RectF r, float step, float stepText, float offsetPercentage, float alphaPercentage) {
         final float offsetY = r.bottom;
         final float scaleY = 1f / ((graph.state.getMaxChartStepped() * Math.max(offsetPercentage, 0.0000001f)) / r.height());
-        for (int i = 3; i < GRID; i = i + 3) {
+        for (int i = 6; i < GRID; i = i + 6) {
             final float y = (-step * i * scaleY) + offsetY;
             final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
             if (alphaPercentage != 0f) {
@@ -117,7 +117,9 @@ class XYRender implements Themable {
 
     public void renderY0TextAndLine(Canvas canvas, RectF r) {
         final float text0Y = r.bottom - (valueHeight / 2f) + valuePaint.descent();
+        valuePaint.setColor(textColor);
         canvas.drawText(ZERO_Y, r.left, text0Y, valuePaint);
+        linePaint.setColor(lineColor);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
     }
 
@@ -197,6 +199,6 @@ class XYRender implements Themable {
         return step;
     }
 
-    public static final int GRID = 18;
+    public static final int GRID = 36;
     public static final String ZERO_Y = "0";
 }
