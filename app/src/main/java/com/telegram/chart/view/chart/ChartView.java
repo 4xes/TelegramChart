@@ -211,6 +211,12 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         invalidate();
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent motionEvent) {
+        getParent().requestDisallowInterceptTouchEvent(false);
+        return super.dispatchTouchEvent(motionEvent);
+    }
+
     public interface OnShowInfoListener {
         void showInfo(int index, RectF bound, PointF point);
 

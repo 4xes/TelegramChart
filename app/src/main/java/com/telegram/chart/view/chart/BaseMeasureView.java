@@ -1,9 +1,7 @@
 package com.telegram.chart.view.chart;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.*;
-import android.os.Build;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;

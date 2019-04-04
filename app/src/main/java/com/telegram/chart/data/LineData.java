@@ -3,7 +3,7 @@ package com.telegram.chart.data;
 public class LineData {
     private final String name;
     private final int color;
-    private final int[] y;
+    public final int[] y;
     private final int maxY;
     private final int minY;
 
@@ -39,10 +39,6 @@ public class LineData {
         return maxY;
     }
 
-    public int getMinY() {
-        return minY;
-    }
-
     public static int getLowerIndex(float lower, int maxIndex) {
         return (int) Math.ceil(lower * (float)(maxIndex));
     }
@@ -74,4 +70,5 @@ public class LineData {
         tempRangeMaxY = max;
         return max;
     }
+
 }

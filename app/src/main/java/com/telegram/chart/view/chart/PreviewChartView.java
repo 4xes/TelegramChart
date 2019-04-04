@@ -6,6 +6,7 @@ import android.graphics.RectF;
 import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
@@ -53,6 +54,12 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
             applyTheme(theme);
         }
         invalidate();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent motionEvent) {
+        getParent().requestDisallowInterceptTouchEvent(false);
+        return super.dispatchTouchEvent(motionEvent);
     }
 
     @Override

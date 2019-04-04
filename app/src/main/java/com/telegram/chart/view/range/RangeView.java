@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.chart.PreviewChartView;
