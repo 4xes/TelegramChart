@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.chart.PreviewChartView;
@@ -47,6 +48,7 @@ public class RangeView extends BaseRangeView implements Themable, Graph.Invalida
     }
 
     private void init() {
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
     @Override

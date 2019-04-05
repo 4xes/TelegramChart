@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/normal"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <com.telegram.chart.view.chart.PreviewChartView
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="@dimen/preview_height"
+        android:paddingTop="@dimen/normal"
         android:paddingLeft="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingRight="@dimen/normal"
         android:paddingEnd="@dimen/normal"
+        android:paddingBottom="@dimen/small"
         />
 
     <!-- padding for touch zone -->
@@ -18,9 +19,11 @@
         android:id="@+id/range"
         android:layout_width="match_parent"
         android:layout_height="@dimen/preview_height"
+        android:paddingTop="@dimen/normal"
         android:paddingLeft="@dimen/normal"
         android:paddingStart="@dimen/normal"
         android:paddingRight="@dimen/normal"
         android:paddingEnd="@dimen/normal"
+        android:paddingBottom="@dimen/small"
         />
 </FrameLayout>

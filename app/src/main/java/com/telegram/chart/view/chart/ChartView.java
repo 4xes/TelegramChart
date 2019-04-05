@@ -171,6 +171,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "onDraw");
         }
+        if (theme != null) {
+            canvas.drawColor(theme.getBackgroundWindowColor());
+        }
         int save = canvas.save();
         canvas.clipRect(clipBound);
 

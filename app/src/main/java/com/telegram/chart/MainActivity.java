@@ -1,24 +1,21 @@
 package com.telegram.chart;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.core.widget.CompoundButtonCompat;
-import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.core.content.ContextCompat;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.ChartsInteractor;
 import com.telegram.chart.data.DataInteractorImpl;
+import com.telegram.chart.view.CheckboxesView;
 import com.telegram.chart.view.chart.PreviewChartView;
 import com.telegram.chart.view.range.RangeView;
 import com.telegram.chart.view.theme.Themable;
@@ -32,10 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class MainActivity extends ThemeBaseActivity {
 
-    private LinearLayout ll;
+    private LinearLayout content;
     private List<ChartView> chartViews = new ArrayList<>();
     private List<Themable> themables = new ArrayList<>();
 
@@ -43,6 +41,7 @@ public class MainActivity extends ThemeBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         setTitle(R.string.app_title);
         initViews();
         applyTheme(getCurrentTheme());
@@ -50,50 +49,30 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     private void initViews() {
-        ll = findViewById(R.id.ll);
+        content = findViewById(R.id.content);
     }
 
     private void renderCheckboxes(final Graph graph, final InfoView infoView) {
-        for (int id = 0; id < graph.countLines(); id++) {
-            AppCompatCheckBox checkBox = new AppCompatCheckBox(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            );
-            int padding = getResources().getDimensionPixelOffset(R.dimen.normal);
-            params.setMargins(padding, 0, 0, 0);
-            checkBox.setLayoutParams(params);
-            checkBox.setPadding(padding, padding, padding, padding);
-            checkBox.setText(graph.getName(id));
-            checkBox.setTextColor(getCurrentTheme().getNameColor());
-            checkBox.setChecked(true);
-            checkBox.setTag(id);
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                graph.setVisible((int) buttonView.getTag(), isChecked);
-                if (infoView.isShowing()) {
-                   infoView.invalidate();
-                }
-            });
-            CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(graph.getColor(id)));
-            ll.addView(checkBox);
-            if (id != graph.countLines() - 1) {
-                renderDivider(true, ViewUtils.pxFromDp(1), DIVIDER_TAG);
+        CheckboxesView checkboxesView = new CheckboxesView(this);
+        checkboxesView.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        checkboxesView.init(graph, (id, isVisible) -> {
+            graph.setVisible(id, isVisible);
+            if (infoView.isShowing()) {
+                infoView.invalidate();
             }
-        }
+        });
+        content.addView(checkboxesView);
+        themables.add(checkboxesView);
     }
 
-    private void renderDivider(boolean withMargin, int height, String tag) {
+    private void renderDivider(int height, String tag) {
         View line = new View(this);
-        LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
+        line.setTag(tag);
+        line.setLayoutParams(new LinearLayout.LayoutParams(
                 MATCH_PARENT,
                 height
-        );
-        if (withMargin) {
-            dividerParams.setMargins(ViewUtils.pxFromDp(64), 0, 0, 0);
-        }
-        line.setTag(tag);
-        line.setLayoutParams(dividerParams);
-        ll.addView(line);
+        ));
+        content.addView(line);
     }
 
     @Override
@@ -119,8 +98,8 @@ public class MainActivity extends ThemeBaseActivity {
     private void renderChart(int number, final ChartData chart) {
         final Graph graph = new Graph(chart);
         LayoutInflater li = LayoutInflater.from(this);
-        final View chartWrapper = li.inflate(R.layout.chart_layout, ll, false);
-        final View previewWrapper = li.inflate(R.layout.preview_layout, ll, false);
+        final View chartWrapper = li.inflate(R.layout.chart_layout, content, false);
+        final View previewWrapper = li.inflate(R.layout.preview_layout, content, false);
         final InfoView infoView = chartWrapper.findViewById(R.id.info);
         final ChartView chartView = chartWrapper.findViewById(R.id.chart);
         final RangeView rangeView = previewWrapper.findViewById(R.id.range);
@@ -131,12 +110,11 @@ public class MainActivity extends ThemeBaseActivity {
         themables.add(chartView);
         themables.add(rangeView);
         themables.add(previewChartView);
-        ll.addView(chartWrapper);
-        ll.addView(previewWrapper);
+        content.addView(chartWrapper);
+        content.addView(previewWrapper);
         renderCheckboxes(graph, infoView);
-        renderDivider(false, ViewUtils.pxFromDp(1), DIVIDER_TAG);
-        renderDivider(false, ViewUtils.pxFromDp(40), SPACING_TAG);
-
+        renderDivider(ViewUtils.pxFromDp(1), DIVIDER_TAG);
+        renderDivider(ViewUtils.pxFromDp(40), SPACING_TAG);
         chartView.seGraph(graph);
         previewChartView.setGraph(graph);
         rangeView.seGraph(graph);
@@ -144,7 +122,7 @@ public class MainActivity extends ThemeBaseActivity {
         rangeView.setOnRangeListener((start, end) -> {
             chartView.resetIndex();
             infoView.hideInfo();
-            graph.update(rangeView.getViewId(), start, end);
+           graph.update(rangeView.getViewId(), start, end);
         });
         chartView.setOnShowInfoListener(infoView);
     }
@@ -153,7 +131,7 @@ public class MainActivity extends ThemeBaseActivity {
         ChartsInteractor interactor = new DataInteractorImpl(getApplicationContext());
         try {
             final List<ChartData> chart = interactor.getCharts();
-            ll.post(() -> {
+            content.post(() -> {
                 for (int i = 0; i < chart.size(); i++) {
                     renderChart(i + 1, chart.get(i));
                 }
@@ -176,9 +154,11 @@ public class MainActivity extends ThemeBaseActivity {
     @Override
     public void applyTheme(Theme theme) {
         super.applyTheme(theme);
-        ll.setBackgroundColor(getCurrentTheme().getBackgroundWindowColor());
-        for (int i = 0; i < ll.getChildCount(); i++) {
-            View child = ll.getChildAt(i);
+        for (int i = 0; i < content.getChildCount(); i++) {
+            View child = content.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                child.setBackgroundColor(getCurrentTheme().getBackgroundWindowColor());
+            }
             if (DIVIDER_TAG.equals(child.getTag())) {
                 child.setBackgroundColor(getCurrentTheme().getDividerColor());
             }
