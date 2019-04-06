@@ -160,21 +160,21 @@ class LineRender implements Themable {
     private final int OFFSET_X = 2;
     private final int OFFSET_Y = 3;
 
-    public static List<LineRender> createListRender(Graph graph) {
-        List<LineRender> lineRenders = new ArrayList<>();
+    public static LineRender[] createListRender(Graph graph) {
+        LineRender[] renders = new LineRender[graph.countLines()];
         for (int id = 0; id < graph.countLines(); id++) {
-            LineRender lineRender = new LineRender(id, graph);
-            lineRender.setLineWidth(pxFromDp(2f));
-            lineRenders.add(lineRender);
+            LineRender render = new LineRender(id, graph);
+            render.setLineWidth(pxFromDp(2f));
+            renders[id] = render;
         }
-        return lineRenders;
+        return renders;
     }
 
-    public static List<LineRender> createListRenderPreview(Graph graph) {
-        List<LineRender> lineRenders = new ArrayList<>();
+    public static LineRender[] createListRenderPreview(Graph graph) {
+        LineRender[] renders = new LineRender[graph.countLines()];
         for (int id = 0; id < graph.countLines(); id++) {
-            lineRenders.add(new LineRender(id, graph));
+            renders[id] = new LineRender(id, graph);
         }
-        return lineRenders;
+        return renders;
     }
 }

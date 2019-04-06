@@ -37,11 +37,9 @@ public class Graph {
         }
         state.visible[id] = isVisible;
         state.setAnimationHide(id);
-        for (InvalidateListener listener: invalidateListeners) {
-            if (listener.getViewId() != Ids.RANGE) {
-                listener.needInvalidate();
-            }
-        }
+
+        invalidateById(Ids.CHART);
+        invalidateById(Ids.PREVIEW);
     }
 
     public String getInfoDate(int index) {
@@ -62,11 +60,17 @@ public class Graph {
             this.range.end = end;
 
             state.updateRange();
-            for (InvalidateListener listener: invalidateListeners) {
-                if (listener.getViewId() == Ids.CHART || (id != Ids.RANGE && listener.getViewId() == Ids.RANGE)) {
-                    listener.needInvalidate();
-                }
+
+            invalidateById(Ids.CHART);
+            if (id != Ids.RANGE) {
+                invalidateById(Ids.RANGE);
             }
+        }
+    }
+
+    public void invalidateById(int id) {
+        if (invalidateListeners[id] != null) {
+            invalidateListeners[id].needInvalidate();
         }
     }
 
@@ -80,7 +84,7 @@ public class Graph {
         return count;
     }
 
-    private final ArrayList<InvalidateListener> invalidateListeners = new ArrayList<>();
+    private final InvalidateListener[] invalidateListeners = new InvalidateListener[3];
 
     public Graph(ChartData chartData) {
         this.lines = chartData.getLines();
@@ -88,14 +92,8 @@ public class Graph {
         this.state = new StateManager(this);
     }
 
-    public void addListener(InvalidateListener invalidateListener) {
-        if (invalidateListener != null) {
-            invalidateListeners.add(invalidateListener);
-        }
-    }
-
-    public void removeListener(InvalidateListener invalidateListener) {
-        invalidateListeners.remove(invalidateListener);
+    public void registerView(int id, InvalidateListener invalidateListener) {
+        invalidateListeners[id] = invalidateListener;
     }
 
     public interface InvalidateListener {
@@ -180,10 +178,11 @@ public class Graph {
 
     public void onTimeUpdate(long deltaTime) {
         state.tick();
-        for (InvalidateListener listener: invalidateListeners) {
-            if ((listener.getViewId() == Ids.CHART && state.chart.needInvalidate) || (listener.getViewId() == Ids.PREVIEW && state.preview.needInvalidate)) {
-                listener.needInvalidate();
-            }
+        if (state.chart.needInvalidate) {
+            invalidateById(Ids.CHART);
+        }
+        if (state.preview.needInvalidate) {
+            invalidateById(Ids.PREVIEW);
         }
     }
 

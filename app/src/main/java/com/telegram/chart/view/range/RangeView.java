@@ -68,7 +68,7 @@ public class RangeView extends BaseRangeView implements Themable, Graph.Invalida
 
     public void seGraph(Graph graph) {
         this.graph = graph;
-        this.graph.addListener(this);
+        this.graph.registerView(getViewId(), this);
         invalidate();
     }
 

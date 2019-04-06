@@ -48,7 +48,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     private int[] gradientColors = new int[2];
     private final float horizontalPadding = pxFromDp(1f);
     private TimeAnimator animator;
-    private List<LineRender> lineRenders = new ArrayList<>();
+    private LineRender[] lineRenders;
     private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
@@ -110,10 +110,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     public void seGraph(Graph graph) {
         this.graph = graph;
-        lineRenders.clear();
         lineRenders = LineRender.createListRender(graph);
         xyRender = new XYRender(graph);
-        graph.addListener(this);
+        graph.registerView(getViewId(), this);
         if (theme != null){
             applyTheme(theme);
         }
@@ -144,7 +143,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
-        if (lineRenders.size() > 0) {
+        if (lineRenders != null && lineRenders.length > 0) {
             int touchIndex = graph.getIndex(x, bound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
@@ -181,8 +180,10 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         if (xyRender != null && hasContent) {
             xyRender.renderYLines(canvas, chartBound);
         }
-        for (LineRender render: lineRenders) {
-            render.render(canvas, chartBound);
+        if (lineRenders != null) {
+            for (int id = 0; id < lineRenders.length; id++) {
+                lineRenders[id].render(canvas, chartBound);
+            }
         }
         canvas.restoreToCount(save);
 
