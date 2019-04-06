@@ -102,7 +102,9 @@ class LineRender implements Themable {
         matrix.setScale(matrixArray[SCALE_X], matrixArray[SCALE_Y]);
         matrix.postTranslate(matrixArray[OFFSET_X], matrixArray[OFFSET_Y]);
         matrix.mapPoints(drawLines, lower * 4, lines, lower * 4, (upper - lower) * 2);
-        matrix.mapPoints(drawPoints, lower * 2, points, lower * 2, (upper - lower) + 1);
+        if (upper - lower < 100) {
+            matrix.mapPoints(drawPoints, lower * 2, points, lower * 2, (upper - lower) + 1);
+        }
     }
 
     public void calculatePreviewPoints(RectF r) {
@@ -114,23 +116,31 @@ class LineRender implements Themable {
     }
 
     public void render(Canvas canvas, RectF r) {
-        final int maxIndex = graph.getY(id).length - 1;
-        int lowerId = LineData.getLowerIndex(graph.range.start, maxIndex) - 1;
-        if (lowerId < 0) {
-            lowerId = 0;
-        }
-        int upperId = LineData.getUpperIndex(graph.range.end, maxIndex) + 1;
-        if (upperId > maxIndex){
-            upperId = maxIndex;
-        }
         float currentAlpha = graph.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
-            recalculateLines(r, lowerId, upperId);
+            final int maxIndex = graph.getY(id).length - 1;
+            int lower = LineData.getLowerIndex(graph.range.start, maxIndex) - 1;
+            if (lower < 0) {
+                lower = 0;
+            }
+            int upper = LineData.getUpperIndex(graph.range.end, maxIndex) + 1;
+            if (upper > maxIndex){
+                upper = maxIndex;
+            }
+            recalculateLines(r, lower, upper);
             final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
+            boolean maxOptimize = upper - lower < MAX_OPTIMIZE_LINES;
+            if (maxOptimize) {
+                paintLine.setStrokeCap(Paint.Cap.BUTT);
+            } else {
+                paintLine.setStrokeCap(Paint.Cap.SQUARE);
+            }
             paintLine.setColor(blendColor);
-            paintPoint.setColor(blendColor);
-            canvas.drawLines(drawLines, lowerId * 4, (upperId - lowerId) * 4, paintLine);
-            canvas.drawPoints(drawPoints, lowerId * 2, (upperId - lowerId) * 2 + 2, paintPoint);
+            canvas.drawLines(drawLines, lower * 4, (upper - lower) * 4, paintLine);
+            if (maxOptimize) {
+                paintPoint.setColor(blendColor);
+                canvas.drawPoints(drawPoints, lower * 2, (upper - lower) * 2 + 2, paintPoint);
+            }
         }
     }
 
@@ -177,4 +187,6 @@ class LineRender implements Themable {
         }
         return renders;
     }
+
+    private static final int MAX_OPTIMIZE_LINES = 100;
 }
