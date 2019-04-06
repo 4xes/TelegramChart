@@ -60,11 +60,11 @@ class XYRender implements Themable {
         final float step = calculateStep(0f, max, GRID);
         final float percent = graph.state.progressY();
         if (graph.state.previousStep < graph.state.currentStep) {
-            renderYLines(canvas, r, step, 1f - percent, 1f - percent);
-            renderYLines(canvas, r, step,  1f / percent, percent);
-        } else {
             renderYLines(canvas, r, step, 1f + (percent), 1f - percent);
             renderYLines(canvas, r, step,  percent, percent);
+        } else {
+            renderYLines(canvas, r, step, 1f - percent, 1f - percent);
+            renderYLines(canvas, r, step, 1f / percent, percent);
         }
     }
 
