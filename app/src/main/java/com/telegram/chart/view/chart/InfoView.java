@@ -40,11 +40,11 @@ public class InfoView extends BaseMeasureView implements Themable, ChartView.OnS
     }
 
     private void init() {
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
     }
 
     public void seGraph(Graph graph) {
-        infoRender = new InfoRender(graph);
+        infoRender = new InfoRender(graph, getContext());
         if (theme != null) {
             applyTheme(theme);
         }

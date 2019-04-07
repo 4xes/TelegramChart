@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_night">#1F2732</color>
+    <color name="background_night">#242F3E</color>
     <color name="background_day">#FFFFFF</color>
-    <color name="background_spacing_night">#171E26</color>
+    <color name="background_spacing_night">#1B2433</color>
     <color name="background_spacing_day">#F0F0F0</color>
-    <color name="primary_night">#232D3A</color>
-    <color name="primary_day">#5A7C9F</color>
-    <color name="primary_dark_day">#49627F</color>
-    <color name="primary_dark_night">#1C242D</color>
+    <color name="toolbar_day">#FFFFFF</color>
+    <color name="toolbar_title_day">#000000</color>
+    <color name="toolbar_icon_day">#8E8E93</color>
+    <color name="toolbar_night">#242F3E</color>
+    <color name="toolbar_title_night">#FFFFFF</color>
+    <color name="toolbar_icon_night">#FFFFFF</color>
 
     <color name="divider_day">#E7E7E7</color>
     <color name="divider_night">#151D25</color>
 
-    <color name="axis_value_day">#9FA8AF</color>
-    <color name="axis_value_night">#546370</color>
-    <color name="axis_day">#F1F1F2</color>
-    <color name="axis_night">#18202B</color>
+    <color name="axis_value_day">#98989C</color>
+    <color name="axis_value_night">#697584</color>
+    <color name="axis_day">#E8EAEC</color>
+    <color name="axis_night">#394350</color>
 
     <color name="column_name_day">#212121</color>
     <color name="column_name_night">#FFFFFF</color>
@@ -28,5 +30,7 @@
     <color name="range_selected_night">#3375ADD8</color>
 
     <color name="info_bg_day">#FFFFFF</color>
-    <color name="info_bg_night">#1D2631</color>
+    <color name="info_bg_night">#1C2533</color>
+    <color name="arrow_day">#D2D5D7</color>
+    <color name="arrow_night">#767C85</color>
 </resources>

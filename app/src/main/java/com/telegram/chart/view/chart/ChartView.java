@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -16,13 +17,11 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
-import com.telegram.chart.R;
 import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
-import static com.telegram.chart.view.utils.ViewUtils.getColor;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
@@ -78,7 +77,6 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         titlePaint.setStyle(Paint.Style.FILL);
         titlePaint.setTextSize(pxFromSp(15f));
         titlePaint.setTextAlign(Paint.Align.LEFT);
-        titlePaint.setColor(getColor(context, R.color.text_color));
         titlePaint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
 
         debugPaint.setStyle(Paint.Style.STROKE);
@@ -97,6 +95,8 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         }
         gradientColors[0] = theme.getBackgroundWindowColor();
         gradientDrawable.setColors(gradientColors);
+
+        titlePaint.setColor(theme.getTitleColor());
         invalidate();
     }
 
@@ -121,9 +121,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         super.onLayout(changed, left, top, right, bottom);
         visibleBound.set(0, getPaddingTop(), getWidth(), getHeight() - getPaddingBottom());
         titleBound.set(bound);
-        titleBound.bottom = bound.top + measureHeightText(titlePaint);
+        titleBound.bottom = bound.top + measureHeightText(titlePaint) + pxFromDp(8f);
         chartBound.set(bound);
-        chartBound.top = bound.top + measureHeightText(titlePaint) + pxFromDp(8f);
+        chartBound.top = bound.top + measureHeightText(titlePaint) + pxFromDp(16f);
         datesBound.set(bound);
         datesBound.top = bound.bottom - pxFromDp(28f);
         chartBound.bottom = datesBound.top;
@@ -238,8 +238,10 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
 
     @Override
     public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-        if (!isLaidOut()) {
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (!isLaidOut()) {
+                return;
+            }
         }
         if (isReady() && graph != null) {
             graph.onTimeUpdate(deltaTime);

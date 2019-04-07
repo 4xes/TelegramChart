@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toolbar;
@@ -37,27 +38,41 @@ abstract class ThemeBaseActivity extends Activity implements Themable {
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        setStatusBarColor(theme.getPrimaryDarkColor());
-        setToolbarColor(theme.getPrimaryColor());
+        setStatusBarColor(theme);
+        setToolbarColors(theme);
     }
 
-    private void setStatusBarColor(int statusBarColor) {
+    private void setStatusBarColor(Theme theme) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            if (statusBarColor == Color.BLACK && window.getNavigationBarColor() == Color.BLACK) {
+            if (theme.getToolbarColor() == Color.BLACK && window.getNavigationBarColor() == Color.BLACK) {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             } else {
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (theme.getId() == Theme.DAY) {
+                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    } else {
+                        getWindow().getDecorView().setSystemUiVisibility(0);
+                    }
+                }
             }
-            window.setStatusBarColor(statusBarColor);
+            window.setStatusBarColor(theme.getToolbarColor());
         }
     }
 
-    private void setToolbarColor(int toolbarColor) {
+    private void setToolbarColors(Theme theme) {
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
-            toolbar.setBackground(new ColorDrawable(toolbarColor));
+            toolbar.setBackground(new ColorDrawable(theme.getToolbarColor()));
+            toolbar.setTitleTextColor(theme.getTitleColor());
         }
+//        ActionBar actionBar = getActionBar();
+//        if (actionBar != null) {
+//            actionBar.setBackgroundDrawable(new ColorDrawable(theme.getToolbarColor()));
+//        }
+
     }
 
     protected void toggleNightMode() {

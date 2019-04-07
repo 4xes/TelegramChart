@@ -33,6 +33,7 @@ public class MainActivity extends ThemeBaseActivity {
     private LinearLayout content;
     private List<ChartView> chartViews = new ArrayList<>();
     private List<Themable> themables = new ArrayList<>();
+    private Menu menu;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,6 +132,7 @@ public class MainActivity extends ThemeBaseActivity {
     private void loadChart() {
         content.post(() -> {
             for (int i = 0; i < ChartData.charts.length; i++) {
+                renderDivider(ViewUtils.pxFromDp(28), SPACING_TAG);
                 renderChart(i + 1, ChartData.charts[i]);
             }
             applyTheme(getCurrentTheme());
@@ -139,8 +141,9 @@ public class MainActivity extends ThemeBaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        final MenuInflater inflater = getMenuInflater();
+        final int resMenu = getCurrentTheme().getId() == Theme.DAY ? R.menu.main_day : R.menu.main_night;
+        inflater.inflate(resMenu, menu);
         return true;
     }
 
@@ -182,6 +185,7 @@ public class MainActivity extends ThemeBaseActivity {
         switch (item.getItemId()) {
             case R.id.action_night_mode:
                 toggleNightMode();
+                invalidateOptionsMenu();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

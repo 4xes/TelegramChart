@@ -131,7 +131,7 @@ class LineRender implements Themable {
                 upper = maxIndex;
             }
             recalculateLines(chart, lower, upper);
-            final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
+            //final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
             boolean maxOptimize = upper - lower < MAX_OPTIMIZE_LINES;
             if (maxOptimize) {
                 paintLine.setStrokeCap(Paint.Cap.BUTT);
@@ -142,7 +142,7 @@ class LineRender implements Themable {
             paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
             canvas.drawLines(drawLines, lower * 4, (upper - lower) * 4, paintLine);
             if (maxOptimize) {
-                paintPoint.setColor(blendColor);
+                paintPoint.setAlpha((int) Math.ceil(255 * currentAlpha));
                 canvas.drawPoints(drawPoints, lower * 2, (upper - lower) * 2 + 2, paintPoint);
             }
         }
@@ -150,10 +150,11 @@ class LineRender implements Themable {
 
     public void renderPreview(Canvas canvas, RectF r) {
         float currentAlpha = graph.state.chart.alphaCurrent[id];
-        if (currentAlpha != 0f) {
+        int alpha = (int) Math.ceil(255 * currentAlpha);
+        if (alpha != 0) {
             calculatePreviewPoints(r);
-            final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
-            paintLine.setColor(blendColor);
+            //final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
+            paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
             canvas.drawLines(drawLines, paintLine);
         }
     }

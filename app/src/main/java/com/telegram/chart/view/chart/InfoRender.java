@@ -1,18 +1,19 @@
 package com.telegram.chart.view.chart;
 
+import android.content.Context;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 
+import com.telegram.chart.R;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
-import static com.telegram.chart.view.utils.ViewUtils.drawRoundRectSupport;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
@@ -26,19 +27,18 @@ public class InfoRender implements Themable {
     private final Paint paintName = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private final RectF infoRect = new RectF();
-    private final Path infoPathSupport = new Path();
     private final float PADDING = pxFromDp(8f);
     private final float SPACING_HORIZONTAL = pxFromDp(10f);
     private final float SPACING_VERTICAL = pxFromDp(2f);
 
     private final Paint paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final float RADIUS = pxFromDp(3f);
     private final float OFFSET = pxFromDp(1f);
     private final float BLUR_RADIUS = pxFromDp(2f);
     private final RectF shadowRect = new RectF();
-    private final Path shadowPathSupport = new Path();
     private final float xLineOffset = pxFromDp(16f);
-
+    private final Drawable shadowDrawableDay;
+    private final Drawable shadowDrawableNight;
+    private boolean isDay = true;
     private final float dateHeight;
     private final String[] names;
     private final String[] values;
@@ -48,7 +48,7 @@ public class InfoRender implements Themable {
     private final int[] colors;
     private final float namesHeight;
 
-    public InfoRender(Graph graph) {
+    public InfoRender(Graph graph, Context context) {
         this.graph = graph;
         values = new String[graph.countLines()];
         names = new String[graph.countLines()];
@@ -60,6 +60,9 @@ public class InfoRender implements Themable {
         dateHeight = measureHeightText(paintDate);
         namesHeight = measureHeightText(paintName);
         valuesHeight = measureHeightText(paintValue);
+
+        shadowDrawableDay = context.getResources().getDrawable(R.drawable.shadow_day);
+        shadowDrawableNight = context.getResources().getDrawable(R.drawable.shadow_night);
     }
 
     private void initPaints() {
@@ -140,8 +143,13 @@ public class InfoRender implements Themable {
         infoRect.set(leftRect, bound.top, leftRect + width, bound.top + height);
         shadowRect.set(infoRect.left + OFFSET, infoRect.top + OFFSET, infoRect.right - OFFSET, infoRect.bottom);
 
-        drawRoundRectSupport(canvas, paintShadow, shadowRect, shadowPathSupport, RADIUS);
-        drawRoundRectSupport(canvas, paintRect,  infoRect, infoPathSupport, RADIUS);
+        if (isDay) {
+            shadowDrawableDay.setBounds((int) shadowRect.left, (int) shadowRect.top, (int) shadowRect.right, (int) shadowRect.bottom);
+            shadowDrawableDay.draw(canvas);
+        } else {
+            shadowDrawableNight.setBounds((int) shadowRect.left, (int) shadowRect.top, (int) shadowRect.right, (int) shadowRect.bottom);
+            shadowDrawableNight.draw(canvas);
+        }
 
         final float left = infoRect.left + PADDING;
         final float top = infoRect.top + PADDING;
@@ -168,5 +176,6 @@ public class InfoRender implements Themable {
     public void applyTheme(Theme theme) {
         paintDate.setColor(theme.getNameColor());
         paintRect.setColor(theme.getBackgroundInfoColor());
+        isDay = theme.getId() == Theme.DAY;
     }
 }

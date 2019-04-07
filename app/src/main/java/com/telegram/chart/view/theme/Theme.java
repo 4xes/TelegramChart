@@ -12,8 +12,8 @@ import static com.telegram.chart.view.utils.ViewUtils.getColor;
 
 public class Theme {
     private @ThemeId int id;
-    private int primaryColor;
-    private int primaryDarkColor;
+    private int toolbarColor;
+    private int titleColor;
     private int backgroundWindowColor;
     private int backgroundSpacingColor;
     private int dividerColor;
@@ -24,10 +24,10 @@ public class Theme {
     private int rangeSelectedColor;
     private int backgroundInfoColor;
 
-    public Theme(Context context, @ThemeId int id, int primaryColor, int primaryDarkColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int backgroundInfoColor) {
+    public Theme(Context context, @ThemeId int id, int toolbarColor, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int backgroundInfoColor) {
         this.id = id;
-        this.primaryColor = getColor(context, primaryColor);
-        this.primaryDarkColor = getColor(context, primaryDarkColor);
+        this.toolbarColor = getColor(context, toolbarColor);
+        this.titleColor = getColor(context, titleColor);
         this.backgroundWindowColor = getColor(context, backgroundWindowColor);
         this.backgroundSpacingColor = getColor(context, backgroundSpacingColor);
         this.dividerColor = getColor(context, dividerColor);
@@ -43,12 +43,40 @@ public class Theme {
         return id;
     }
 
-    public int getPrimaryColor() {
-        return primaryColor;
+    private static Theme createNight(Context context) {
+        return new Theme(
+                context,
+                NIGHT,
+                R.color.toolbar_night,
+                R.color.toolbar_title_night,
+                R.color.background_night,
+                R.color.background_spacing_night,
+                R.color.divider_night,
+                R.color.axis_value_night,
+                R.color.axis_night,
+                R.color.column_name_night,
+                R.color.range_night,
+                R.color.range_selected_night,
+                R.color.info_bg_night
+        );
     }
 
-    public int getPrimaryDarkColor() {
-        return primaryDarkColor;
+    private static Theme createDay(Context context) {
+        return new Theme(
+                context,
+                DAY,
+                R.color.toolbar_day,
+                R.color.toolbar_title_day,
+                R.color.background_day,
+                R.color.background_spacing_day,
+                R.color.divider_day,
+                R.color.axis_value_day,
+                R.color.axis_day,
+                R.color.column_name_day,
+                R.color.range_day,
+                R.color.range_selected_day,
+                R.color.info_bg_day
+        );
     }
 
     public int getBackgroundWindowColor() {
@@ -97,40 +125,12 @@ public class Theme {
         return createDay(context);
     }
 
-    private static Theme createNight(Context context) {
-        return new Theme(
-                context,
-                NIGHT,
-                R.color.primary_night,
-                R.color.primary_dark_night,
-                R.color.background_night,
-                R.color.background_spacing_night,
-                R.color.divider_night,
-                R.color.axis_value_night,
-                R.color.axis_night,
-                R.color.column_name_night,
-                R.color.range_night,
-                R.color.range_selected_night,
-                R.color.info_bg_night
-        );
+    public int getToolbarColor() {
+        return toolbarColor;
     }
 
-    private static Theme createDay(Context context) {
-        return new Theme(
-                context,
-                DAY,
-                R.color.primary_day,
-                R.color.primary_dark_day,
-                R.color.background_day,
-                R.color.background_spacing_day,
-                R.color.divider_day,
-                R.color.axis_value_day,
-                R.color.axis_day,
-                R.color.column_name_day,
-                R.color.range_day,
-                R.color.range_selected_day,
-                R.color.info_bg_day
-        );
+    public int getTitleColor() {
+        return titleColor;
     }
 
     public static final int DAY = 0;

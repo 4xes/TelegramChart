@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_night_mode"
+        android:icon="@drawable/ic_moon_night"
+        android:showAsAction="always"
+        android:title="@string/chart_night_mode" />
+</menu>
