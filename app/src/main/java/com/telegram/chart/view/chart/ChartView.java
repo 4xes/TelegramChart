@@ -32,7 +32,6 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     protected final RectF chartBound = new RectF();
     protected final RectF visibleBound = new RectF();
     protected final RectF datesBound = new RectF();
-    protected final RectF clipBound = new RectF();
     protected final RectF titleBound = new RectF();
     private final TextPaint titlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -129,7 +128,6 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         datesBound.top = bound.bottom - pxFromDp(28f);
         chartBound.bottom = datesBound.top;
         chartBound.inset(horizontalPadding, 0f);
-        clipBound.set(bound.left, 0f, bound.right, getHeight());
         gradientDrawable.setBounds((int) bound.left, (int) bound.top, (int) bound.right, (int) chartBound.top);
     }
 
@@ -166,8 +164,6 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         if (theme != null) {
             canvas.drawColor(theme.getBackgroundWindowColor());
         }
-        int save = canvas.save();
-        canvas.clipRect(clipBound);
 
         boolean hasContent = graph.countVisible() > 0;
         if (xyRender != null && hasContent) {
@@ -175,10 +171,9 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         }
         if (lineRenders != null) {
             for (int id = 0; id < lineRenders.length; id++) {
-                lineRenders[id].render(canvas, chartBound);
+                lineRenders[id].render(canvas, chartBound, visibleBound);
             }
         }
-        canvas.restoreToCount(save);
 
         if (hasContent) {
             if (xyRender != null) {

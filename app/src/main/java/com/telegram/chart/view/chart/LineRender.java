@@ -114,19 +114,23 @@ class LineRender implements Themable {
         matrix.mapPoints(drawLines, lines);
     }
 
-    public void render(Canvas canvas, RectF r) {
+    public void render(Canvas canvas, RectF chart, RectF visible) {
         float currentAlpha = graph.state.chart.alphaCurrent[id];
-        if (currentAlpha != 0f) {
+        int alpha = (int) Math.ceil(255 * currentAlpha);
+        if (alpha != 0) {
             final int maxIndex = graph.getY(id).length - 1;
-            int lower = LineData.getLowerIndex(graph.range.start, maxIndex) - 1;
+            final float sectionWidth = graph.sectionWidth(chart.width());
+            final int addIndexLeft = (int) Math.rint((chart.left - visible.left) / sectionWidth);
+            final int addIndexRight = (int) Math.rint((visible.right - chart.right) / sectionWidth);
+            int lower = LineData.getLowerIndex(graph.range.start, maxIndex) - 1 - addIndexLeft;
             if (lower < 0) {
                 lower = 0;
             }
-            int upper = LineData.getUpperIndex(graph.range.end, maxIndex) + 1;
+            int upper = LineData.getUpperIndex(graph.range.end, maxIndex) + 1 + addIndexRight;
             if (upper > maxIndex){
                 upper = maxIndex;
             }
-            recalculateLines(r, lower, upper);
+            recalculateLines(chart, lower, upper);
             final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
             boolean maxOptimize = upper - lower < MAX_OPTIMIZE_LINES;
             if (maxOptimize) {
@@ -134,7 +138,8 @@ class LineRender implements Themable {
             } else {
                 paintLine.setStrokeCap(Paint.Cap.SQUARE);
             }
-            paintLine.setColor(blendColor);
+            //paintLine.setColor(blendColor);
+            paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
             canvas.drawLines(drawLines, lower * 4, (upper - lower) * 4, paintLine);
             if (maxOptimize) {
                 paintPoint.setColor(blendColor);
