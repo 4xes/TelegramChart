@@ -164,56 +164,8 @@ public class StateManager {
         }
     }
 
-    public void setAnimationHide(int targetId) {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        chart.resetFadingAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
-
-        int maxPreview = getMaxPreview();
-        int maxChart = getMaxChartStepped();
-
-        if (maxPreview == Integer.MIN_VALUE) {
-            maxPreview = graph.lines[targetId].getMaxY();
-        }
-
-        if (maxChart== Integer.MIN_VALUE) {
-            maxChart = getMaxChartStepped(targetId);
-        }
-
-        for (int id = 0; id < graph.countLines(); id++) {
-            preview.alphaStart[id] = chart.alphaCurrent[id];
-            preview.alphaEnd[id] = visible[id] ? 1f : 0f;
-
-            chart.alphaStart[id] = chart.alphaCurrent[id];
-            chart.alphaEnd[id] = visible[id] ? 1f : 0f;
-
-            if ((targetId != id || graph.lines[targetId].getMaxY() == maxPreview)) {
-                preview.yMaxStart[id] = preview.yMaxCurrent[id];
-                preview.yMaxEnd[id] = maxPreview;
-
-                if (graph.lines[targetId].getMaxY() == maxPreview && targetId == id) {
-                    preview.yMaxStart[id] = maxPreview;
-                    preview.yMaxCurrent[id] = maxPreview;
-                    preview.yMaxEnd[id] = maxPreview;
-                }
-            }
-
-            if ((targetId != id || getMaxChartStepped(id) == maxChart)) {
-                if (visible[id]) {
-                    chart.yMaxStart[id] = chart.yMaxCurrent[id];
-                    chart.yMaxEnd[id] = maxChart;
-                }
-            }
-        }
-        chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
-        chart.yMaxEnd[targetId] = visible[targetId] ? maxChart : maxChart / 4;
-
-
-        int newCurrent = getMaxChart();
-        updateCurrentAnimation(newCurrent);
-    }
-
+    private final static long ANIMATION_DURATION_LONG = 300L;
+    private final static long ANIMATION_DURATION_SHORT = 150L;
 
     public State getChart() {
         return chart;
@@ -224,7 +176,7 @@ public class StateManager {
     }
 
     public void tick() {
-        chart.needInvalidate = chart.isNeedInvalidate() || currentStep != previousStep ;
+        chart.needInvalidate = chart.isNeedInvalidate() || currentStep != previousStep;
         preview.needInvalidate = preview.isNeedInvalidate();
         chart.tickScale();
         chart.tickFading();
@@ -255,8 +207,53 @@ public class StateManager {
         executedYTime = 0;
     }
 
-    private final static long ANIMATION_DURATION_LONG = 2000L;
-    private final static long ANIMATION_DURATION_SHORT = 1000L;
+    public void setAnimationHide(int targetId) {
+        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        chart.resetFadingAnimation(ANIMATION_DURATION_LONG);
+        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
+
+        int maxPreview = getMaxPreview();
+        int maxStepped = getMaxChartStepped();
+        if (maxPreview == Integer.MIN_VALUE) {
+            maxPreview = graph.lines[targetId].getMaxY();
+        }
+
+        int targetMaxStepped = getMaxChartStepped(targetId);
+        if (maxStepped == Integer.MIN_VALUE) {
+            maxStepped = targetMaxStepped;
+        }
+
+        for (int id = 0; id < graph.countLines(); id++) {
+            preview.alphaStart[id] = chart.alphaCurrent[id];
+            preview.alphaEnd[id] = visible[id] ? 1f : 0f;
+
+            chart.alphaStart[id] = chart.alphaCurrent[id];
+            chart.alphaEnd[id] = visible[id] ? 1f : 0f;
+
+            if ((targetId != id || graph.lines[targetId].getMaxY() == maxPreview)) {
+                preview.yMaxStart[id] = preview.yMaxCurrent[id];
+                preview.yMaxEnd[id] = maxPreview;
+
+                if (graph.lines[targetId].getMaxY() == maxPreview && targetId == id) {
+                    preview.yMaxStart[id] = maxPreview;
+                    preview.yMaxCurrent[id] = maxPreview;
+                    preview.yMaxEnd[id] = maxPreview;
+                }
+            }
+
+            chart.yMaxStart[id] = chart.yMaxCurrent[id];
+            chart.yMaxEnd[id] = maxStepped;
+        }
+
+        if (targetMaxStepped == maxStepped) {
+            chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
+            chart.yMaxEnd[targetId] = visible[targetId] ? maxStepped : maxStepped / 4;
+        }
+
+        int newCurrent = getMaxChart();
+        updateCurrentAnimation(newCurrent);
+    }
     private final static long ANIMATION_TICK = 16L;
 
     public class State {
