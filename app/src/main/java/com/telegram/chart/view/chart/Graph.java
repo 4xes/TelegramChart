@@ -7,7 +7,6 @@ import com.telegram.chart.data.ChartData;
 import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.utils.DateUtils;
 
-import java.util.ArrayList;
 
 public class Graph {
     public final StateManager state;

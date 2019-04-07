@@ -3,18 +3,15 @@ package com.telegram.chart.view.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
+import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 

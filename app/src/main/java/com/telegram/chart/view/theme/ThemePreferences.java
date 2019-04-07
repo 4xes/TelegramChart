@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 
 import com.telegram.chart.BuildConfig;
 
-import static com.telegram.chart.view.theme.Theme.DAY;
-
 public class ThemePreferences {
 
     private final SharedPreferences preferences;

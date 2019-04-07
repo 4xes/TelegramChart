@@ -1,16 +1,15 @@
 package com.telegram.chart.view.chart;
 
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.RectF;
 
 import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.utils.ViewUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import androidx.core.graphics.ColorUtils;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 

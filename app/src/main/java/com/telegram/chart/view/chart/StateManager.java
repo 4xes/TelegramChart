@@ -255,8 +255,8 @@ public class StateManager {
         executedYTime = 0;
     }
 
-    private final static long ANIMATION_DURATION_LONG = 300L;
-    private final static long ANIMATION_DURATION_SHORT = 100L;
+    private final static long ANIMATION_DURATION_LONG = 2000L;
+    private final static long ANIMATION_DURATION_SHORT = 1000L;
     private final static long ANIMATION_TICK = 16L;
 
     public class State {

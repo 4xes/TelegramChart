@@ -1,15 +1,14 @@
 package com.telegram.chart.view.range;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.*;
-import android.os.Build;
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
+import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.telegram.chart.view.annotation.IntDef;
+import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.chart.Range;
 
 import java.lang.annotation.Retention;
@@ -30,11 +29,6 @@ public abstract class BaseRangeView extends View {
 
     public BaseRangeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public BaseRangeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     protected RectF bound = new RectF();
@@ -265,6 +259,4 @@ public abstract class BaseRangeView extends View {
     @IntDef({START, RANGE, END, NONE})
     @Retention(RetentionPolicy.SOURCE)
     @interface Zone { }
-
-
 }

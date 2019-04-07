@@ -1,9 +1,6 @@
 package com.telegram.chart;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,18 +8,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.Toolbar;
 
 import com.telegram.chart.data.ChartData;
-import com.telegram.chart.data.ChartsInteractor;
-import com.telegram.chart.data.DataInteractorImpl;
 import com.telegram.chart.view.CheckboxesView;
+import com.telegram.chart.view.annotation.Nullable;
+import com.telegram.chart.view.chart.ChartView;
+import com.telegram.chart.view.chart.Graph;
+import com.telegram.chart.view.chart.InfoView;
 import com.telegram.chart.view.chart.PreviewChartView;
 import com.telegram.chart.view.range.RangeView;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
-import com.telegram.chart.view.chart.ChartView;
-import com.telegram.chart.view.chart.Graph;
-import com.telegram.chart.view.chart.InfoView;
 import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -41,6 +38,10 @@ public class MainActivity extends ThemeBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setActionBar(toolbar);
+        }
 
         setTitle(R.string.app_title);
         initViews();
@@ -128,19 +129,12 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     private void loadChart() {
-        ChartsInteractor interactor = new DataInteractorImpl(getApplicationContext());
-        try {
-            final List<ChartData> chart = interactor.getCharts();
-            content.post(() -> {
-                for (int i = 0; i < chart.size(); i++) {
-                    renderChart(i + 1, chart.get(i));
-                }
-                applyTheme(getCurrentTheme());
-            });
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-
+        content.post(() -> {
+            for (int i = 0; i < ChartData.charts.length; i++) {
+                renderChart(i + 1, ChartData.charts[i]);
+            }
+            applyTheme(getCurrentTheme());
+        });
     }
 
     @Override

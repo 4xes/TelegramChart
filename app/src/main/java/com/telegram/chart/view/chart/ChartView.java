@@ -1,20 +1,14 @@
 package com.telegram.chart.view.chart;
 
 import android.animation.TimeAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -23,13 +17,12 @@ import android.view.View;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.R;
+import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
+import static com.telegram.chart.view.utils.ViewUtils.getColor;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
@@ -86,7 +79,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         titlePaint.setStyle(Paint.Style.FILL);
         titlePaint.setTextSize(pxFromSp(15f));
         titlePaint.setTextAlign(Paint.Align.LEFT);
-        titlePaint.setColor(ContextCompat.getColor(context, R.color.text_color));
+        titlePaint.setColor(getColor(context, R.color.text_color));
         titlePaint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
 
         debugPaint.setStyle(Paint.Style.STROKE);

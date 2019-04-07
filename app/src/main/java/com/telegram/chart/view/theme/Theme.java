@@ -1,15 +1,14 @@
 package com.telegram.chart.view.theme;
 
 import android.content.Context;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.IntDef;
-import androidx.core.content.ContextCompat;
 
 import com.telegram.chart.R;
+import com.telegram.chart.view.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import static com.telegram.chart.view.utils.ViewUtils.getColor;
 
 public class Theme {
     private @ThemeId int id;
@@ -25,19 +24,19 @@ public class Theme {
     private int rangeSelectedColor;
     private int backgroundInfoColor;
 
-    public Theme(Context context, @ThemeId int id, @ColorRes int primaryColor, @ColorRes  int primaryDarkColor, @ColorRes  int backgroundWindowColor, @ColorRes  int backgroundSpacingColor, @ColorRes  int dividerColor, @ColorRes  int axisValueColor, @ColorRes  int axisColor, @ColorRes  int nameColor, @ColorRes  int rangeColor, @ColorRes  int rangeSelectedColor, @ColorRes  int backgroundInfoColor) {
+    public Theme(Context context, @ThemeId int id, int primaryColor, int primaryDarkColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int backgroundInfoColor) {
         this.id = id;
-        this.primaryColor = ContextCompat.getColor(context, primaryColor);
-        this.primaryDarkColor = ContextCompat.getColor(context, primaryDarkColor);
-        this.backgroundWindowColor = ContextCompat.getColor(context, backgroundWindowColor);
-        this.backgroundSpacingColor = ContextCompat.getColor(context, backgroundSpacingColor);
-        this.dividerColor = ContextCompat.getColor(context, dividerColor);
-        this.axisValueColor = ContextCompat.getColor(context, axisValueColor);
-        this.axisColor = ContextCompat.getColor(context, axisColor);
-        this.nameColor = ContextCompat.getColor(context, nameColor);
-        this.rangeColor = ContextCompat.getColor(context, rangeColor);
-        this.rangeSelectedColor = ContextCompat.getColor(context, rangeSelectedColor);
-        this.backgroundInfoColor = ContextCompat.getColor(context, backgroundInfoColor);
+        this.primaryColor = getColor(context, primaryColor);
+        this.primaryDarkColor = getColor(context, primaryDarkColor);
+        this.backgroundWindowColor = getColor(context, backgroundWindowColor);
+        this.backgroundSpacingColor = getColor(context, backgroundSpacingColor);
+        this.dividerColor = getColor(context, dividerColor);
+        this.axisValueColor = getColor(context, axisValueColor);
+        this.axisColor = getColor(context, axisColor);
+        this.nameColor = getColor(context, nameColor);
+        this.rangeColor = getColor(context, rangeColor);
+        this.rangeSelectedColor = getColor(context, rangeSelectedColor);
+        this.backgroundInfoColor = getColor(context, backgroundInfoColor);
     }
 
     public int getId() {

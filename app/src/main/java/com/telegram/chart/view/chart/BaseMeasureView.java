@@ -1,11 +1,11 @@
 package com.telegram.chart.view.chart;
 
 import android.content.Context;
-import android.graphics.*;
-import androidx.annotation.Nullable;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.telegram.chart.view.annotation.Nullable;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.reconcileSize;

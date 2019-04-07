@@ -3,20 +3,17 @@ package com.telegram.chart.view.range;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
-import com.telegram.chart.view.chart.PreviewChartView;
-import com.telegram.chart.view.chart.Range;
-import com.telegram.chart.view.theme.Themable;
-import com.telegram.chart.view.theme.Theme;
+import com.telegram.chart.view.annotation.NonNull;
+import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.chart.Graph;
 import com.telegram.chart.view.chart.Ids;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.utils.ViewUtils.clipSupport;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;

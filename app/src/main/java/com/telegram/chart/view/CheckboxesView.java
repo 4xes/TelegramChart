@@ -1,7 +1,6 @@
 package com.telegram.chart.view;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -11,11 +10,10 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import com.telegram.chart.R;
+import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.chart.Graph;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
-import androidx.annotation.Nullable;
-import androidx.core.widget.CompoundButtonCompat;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
@@ -69,7 +67,6 @@ public class CheckboxesView extends LinearLayout implements Themable {
                 final int lineId = (int) buttonView.getTag();
                 onLineVisibleListener.onLineVisibleChange(lineId, isVisible);
             });
-            CompoundButtonCompat.setButtonTintList(checkBox, ColorStateList.valueOf(graph.getColor(id)));
             addView(checkBox);
         }
     }

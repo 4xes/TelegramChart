@@ -1,5 +1,6 @@
 package com.telegram.chart.view.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -83,5 +84,13 @@ public class ViewUtils {
         float g = Color.green(color1) * inverseRatio + Color.green(color2) * ratio;
         float b = Color.blue(color1) * inverseRatio + Color.blue(color2) * ratio;
         return Color.argb((int) a, (int) r, (int) g, (int) b);
+    }
+
+    public static int getColor(Context context, int resId) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            return context.getColor(resId);
+        } else {
+            return context.getResources().getColor(resId);
+        }
     }
 }

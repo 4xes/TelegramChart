@@ -1,20 +1,20 @@
 package com.telegram.chart;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toolbar;
 
+import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.theme.ThemePreferences;
 
-abstract class ThemeBaseActivity extends AppCompatActivity implements Themable {
+abstract class ThemeBaseActivity extends Activity implements Themable {
 
     private Theme theme;
     private ThemePreferences themePreferences;
@@ -54,9 +54,9 @@ abstract class ThemeBaseActivity extends AppCompatActivity implements Themable {
     }
 
     private void setToolbarColor(int toolbarColor) {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setBackgroundDrawable(new ColorDrawable(toolbarColor));
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setBackground(new ColorDrawable(toolbarColor));
         }
     }
 
