@@ -22,9 +22,9 @@ public class Theme {
     private int nameColor;
     private int rangeColor;
     private int rangeSelectedColor;
-    private int backgroundInfoColor;
+    private int tooltipColor;
 
-    public Theme(Context context, @ThemeId int id, int toolbarColor, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int backgroundInfoColor) {
+    public Theme(Context context, @ThemeId int id, int toolbarColor, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int tooltipColor) {
         this.id = id;
         this.toolbarColor = getColor(context, toolbarColor);
         this.titleColor = getColor(context, titleColor);
@@ -36,7 +36,7 @@ public class Theme {
         this.nameColor = getColor(context, nameColor);
         this.rangeColor = getColor(context, rangeColor);
         this.rangeSelectedColor = getColor(context, rangeSelectedColor);
-        this.backgroundInfoColor = getColor(context, backgroundInfoColor);
+        this.tooltipColor = getColor(context, tooltipColor);
     }
 
     public int getId() {
@@ -57,7 +57,7 @@ public class Theme {
                 R.color.column_name_night,
                 R.color.range_night,
                 R.color.range_selected_night,
-                R.color.info_bg_night
+                R.color.tooltip_bg_night
         );
     }
 
@@ -75,7 +75,7 @@ public class Theme {
                 R.color.column_name_day,
                 R.color.range_day,
                 R.color.range_selected_day,
-                R.color.info_bg_day
+                R.color.tooltip_bg_day
         );
     }
 
@@ -111,8 +111,8 @@ public class Theme {
         return rangeSelectedColor;
     }
 
-    public int getBackgroundInfoColor() {
-        return backgroundInfoColor;
+    public int getTooltipColor() {
+        return tooltipColor;
     }
 
     public static Theme createTheme(Context context, @ThemeId int themeId) {

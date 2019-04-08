@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
-import com.telegram.chart.data.LineData;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.utils.ViewUtils;
@@ -15,7 +14,7 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class LineRender implements Themable {
     private final int id;
-    private final Graph graph;
+    private final GraphManager graphManager;
     private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -31,12 +30,12 @@ class LineRender implements Themable {
     public final int lineColor;
     public int backgroundColor;
 
-    public LineRender(int id, Graph data) {
+    public LineRender(int id, GraphManager data) {
         this.id = id;
-        this.graph = data;
-        lineColor = graph.getColor(id);
-        final int pointsLength = graph.dates.length * 2;
-        final int linePointsLength = 4 + (graph.dates.length - 2) * 4;
+        this.graphManager = data;
+        lineColor = graphManager.chart.data[id].color;
+        final int pointsLength = graphManager.chart.x.length * 2;
+        final int linePointsLength = 4 + (graphManager.chart.x.length - 2) * 4;
         lines = new float[linePointsLength];
         drawLines = new float[linePointsLength];
         points = new float[pointsLength];
@@ -45,27 +44,14 @@ class LineRender implements Themable {
         initPoints();
     }
 
-    public void initPoints() {
-        int[] y = graph.getY(id);
-
-        if (y.length > 0) {
-            for (int i = 0; i < y.length - 1; i++) {
-                final int iX0 = i * 4;
-                final int iY0 = i * 4 + 1;
-                final int iX1 = i * 4 + 2;
-                final int iY1 = i * 4 + 3;
-                lines[iX0] = i;
-                lines[iY0] = -y[i];
-                lines[iX1] = (i + 1) ;
-                lines[iY1] = -y[i + 1];
-
-                points[i * 2] = i;
-                points[(i * 2) + 1] = -y[i];
-            }
-            final int lastI = (y.length - 1) * 2;
-            points[lastI] = y.length - 1;
-            points[lastI + 1] = -y[y.length - 1];
+    public static LineRender[] createListRender(GraphManager graphManager) {
+        LineRender[] renders = new LineRender[graphManager.countLines()];
+        for (int id = 0; id < graphManager.countLines(); id++) {
+            LineRender render = new LineRender(id, graphManager);
+            render.setLineWidth(pxFromDp(2f));
+            renders[id] = render;
         }
+        return renders;
     }
 
     private void initPaints() {
@@ -95,8 +81,39 @@ class LineRender implements Themable {
         paintInsideCircle.setColor(backgroundColor);
     }
 
+    public static LineRender[] createListRenderPreview(GraphManager graphManager) {
+        LineRender[] renders = new LineRender[graphManager.countLines()];
+        for (int id = 0; id < graphManager.countLines(); id++) {
+            renders[id] = new LineRender(id, graphManager);
+        }
+        return renders;
+    }
+
+    public void initPoints() {
+        int[] y = graphManager.chart.data[id].data;
+
+        if (y.length > 0) {
+            for (int i = 0; i < y.length - 1; i++) {
+                final int iX0 = i * 4;
+                final int iY0 = i * 4 + 1;
+                final int iX1 = i * 4 + 2;
+                final int iY1 = i * 4 + 3;
+                lines[iX0] = i;
+                lines[iY0] = -y[i];
+                lines[iX1] = (i + 1) ;
+                lines[iY1] = -y[i + 1];
+
+                points[i * 2] = i;
+                points[(i * 2) + 1] = -y[i];
+            }
+            final int lastI = (y.length - 1) * 2;
+            points[lastI] = y.length - 1;
+            points[lastI + 1] = -y[y.length - 1];
+        }
+    }
+
     public void recalculateLines(RectF r, int lower, int upper) {
-        graph.matrix(id, r, matrixArray);
+        graphManager.matrix(id, r, matrixArray);
         matrix.reset();
         matrix.setScale(matrixArray[SCALE_X], matrixArray[SCALE_Y]);
         matrix.postTranslate(matrixArray[OFFSET_X], matrixArray[OFFSET_Y]);
@@ -107,7 +124,7 @@ class LineRender implements Themable {
     }
 
     public void calculatePreviewPoints(RectF r) {
-        graph.matrixPreview(id, r, matrixArray);
+        graphManager.matrixPreview(id, r, matrixArray);
         matrix.reset();
         matrix.setScale(matrixArray[SCALE_X], matrixArray[SCALE_Y]);
         matrix.postTranslate(matrixArray[OFFSET_X], matrixArray[OFFSET_Y]);
@@ -115,30 +132,28 @@ class LineRender implements Themable {
     }
 
     public void render(Canvas canvas, RectF chart, RectF visible) {
-        float currentAlpha = graph.state.chart.alphaCurrent[id];
+        float currentAlpha = graphManager.state.chart.alphaCurrent[id];
         int alpha = (int) Math.ceil(255 * currentAlpha);
         if (alpha != 0) {
-            final int maxIndex = graph.getY(id).length - 1;
-            final float sectionWidth = graph.sectionWidth(chart.width());
+            final int maxIndex = graphManager.chart.x.length - 1;
+            final float sectionWidth = graphManager.sectionWidth(chart.width());
             final int addIndexLeft = (int) Math.rint((chart.left - visible.left) / sectionWidth);
             final int addIndexRight = (int) Math.rint((visible.right - chart.right) / sectionWidth);
-            int lower = LineData.getLowerIndex(graph.range.start, maxIndex) - 1 - addIndexLeft;
+            int lower = graphManager.chart.getLower(graphManager.range.start) - 1 - addIndexLeft;
             if (lower < 0) {
                 lower = 0;
             }
-            int upper = LineData.getUpperIndex(graph.range.end, maxIndex) + 1 + addIndexRight;
+            int upper = graphManager.chart.getUpper(graphManager.range.end) + 1 + addIndexRight;
             if (upper > maxIndex){
                 upper = maxIndex;
             }
             recalculateLines(chart, lower, upper);
-            //final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
             boolean maxOptimize = upper - lower < MAX_OPTIMIZE_LINES;
             if (maxOptimize) {
                 paintLine.setStrokeCap(Paint.Cap.BUTT);
             } else {
                 paintLine.setStrokeCap(Paint.Cap.SQUARE);
             }
-            //paintLine.setColor(blendColor);
             paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
             canvas.drawLines(drawLines, lower * 4, (upper - lower) * 4, paintLine);
             if (maxOptimize) {
@@ -148,49 +163,30 @@ class LineRender implements Themable {
         }
     }
 
+    private final int SCALE_X = 0;
+    private final int SCALE_Y = 1;
+    private final int OFFSET_X = 2;
+    private final int OFFSET_Y = 3;
+
     public void renderPreview(Canvas canvas, RectF r) {
-        float currentAlpha = graph.state.chart.alphaCurrent[id];
+        float currentAlpha = graphManager.state.chart.alphaCurrent[id];
         int alpha = (int) Math.ceil(255 * currentAlpha);
         if (alpha != 0) {
             calculatePreviewPoints(r);
-            //final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
             paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
             canvas.drawLines(drawLines, paintLine);
         }
     }
 
     public void renderCircle(Canvas canvas, int index, RectF r) {
-        float currentAlpha = graph.state.chart.alphaCurrent[id];
+        float currentAlpha = graphManager.state.chart.alphaCurrent[id];
         if (currentAlpha != 0f) {
-            graph.calculatePoint(id, index, r, point);
+            graphManager.calculatePoint(id, index, r, point);
             final int blendColor = ViewUtils.blendARGB( backgroundColor, lineColor, currentAlpha);
             paintCircle.setColor(blendColor);
             canvas.drawCircle(point.x, point.y, radius, paintInsideCircle);
             canvas.drawCircle(point.x, point.y, radius, paintCircle);
         }
-    }
-
-    private final int SCALE_X = 0;
-    private final int SCALE_Y = 1;
-    private final int OFFSET_X = 2;
-    private final int OFFSET_Y = 3;
-
-    public static LineRender[] createListRender(Graph graph) {
-        LineRender[] renders = new LineRender[graph.countLines()];
-        for (int id = 0; id < graph.countLines(); id++) {
-            LineRender render = new LineRender(id, graph);
-            render.setLineWidth(pxFromDp(2f));
-            renders[id] = render;
-        }
-        return renders;
-    }
-
-    public static LineRender[] createListRenderPreview(Graph graph) {
-        LineRender[] renders = new LineRender[graph.countLines()];
-        for (int id = 0; id < graph.countLines(); id++) {
-            renders[id] = new LineRender(id, graph);
-        }
-        return renders;
     }
 
     private static final int MAX_OPTIMIZE_LINES = 100;

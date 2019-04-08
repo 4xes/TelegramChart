@@ -15,7 +15,7 @@ import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class PreviewChartView extends BaseMeasureView implements Themable, Graph.InvalidateListener {
+public class PreviewChartView extends BaseMeasureView implements Themable, GraphManager.InvalidateListener {
 
     private final RectF chartBound = new RectF();
     private final float horizontalPadding = pxFromDp(1f);
@@ -43,9 +43,9 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
-    public void setGraph(Graph graph) {
-        lineRenders = LineRender.createListRenderPreview(graph);
-        graph.registerView(getViewId(), this);
+    public void setGraph(GraphManager graphManager) {
+        lineRenders = LineRender.createListRenderPreview(graphManager);
+        graphManager.registerView(getViewId(), this);
         if (theme != null){
             applyTheme(theme);
         }

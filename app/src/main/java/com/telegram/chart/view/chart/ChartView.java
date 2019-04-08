@@ -21,12 +21,12 @@ import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
-import static com.telegram.chart.view.chart.Graph.NONE_INDEX;
+import static com.telegram.chart.view.chart.GraphManager.NONE_INDEX;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
-public class ChartView extends BaseMeasureView implements Themable, Graph.InvalidateListener, TimeAnimator.TimeListener {
+public class ChartView extends BaseMeasureView implements Themable, GraphManager.InvalidateListener, TimeAnimator.TimeListener {
 
     protected final RectF chartBound = new RectF();
     protected final RectF visibleBound = new RectF();
@@ -43,7 +43,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
-    private Graph graph;
+    private GraphManager graphManager;
     private String titleText;
     private int selectIndex = NONE_INDEX;
     public static final String TAG = ChartView.class.getSimpleName();
@@ -100,11 +100,11 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         invalidate();
     }
 
-    public void seGraph(Graph graph) {
-        this.graph = graph;
-        lineRenders = LineRender.createListRender(graph);
-        xyRender = new XYRender(graph);
-        graph.registerView(getViewId(), this);
+    public void seGraph(GraphManager graphManager) {
+        this.graphManager = graphManager;
+        lineRenders = LineRender.createListRender(graphManager);
+        xyRender = new XYRender(graphManager);
+        graphManager.registerView(getViewId(), this);
         if (theme != null){
             applyTheme(theme);
         }
@@ -135,14 +135,14 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         if (lineRenders != null && lineRenders.length > 0) {
-            int touchIndex = graph.getIndex(x, bound);
+            int touchIndex = graphManager.getIndex(x, bound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
                 if (onShowInfoListener != null) {
                     if (selectIndex == NONE_INDEX) {
                         onShowInfoListener.hideInfo();
                     } else {
-                        graph.calculateLine(selectIndex, chartBound, point);
+                        graphManager.calculateLine(selectIndex, chartBound, point);
                         onShowInfoListener.showInfo(selectIndex, chartBound, point);
                     }
                 }
@@ -165,7 +165,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
             canvas.drawColor(theme.getBackgroundWindowColor());
         }
 
-        boolean hasContent = graph.countVisible() > 0;
+        boolean hasContent = graphManager.countVisible() > 0;
         if (xyRender != null && hasContent) {
             xyRender.renderYLines(canvas, chartBound);
         }
@@ -178,7 +178,7 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
         if (hasContent) {
             if (xyRender != null) {
                 if (selectIndex != NONE_INDEX) {
-                    graph.calculateLine(selectIndex, chartBound, point);
+                    graphManager.calculateLine(selectIndex, chartBound, point);
                     xyRender.renderVLine(canvas, chartBound, point.x);
                 }
                 xyRender.renderYText(canvas, chartBound);
@@ -243,8 +243,8 @@ public class ChartView extends BaseMeasureView implements Themable, Graph.Invali
                 return;
             }
         }
-        if (isReady() && graph != null) {
-            graph.onTimeUpdate(deltaTime);
+        if (isReady() && graphManager != null) {
+            graphManager.onTimeUpdate(deltaTime);
         }
     }
 

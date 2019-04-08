@@ -10,7 +10,7 @@ import android.view.View;
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.annotation.NonNull;
 import com.telegram.chart.view.annotation.Nullable;
-import com.telegram.chart.view.chart.Graph;
+import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.chart.Ids;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
@@ -18,11 +18,11 @@ import com.telegram.chart.view.theme.Theme;
 import static com.telegram.chart.view.utils.ViewUtils.clipSupport;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-public class RangeView extends BaseRangeView implements Themable, Graph.InvalidateListener {
+public class RangeView extends BaseRangeView implements Themable, GraphManager.InvalidateListener {
 
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Graph graph;
+    private GraphManager graphManager;
 
     private float selectVerticalWidth = pxFromDp(1f);
     private float selectHorizontalWidth = pxFromDp(4f);
@@ -63,9 +63,9 @@ public class RangeView extends BaseRangeView implements Themable, Graph.Invalida
         invalidate();
     }
 
-    public void seGraph(Graph graph) {
-        this.graph = graph;
-        this.graph.registerView(getViewId(), this);
+    public void seGraph(GraphManager graphManager) {
+        this.graphManager = graphManager;
+        this.graphManager.registerView(getViewId(), this);
         invalidate();
     }
 

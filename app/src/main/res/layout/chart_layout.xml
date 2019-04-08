@@ -14,7 +14,7 @@
         android:paddingEnd="@dimen/normal"
         />
 
-    <com.telegram.chart.view.chart.InfoView
+    <com.telegram.chart.view.chart.TooltipView
         android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="320dp"

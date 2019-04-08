@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 
 import com.telegram.chart.R;
 import com.telegram.chart.view.annotation.Nullable;
-import com.telegram.chart.view.chart.Graph;
+import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
@@ -46,8 +46,8 @@ public class CheckboxesView extends LinearLayout implements Themable {
         dividerPaint.setStrokeWidth(pxFromDp(1f));
     }
 
-    public void init(Graph graph, OnLineVisibleListener onLineVisibleListener) {
-        for (int id = 0; id < graph.countLines(); id++) {
+    public void init(GraphManager graphManager, OnLineVisibleListener onLineVisibleListener) {
+        for (int id = 0; id < graphManager.countLines(); id++) {
             CheckBox checkBox = new CheckBox(getContext());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -57,7 +57,7 @@ public class CheckboxesView extends LinearLayout implements Themable {
             params.setMargins(padding, 0, 0, 0);
             checkBox.setLayoutParams(params);
             checkBox.setPadding(padding, padding, padding, padding);
-            checkBox.setText(graph.getName(id));
+            checkBox.setText(graphManager.chart.data[id].name);
             if (theme != null) {
                 checkBox.setTextColor(theme.getNameColor());
             }

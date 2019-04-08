@@ -10,13 +10,15 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Toolbar;
 
-import com.telegram.chart.data.ChartData;
+import com.telegram.chart.data.Chart;
+import com.telegram.chart.data.parser.ChartsInteractor;
+import com.telegram.chart.data.parser.DataInteractorImpl;
 import com.telegram.chart.view.CheckboxesView;
 import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.chart.ChartView;
-import com.telegram.chart.view.chart.Graph;
-import com.telegram.chart.view.chart.InfoView;
+import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.chart.PreviewChartView;
+import com.telegram.chart.view.chart.TooltipView;
 import com.telegram.chart.view.range.RangeView;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
@@ -54,13 +56,13 @@ public class MainActivity extends ThemeBaseActivity {
         content = findViewById(R.id.content);
     }
 
-    private void renderCheckboxes(final Graph graph, final InfoView infoView) {
+    private void renderCheckboxes(final GraphManager graphManager, final TooltipView tooltipView) {
         CheckboxesView checkboxesView = new CheckboxesView(this);
         checkboxesView.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-        checkboxesView.init(graph, (id, isVisible) -> {
-            graph.setVisible(id, isVisible);
-            if (infoView.isShowing()) {
-                infoView.invalidate();
+        checkboxesView.init(graphManager, (id, isVisible) -> {
+            graphManager.setVisible(id, isVisible);
+            if (tooltipView.isShowing()) {
+                tooltipView.invalidate();
             }
         });
         content.addView(checkboxesView);
@@ -97,46 +99,60 @@ public class MainActivity extends ThemeBaseActivity {
         }
     }
 
-    private void renderChart(int number, final ChartData chart) {
-        final Graph graph = new Graph(chart);
+    private void renderChart(int number, final Chart chart) {
+        final GraphManager graphManager = new GraphManager(chart);
         LayoutInflater li = LayoutInflater.from(this);
         final View chartWrapper = li.inflate(R.layout.chart_layout, content, false);
         final View previewWrapper = li.inflate(R.layout.preview_layout, content, false);
-        final InfoView infoView = chartWrapper.findViewById(R.id.info);
+        final TooltipView tooltipView = chartWrapper.findViewById(R.id.info);
         final ChartView chartView = chartWrapper.findViewById(R.id.chart);
         final RangeView rangeView = previewWrapper.findViewById(R.id.range);
         final PreviewChartView previewChartView = previewWrapper.findViewById(R.id.preview);
         chartView.setTitleText(getString(R.string.chart_title, number));
         chartViews.add(chartView);
-        themables.add(infoView);
+        themables.add(tooltipView);
         themables.add(chartView);
         themables.add(rangeView);
         themables.add(previewChartView);
         content.addView(chartWrapper);
         content.addView(previewWrapper);
-        renderCheckboxes(graph, infoView);
+        renderCheckboxes(graphManager, tooltipView);
         renderDivider(ViewUtils.pxFromDp(1), DIVIDER_TAG);
         renderDivider(ViewUtils.pxFromDp(40), SPACING_TAG);
-        chartView.seGraph(graph);
-        previewChartView.setGraph(graph);
-        rangeView.seGraph(graph);
-        infoView.seGraph(graph);
+        chartView.seGraph(graphManager);
+        previewChartView.setGraph(graphManager);
+        rangeView.seGraph(graphManager);
+        tooltipView.seGraph(graphManager);
         rangeView.setOnRangeListener((start, end) -> {
             chartView.resetIndex();
-            infoView.hideInfo();
-           graph.update(rangeView.getViewId(), start, end);
+            tooltipView.hideInfo();
+           graphManager.update(rangeView.getViewId(), start, end);
         });
-        chartView.setOnShowInfoListener(infoView);
+        chartView.setOnShowInfoListener(tooltipView);
     }
 
     private void loadChart() {
-        content.post(() -> {
-            for (int i = 0; i < ChartData.charts.length; i++) {
+//        content.post(() -> {
+//            for (int i = 0; i < Chart.charts.length; i++) {
+//                renderDivider(ViewUtils.pxFromDp(28), SPACING_TAG);
+//                renderChart(i + 1, Chart.charts[i]);
+//            }
+//            applyTheme(getCurrentTheme());
+//        });
+
+        ChartsInteractor interactor = new DataInteractorImpl(getApplicationContext());
+        try {
+            final Chart chart1 = interactor.getChart(1);
+            final Chart chart2 = interactor.getChart(2);
+            content.post(() -> {
                 renderDivider(ViewUtils.pxFromDp(28), SPACING_TAG);
-                renderChart(i + 1, ChartData.charts[i]);
-            }
-            applyTheme(getCurrentTheme());
-        });
+                renderChart(1, chart1);
+                renderChart(2, chart2);
+                applyTheme(getCurrentTheme());
+            });
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     @Override
