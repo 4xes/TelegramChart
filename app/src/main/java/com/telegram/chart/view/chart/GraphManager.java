@@ -1,5 +1,6 @@
 package com.telegram.chart.view.chart;
 
+import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
@@ -103,6 +104,17 @@ public class GraphManager {
         matrix[3] = offsetY;
     }
 
+    public void matrix(int id, RectF r, Matrix matrix) {
+        final float scaleX = getScaleRange() * sectionWidth(r.width());
+        final float scaleY = (1f / (state.chart.yMaxCurrent[id] / r.height())) * state.chart.multiCurrent[id];
+        final float dx = (-r.width() * range.start) * getScaleRange();
+        final float offsetX = r.left + dx;
+        final float offsetY = r.bottom;
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
+    }
+
     public void matrixPreview(int id, RectF r, float[] matrix) {
         final float width = r.width();
         final float scaleX = sectionWidth(width);
@@ -113,6 +125,17 @@ public class GraphManager {
         matrix[1] = scaleY;
         matrix[2] = offsetX;
         matrix[3] = offsetY;
+    }
+
+    public void matrixPreview(int id, RectF r, Matrix matrix) {
+        final float width = r.width();
+        final float scaleX = sectionWidth(width);
+        final float scaleY = (1f / (state.preview.yMaxCurrent[id] / r.height()) * state.preview.multiCurrent[id]);
+        final float offsetX = r.left;
+        final float offsetY = r.bottom;
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
     }
 
     public void calculateLine(int index, RectF r, PointF point) {

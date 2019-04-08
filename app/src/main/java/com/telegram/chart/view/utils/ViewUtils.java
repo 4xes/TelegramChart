@@ -23,11 +23,11 @@ public class ViewUtils {
     }
 
     public static float pxFromDp(float value) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, Resources.getSystem().getDisplayMetrics());
+        return (float) Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, Resources.getSystem().getDisplayMetrics()));
     }
 
     public static float pxFromSp(float value) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, Resources.getSystem().getDisplayMetrics());
+        return (float) Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, Resources.getSystem().getDisplayMetrics()));
     }
 
     public static float measureHeightText(final Paint paint) {

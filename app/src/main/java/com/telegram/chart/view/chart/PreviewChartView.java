@@ -20,7 +20,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     private final RectF chartBound = new RectF();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
-    private LineRender[] lineRenders;
+    private BaseRender[] renders;
     public static final String TAG = PreviewChartView.class.getSimpleName();
     private Theme theme;
 
@@ -44,7 +44,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     }
 
     public void setGraph(GraphManager graphManager) {
-        lineRenders = LineRender.createListRenderPreview(graphManager);
+        renders = RenderFabric.getPreviews(graphManager);
         graphManager.registerView(getViewId(), this);
         if (theme != null){
             applyTheme(theme);
@@ -61,7 +61,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        for (LineRender renderer: lineRenders) {
+        for (BaseRender renderer: renders) {
             renderer.applyTheme(theme);
         }
         invalidate();
@@ -87,9 +87,9 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         if (theme != null) {
             canvas.drawColor(theme.getBackgroundWindowColor());
         }
-        if (lineRenders != null) {
-            for (int id = 0; id < lineRenders.length; id++) {
-                lineRenders[id].renderPreview(canvas, chartBound);
+        if (renders != null) {
+            for (int id = 0; id < renders.length; id++) {
+                renders[id].render(canvas, chartBound, null);
             }
         }
     }

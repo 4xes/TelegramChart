@@ -2,37 +2,27 @@ package com.telegram.chart.view.chart;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PointF;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.theme.Theme;
-import com.telegram.chart.view.utils.ViewUtils;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-class LineRender extends BaseRender {
+class StackedBarRender extends BaseRender {
     private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintInsideCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final PointF point = new PointF();
-    private final float radius = pxFromDp(4);
-    private final float[] points;
-    private final float[] drawPoints;
-    private final float[] lines;
-    private final float[] drawLines;
-    private final int color;
-    private int backgroundColor;
+    public final float[] lines;
+    public final float[] drawLines;
+    public final int color;
 
-    public LineRender(int id, GraphManager manager) {
+    public StackedBarRender(int id, GraphManager manager) {
         super(id, manager);
         color = manager.chart.data[id].color;
-        final int pointsLength = manager.chart.x.length * 2;
         final int linePointsLength = 4 + (manager.chart.x.length - 2) * 4;
         lines = new float[linePointsLength];
         drawLines = new float[linePointsLength];
-        points = new float[pointsLength];
-        drawPoints = new float[pointsLength];
         initPaints();
         initDrawArrays();
     }
@@ -54,8 +44,6 @@ class LineRender extends BaseRender {
 
     @Override
     public void applyTheme(Theme theme) {
-        backgroundColor = theme.getBackgroundWindowColor();
-        paintInsideCircle.setColor(backgroundColor);
     }
 
     public void initDrawArrays() {
@@ -71,24 +59,14 @@ class LineRender extends BaseRender {
                 lines[iY0] = -y[i];
                 lines[iX1] = (i + 1) ;
                 lines[iY1] = -y[i + 1];
-
-                points[i * 2] = i;
-                points[(i * 2) + 1] = -y[i];
             }
-            final int lastI = (y.length - 1) * 2;
-            points[lastI] = y.length - 1;
-            points[lastI + 1] = -y[y.length - 1];
         }
     }
 
     public void recalculateLines(RectF r, int lower, int upper) {
         manager.matrix(id, r, matrix);
         matrix.mapPoints(drawLines, lower * 4, lines, lower * 4, (upper - lower) * 2);
-        if (upper - lower < 100) {
-            matrix.mapPoints(drawPoints, lower * 2, points, lower * 2, (upper - lower) + 1);
-        }
     }
-
 
     public void render(Canvas canvas, RectF chart, RectF visible) {
         float currentAlpha = manager.state.chart.alphaCurrent[id];
@@ -107,32 +85,18 @@ class LineRender extends BaseRender {
                 upper = maxIndex;
             }
             recalculateLines(chart, lower, upper);
-            boolean maxOptimize = upper - lower < MAX_OPTIMIZE_LINES;
-            if (maxOptimize) {
-                paintLine.setStrokeCap(Paint.Cap.BUTT);
-            } else {
-                paintLine.setStrokeCap(Paint.Cap.SQUARE);
-            }
+            paintLine.setStrokeCap(Paint.Cap.SQUARE);
             paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
             canvas.drawLines(drawLines, lower * 4, (upper - lower) * 4, paintLine);
-            if (maxOptimize) {
-                paintPoint.setAlpha((int) Math.ceil(255 * currentAlpha));
-                canvas.drawPoints(drawPoints, lower * 2, (upper - lower) * 2 + 2, paintPoint);
-            }
         }
     }
 
-    @Override
-    public void renderSelect(Canvas canvas, int index, RectF chart, RectF visible) {
-        float currentAlpha = manager.state.chart.alphaCurrent[id];
-        if (currentAlpha != 0f) {
-            manager.calculatePoint(id, index, chart, point);
-            final int blendColor = ViewUtils.blendARGB( backgroundColor, color, currentAlpha);
-            paintCircle.setColor(blendColor);
-            canvas.drawCircle(point.x, point.y, radius, paintInsideCircle);
-            canvas.drawCircle(point.x, point.y, radius, paintCircle);
+    public static StackedBarRender[] createRender(GraphManager manager) {
+        StackedBarRender[] renders = new StackedBarRender[manager.countLines()];
+        for (int id = 0; id < manager.countLines(); id++) {
+            StackedBarRender render = new StackedBarRender(id, manager);
+            renders[id] = render;
         }
+        return renders;
     }
-
-    private static final int MAX_OPTIMIZE_LINES = 100;
 }

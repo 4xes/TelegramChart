@@ -1,6 +1,7 @@
 package com.telegram.chart.view.chart;
 
 import android.animation.TimeAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -39,7 +40,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     private int[] gradientColors = new int[2];
     private final float horizontalPadding = pxFromDp(1f);
     private TimeAnimator animator;
-    private LineRender[] lineRenders;
+    private BaseRender[] renders;
     private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
@@ -90,7 +91,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         if (xyRender != null) {
             xyRender.applyTheme(theme);
         }
-        for (LineRender renderer: lineRenders) {
+        for (BaseRender renderer: renders) {
             renderer.applyTheme(theme);
         }
         gradientColors[0] = theme.getBackgroundWindowColor();
@@ -102,7 +103,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
 
     public void seGraph(GraphManager graphManager) {
         this.graphManager = graphManager;
-        lineRenders = LineRender.createListRender(graphManager);
+        renders = RenderFabric.getCharts(graphManager);
         xyRender = new XYRender(graphManager);
         graphManager.registerView(getViewId(), this);
         if (theme != null){
@@ -134,7 +135,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
-        if (lineRenders != null && lineRenders.length > 0) {
+        if (renders != null && renders.length > 0) {
             int touchIndex = graphManager.getIndex(x, bound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
@@ -169,9 +170,9 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         if (xyRender != null && hasContent) {
             xyRender.renderYLines(canvas, chartBound);
         }
-        if (lineRenders != null) {
-            for (int id = 0; id < lineRenders.length; id++) {
-                lineRenders[id].render(canvas, chartBound, visibleBound);
+        if (renders != null) {
+            for (int id = 0; id < renders.length; id++) {
+                renders[id].render(canvas, chartBound, visibleBound);
             }
         }
 
@@ -190,8 +191,10 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         }
 
         if (selectIndex != NONE_INDEX) {
-            for (LineRender render: lineRenders) {
-                render.renderCircle(canvas, selectIndex, chartBound);
+            if (renders != null) {
+                for (BaseRender render: renders) {
+                    render.renderSelect(canvas, selectIndex, chartBound, visibleBound);
+                }
             }
         }
         gradientDrawable.draw(canvas);
@@ -236,6 +239,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
