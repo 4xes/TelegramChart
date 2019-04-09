@@ -100,7 +100,7 @@ public class TooltipRender implements Themable {
         int n = 0;
         for (int id = 0; id < graphManager.countLines(); id++) {
             if (graphManager.state.visible[id]) {
-                values[n] = String.valueOf(graphManager.chart.data[id].data[index]);
+                values[n] = String.valueOf(graphManager.chart.data[id].y[index]);
                 names[n] = graphManager.chart.data[id].name;
                 valuesWidth[n] = paintValue.measureText(values[n]);
                 namesWidth[n] = paintName.measureText(names[n]);

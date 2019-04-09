@@ -36,7 +36,7 @@ class PreviewLineRender extends BaseRender {
 
     public void initDrawArrays() {
         for (int id = 0; id < manager.countLines(); id++) {
-            int[] y = manager.chart.data[id].data;
+            int[] y = manager.chart.data[id].y;
 
             if (y.length > 0) {
                 for (int i = 0; i < y.length - 1; i++) {

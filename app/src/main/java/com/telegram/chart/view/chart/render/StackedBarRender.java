@@ -45,7 +45,7 @@ class StackedBarRender extends BaseRender {
 
     public void recalculateLines(RectF r, int lower, int upper) {
         for (int id = 0; id < manager.countLines(); id++) {
-            int[] y = manager.chart.data[id].data;
+            int[] y = manager.chart.data[id].y;
 
             if (y.length > 0) {
                 for (int i = 0; i < y.length; i++) {

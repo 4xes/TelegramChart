@@ -150,7 +150,7 @@ public class GraphManager {
         final float offsetX = r.left + dx;
         final float scaleY = 1f / (state.chart.yMaxCurrent[id] / r.height());
         final float offsetY = r.bottom;
-        point.set(index * scaleX + offsetX, -(chart.data[id].data[index] * scaleY) + offsetY);
+        point.set(index * scaleX + offsetX, -(chart.data[id].y[index] * scaleY) + offsetY);
     }
 
     public float sectionWidth(float width) {

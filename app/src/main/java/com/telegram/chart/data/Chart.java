@@ -14,6 +14,7 @@ public class Chart {
     public final int[] x;
     public final String type;
     public final boolean[] visible;
+    public final Calculator calculator;
 
     public Chart(int[] x, Data[] data, String type) {
         this.x = x;
@@ -21,6 +22,7 @@ public class Chart {
         this.type = type;
         this.visible = new boolean[data.length];
         Arrays.fill(visible, true);
+        calculator = CalculatorFabric.getCalculator(this);
     }
 
     public int getLower(float lower) {
@@ -32,36 +34,11 @@ public class Chart {
     }
 
     public int max() {
-        int max = Integer.MIN_VALUE;
-
-        for (int id = 0; id < data.length; id++) {
-            if (visible[id]) {
-                final Data line = data[id];
-                if (max < line.max) {
-                    max = line.max;
-                }
-            }
-        }
-        return max;
-    }
-
-    public int count() {
-        return data.length;
+        return calculator.max(this);
     }
 
     public int max(Range range) {
-        int max = Integer.MIN_VALUE;
-
-        for (int id = 0; id < count(); id++) {
-            if (visible[id]) {
-                final Data line = data[id];
-                final int maxLine = line.getMax(range.start, range.end);
-                if (max < maxLine) {
-                    max = maxLine;
-                }
-            }
-        }
-        return max;
+        return calculator.max(this, range);
     }
 
     public static int toStepped(int max) {
@@ -77,7 +54,6 @@ public class Chart {
     }
 
     public int stepMax(int id, Range range) {
-        int max = data[id].getMax(range.start, range.end);
-        return toStepped(max);
+        return toStepped(calculator.max(this, id, range));
     }
 }
