@@ -6,6 +6,12 @@ import android.graphics.RectF;
 
 import com.telegram.chart.data.Chart;
 
+import static com.telegram.chart.view.chart.render.Render.OFFSET_X;
+import static com.telegram.chart.view.chart.render.Render.OFFSET_Y;
+import static com.telegram.chart.view.chart.render.Render.SCALED_WIDTH;
+import static com.telegram.chart.view.chart.render.Render.SCALE_X;
+import static com.telegram.chart.view.chart.render.Render.SCALE_Y;
+
 public class GraphManager {
     public final StateManager state;
     public final Chart chart;
@@ -93,21 +99,23 @@ public class GraphManager {
     }
 
     public void matrix(int id, RectF r, float[] matrix) {
-        final float scaleX = getScaleRange() * sectionWidth(r.width());
+        final float width = r.width();
+        final float scaleX = getScaleRange() * sectionWidth(width);
         final float scaleY = (1f / (state.chart.yMaxCurrent[id] / r.height())) * state.chart.multiCurrent[id];
-        final float dx = (-r.width() * range.start) * getScaleRange();
+        final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx;
         final float offsetY = r.bottom;
-        matrix[0] = scaleX;
-        matrix[1] = scaleY;
-        matrix[2] = offsetX;
-        matrix[3] = offsetY;
+        matrix[SCALE_X] = scaleX;
+        matrix[OFFSET_X] = offsetX;
+        matrix[SCALE_Y] = scaleY;
+        matrix[OFFSET_Y] = offsetY;
     }
 
     public void matrix(int id, RectF r, Matrix matrix) {
-        final float scaleX = getScaleRange() * sectionWidth(r.width());
+        final float width = r.width();
+        final float scaleX = getScaleRange() * sectionWidth(width);
         final float scaleY = (1f / (state.chart.yMaxCurrent[id] / r.height())) * state.chart.multiCurrent[id];
-        final float dx = (-r.width() * range.start) * getScaleRange();
+        final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx;
         final float offsetY = r.bottom;
         matrix.reset();
@@ -115,16 +123,19 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
-    public void matrixPreview(int id, RectF r, float[] matrix) {
+    public void matrixStackedBars(RectF r, float[] matrix) {
         final float width = r.width();
-        final float scaleX = sectionWidth(width);
-        final float scaleY = (1f / (state.preview.yMaxCurrent[id] / r.height()) * state.preview.multiCurrent[id]);
-        final float offsetX = r.left;
+        final float barWidth = barWidth(width);
+        final float scaleX = getScaleRange() * barWidth;
+        final float scaleY = (1f / (chart.stepMax(range)/ r.height()));
+        final float dx = (-width * range.start) * getScaleRange();
+        final float offsetX = r.left + dx + scaleX / 2f;
         final float offsetY = r.bottom;
-        matrix[0] = scaleX;
-        matrix[1] = scaleY;
-        matrix[2] = offsetX;
-        matrix[3] = offsetY;
+        matrix[SCALE_X] = scaleX;
+        matrix[OFFSET_X] = offsetX;
+        matrix[SCALE_Y] = scaleY;
+        matrix[OFFSET_Y] = offsetY;
+        matrix[SCALED_WIDTH] = Math.round(getScaleRange() * sectionWidth(width));
     }
 
     public void matrixPreview(int id, RectF r, Matrix matrix) {
@@ -146,7 +157,7 @@ public class GraphManager {
         final float width = r.width();
         final float scaleRange = getScaleRange();
         final float scaleX = scaleRange * sectionWidth(width);
-        final float dx = (-width * range.start) * scaleRange;
+        final float dx = (-width * range.start) * scaleRange - sectionWidth(width) / 2f;
         final float offsetX = r.left + dx;
         final float scaleY = 1f / (state.chart.yMaxCurrent[id] / r.height());
         final float offsetY = r.bottom;
@@ -156,6 +167,13 @@ public class GraphManager {
     public float sectionWidth(float width) {
         if (chart.x.length > 1) {
             return width / (chart.x.length - 1);
+        }
+        return width;
+    }
+
+    public float barWidth(float width) {
+        if (chart.x.length > 1) {
+            return width / (chart.x.length);
         }
         return width;
     }

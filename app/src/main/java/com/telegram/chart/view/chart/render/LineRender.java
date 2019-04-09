@@ -10,7 +10,7 @@ import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-class LineRender extends BaseRender {
+class LineRender extends Render {
     private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);

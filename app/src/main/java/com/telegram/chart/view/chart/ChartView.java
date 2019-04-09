@@ -19,7 +19,7 @@ import android.view.View;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.annotation.Nullable;
-import com.telegram.chart.view.chart.render.BaseRender;
+import com.telegram.chart.view.chart.render.Render;
 import com.telegram.chart.view.chart.render.RenderFabric;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
@@ -42,7 +42,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     private int[] gradientColors = new int[2];
     private final float horizontalPadding = pxFromDp(1f);
     private TimeAnimator animator;
-    private BaseRender render;
+    private Render render;
     private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
@@ -131,7 +131,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         datesBound.top = bound.bottom - pxFromDp(28f);
         chartBound.bottom = datesBound.top;
         chartBound.inset(horizontalPadding, 0f);
-        gradientDrawable.setBounds((int) bound.left, (int) bound.top, (int) bound.right, (int) chartBound.top);
+        gradientDrawable.setBounds((int) visibleBound.left, (int) bound.top, (int) visibleBound.right, (int) chartBound.top);
     }
 
     @Override

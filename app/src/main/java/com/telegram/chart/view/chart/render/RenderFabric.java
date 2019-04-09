@@ -5,8 +5,8 @@ import com.telegram.chart.view.chart.GraphManager;
 
 public class RenderFabric {
 
-    public static BaseRender getChart(GraphManager graphManager) {
-        BaseRender render = null;
+    public static Render getChart(GraphManager graphManager) {
+        Render render = null;
         switch (graphManager.chart.type) {
             case Chart.TYPE_LINE:
                 render = new LineRender(graphManager);
@@ -25,8 +25,8 @@ public class RenderFabric {
     }
 
 
-    public static BaseRender getPreview(GraphManager graphManager) {
-        BaseRender render = null;
+    public static Render getPreview(GraphManager graphManager) {
+        Render render = null;
         switch (graphManager.chart.type) {
             case Chart.TYPE_LINE:
                 render = new PreviewLineRender(graphManager);

@@ -8,7 +8,7 @@ import com.telegram.chart.view.chart.GraphManager;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
-class PreviewLineRender extends BaseRender {
+class PreviewLineRender extends Render {
     private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
     public final float[][] lines;
     public final float[][] drawLines;

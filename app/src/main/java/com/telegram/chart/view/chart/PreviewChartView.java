@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.annotation.Nullable;
-import com.telegram.chart.view.chart.render.BaseRender;
+import com.telegram.chart.view.chart.render.Render;
 import com.telegram.chart.view.chart.render.RenderFabric;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
@@ -22,7 +22,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     private final RectF chartBound = new RectF();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
-    private BaseRender render;
+    private Render render;
     public static final String TAG = PreviewChartView.class.getSimpleName();
     private Theme theme;
 
