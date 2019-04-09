@@ -1,20 +1,19 @@
-package com.telegram.chart.view.chart;
+package com.telegram.chart.view.chart.render;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
+import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
 public abstract class BaseRender implements Themable {
-    protected final int id;
-    protected final GraphManager manager;
+    final GraphManager manager;
     protected final float[] matrixArray = new float[4];
-    protected final Matrix matrix = new Matrix();
+    final Matrix matrix = new Matrix();
 
-    public BaseRender(int id, GraphManager graphManager) {
-        this.id = id;
+    public BaseRender(GraphManager graphManager) {
         this.manager = graphManager;
     }
 

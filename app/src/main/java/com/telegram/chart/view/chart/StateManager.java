@@ -1,12 +1,13 @@
 package com.telegram.chart.view.chart;
 
-import com.telegram.chart.data.Data;
-
 import java.util.Arrays;
+
+import static com.telegram.chart.data.Chart.step;
+import static com.telegram.chart.data.Chart.toStepped;
 
 public class StateManager {
 
-    private final GraphManager graphManager;
+    private final GraphManager manager;
     public State chart;
     public State preview;
     public boolean[] visible;
@@ -19,16 +20,16 @@ public class StateManager {
     public float previousStep;
     public float currentStep;
 
-    public StateManager(GraphManager graphManager) {
-        this.graphManager = graphManager;
-        this.chart = new State(graphManager.countLines());
-        this.preview = new State(graphManager.countLines());
-        this.visible = new boolean[graphManager.countLines()];
+    public StateManager(GraphManager manager) {
+        this.manager = manager;
+        this.chart = new State(manager.countLines());
+        this.preview = new State(manager.countLines());
+        this.visible = new boolean[manager.countLines()];
         Arrays.fill(visible, true);
 
-        int maxPreview = getMaxPreview();
-        int maxChart = getMaxChartStepped();
-        int newCurrent = getMaxChart();
+        int maxPreview = manager.chart.max();
+        int newCurrent = manager.chart.max(manager.range);
+        int maxChart = toStepped(newCurrent);
         float step = step(newCurrent);
 
         previousMaxY = newCurrent;
@@ -36,7 +37,7 @@ public class StateManager {
         previousStep = step;
         currentStep = previousStep;
 
-        for (int id = 0; id < graphManager.countLines(); id++) {
+        for (int id = 0; id < manager.countLines(); id++) {
             preview.yMaxStart[id] = maxPreview;
             preview.yMaxCurrent[id] = preview.yMaxStart[id];
             preview.yMaxEnd[id] = maxPreview;
@@ -64,68 +65,11 @@ public class StateManager {
         setAnimationStart();
     }
 
-    public int getMaxPreview() {
-        int max = Integer.MIN_VALUE;
-
-        for (int id = 0; id < graphManager.countLines(); id++) {
-            if (visible[id]) {
-                final Data line = graphManager.chart.data[id];
-                if (max < line.max) {
-                    max = line.max;
-                }
-            }
-        }
-        return max;
-    }
-
-    public int getMaxChart() {
-        int max = Integer.MIN_VALUE;
-
-        for (int id = 0; id < graphManager.countLines(); id++) {
-            if (visible[id]) {
-                final Data line = graphManager.chart.data[id];
-                final int maxLine = line.getMax(graphManager.range.start, graphManager.range.end);
-                if (max < maxLine) {
-                    max = maxLine;
-                }
-            }
-        }
-        return max;
-    }
-
-    public int getMaxChartStepped() {
-        return toMaxChartStepped(getMaxChart());
-    }
-
-    public static int toMaxChartStepped(int maxChart) {
-        int max = maxChart;
-        if (max != Integer.MIN_VALUE) {
-            float step = XYRender.calculateStep(0, max, XYRender.GRID);
-            max = (int) Math.floor(step * (XYRender.GRID));
-        }
-        return max;
-    }
-
-    public static float step(long maxChart) {
-        return XYRender.calculateStep(0, maxChart, XYRender.GRID);
-    }
-
-    public int getMaxChartStepped(int id) {
-        int max = graphManager.chart.data[id].getMax(graphManager.range.start, graphManager.range.end);
-        if (max != Integer.MIN_VALUE) {
-            float step = XYRender.calculateStep(0, max, XYRender.GRID);
-            max = (int) Math.floor(step * (XYRender.GRID));
-        }
-        return max;
-    }
-
-
-
     public void setAnimationStart() {
         chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
         preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
 
-        for (int id = 0; id < graphManager.countLines(); id++) {
+        for (int id = 0; id < manager.countLines(); id++) {
             preview.multiStart[id] = 0f;
             preview.multiCurrent[id] = preview.multiStart[id];
             preview.multiEnd[id] = 1f;
@@ -139,14 +83,14 @@ public class StateManager {
     public void updateRange() {
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
-        int newCurrent = getMaxChart();
-        updateCurrentAnimation(newCurrent);
+        int maxRange = manager.chart.max(manager.range);
+        updateCurrentAnimation(maxRange);
 
-        int maxChart = toMaxChartStepped(newCurrent);
-        for (int id = 0; id < graphManager.countLines(); id++) {
+        int maxStepped = toStepped(maxRange);
+        for (int id = 0; id < manager.countLines(); id++) {
             if (visible[id]) {
                 chart.yMaxStart[id] = chart.yMaxCurrent[id];
-                chart.yMaxEnd[id] = maxChart;
+                chart.yMaxEnd[id] = maxStepped;
             }
         }
 
@@ -213,32 +157,33 @@ public class StateManager {
         preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
         preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
 
-        int maxPreview = getMaxPreview();
-        int maxStepped = getMaxChartStepped();
-        if (maxPreview == Integer.MIN_VALUE) {
-            maxPreview = graphManager.chart.data[targetId].max;
+        int max = manager.chart.max();
+        int maxRange = manager.chart.max(manager.range);
+        int maxStepped = toStepped(maxRange);
+        if (max == Integer.MIN_VALUE) {
+            max = manager.chart.data[targetId].max;
         }
 
-        int targetMaxStepped = getMaxChartStepped(targetId);
+        int targetMaxStepped = manager.chart.stepMax(targetId, manager.range);
         if (maxStepped == Integer.MIN_VALUE) {
             maxStepped = targetMaxStepped;
         }
 
-        for (int id = 0; id < graphManager.countLines(); id++) {
+        for (int id = 0; id < manager.countLines(); id++) {
             preview.alphaStart[id] = chart.alphaCurrent[id];
             preview.alphaEnd[id] = visible[id] ? 1f : 0f;
 
             chart.alphaStart[id] = chart.alphaCurrent[id];
             chart.alphaEnd[id] = visible[id] ? 1f : 0f;
 
-            if ((targetId != id || graphManager.chart.data[targetId].max == maxPreview)) {
+            if ((targetId != id || manager.chart.data[targetId].max == max)) {
                 preview.yMaxStart[id] = preview.yMaxCurrent[id];
-                preview.yMaxEnd[id] = maxPreview;
+                preview.yMaxEnd[id] = max;
 
-                if (graphManager.chart.data[targetId].max == maxPreview && targetId == id) {
-                    preview.yMaxStart[id] = maxPreview;
-                    preview.yMaxCurrent[id] = maxPreview;
-                    preview.yMaxEnd[id] = maxPreview;
+                if (manager.chart.data[targetId].max == max && targetId == id) {
+                    preview.yMaxStart[id] = max;
+                    preview.yMaxCurrent[id] = max;
+                    preview.yMaxEnd[id] = max;
                 }
             }
 
@@ -251,8 +196,7 @@ public class StateManager {
             chart.yMaxEnd[targetId] = visible[targetId] ? maxStepped : maxStepped / 4;
         }
 
-        int newCurrent = getMaxChart();
-        updateCurrentAnimation(newCurrent);
+        updateCurrentAnimation(maxRange);
     }
     private final static long ANIMATION_TICK = 16L;
 

@@ -132,20 +132,14 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     private void loadChart() {
-//        content.post(() -> {
-//            for (int i = 0; i < Chart.charts.length; i++) {
-//                renderDivider(ViewUtils.pxFromDp(28), SPACING_TAG);
-//                renderChart(i + 1, Chart.charts[i]);
-//            }
-//            applyTheme(getCurrentTheme());
-//        });
-
         ChartsInteractor interactor = new DataInteractorImpl(getApplicationContext());
         try {
             final Chart chart1 = interactor.getChart(1);
             final Chart chart2 = interactor.getChart(2);
+            final Chart chart3 = interactor.getChart(3);
             content.post(() -> {
                 renderDivider(ViewUtils.pxFromDp(28), SPACING_TAG);
+                renderChart(3, chart3);
                 renderChart(1, chart1);
                 renderChart(2, chart2);
                 applyTheme(getCurrentTheme());

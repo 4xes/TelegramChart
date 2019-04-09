@@ -10,6 +10,8 @@ import android.view.View;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.annotation.Nullable;
+import com.telegram.chart.view.chart.render.BaseRender;
+import com.telegram.chart.view.chart.render.RenderFabric;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
@@ -20,7 +22,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     private final RectF chartBound = new RectF();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
-    private BaseRender[] renders;
+    private BaseRender render;
     public static final String TAG = PreviewChartView.class.getSimpleName();
     private Theme theme;
 
@@ -44,7 +46,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     }
 
     public void setGraph(GraphManager graphManager) {
-        renders = RenderFabric.getPreviews(graphManager);
+        render = RenderFabric.getPreview(graphManager);
         graphManager.registerView(getViewId(), this);
         if (theme != null){
             applyTheme(theme);
@@ -61,8 +63,8 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        for (BaseRender renderer: renders) {
-            renderer.applyTheme(theme);
+        if (render != null) {
+            render.applyTheme(theme);
         }
         invalidate();
     }
@@ -87,10 +89,8 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         if (theme != null) {
             canvas.drawColor(theme.getBackgroundWindowColor());
         }
-        if (renders != null) {
-            for (int id = 0; id < renders.length; id++) {
-                renders[id].render(canvas, chartBound, null);
-            }
+        if (render != null) {
+            render.render(canvas, chartBound, null);
         }
     }
 

@@ -19,6 +19,8 @@ import android.view.View;
 
 import com.telegram.chart.BuildConfig;
 import com.telegram.chart.view.annotation.Nullable;
+import com.telegram.chart.view.chart.render.BaseRender;
+import com.telegram.chart.view.chart.render.RenderFabric;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
@@ -40,7 +42,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     private int[] gradientColors = new int[2];
     private final float horizontalPadding = pxFromDp(1f);
     private TimeAnimator animator;
-    private BaseRender[] renders;
+    private BaseRender render;
     private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
@@ -91,8 +93,8 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         if (xyRender != null) {
             xyRender.applyTheme(theme);
         }
-        for (BaseRender renderer: renders) {
-            renderer.applyTheme(theme);
+        if (render != null) {
+            render.applyTheme(theme);
         }
         gradientColors[0] = theme.getBackgroundWindowColor();
         gradientDrawable.setColors(gradientColors);
@@ -103,7 +105,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
 
     public void seGraph(GraphManager graphManager) {
         this.graphManager = graphManager;
-        renders = RenderFabric.getCharts(graphManager);
+        render = RenderFabric.getChart(graphManager);
         xyRender = new XYRender(graphManager);
         graphManager.registerView(getViewId(), this);
         if (theme != null){
@@ -135,7 +137,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
-        if (renders != null && renders.length > 0) {
+        if (render != null) {
             int touchIndex = graphManager.getIndex(x, bound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
@@ -170,10 +172,8 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         if (xyRender != null && hasContent) {
             xyRender.renderYLines(canvas, chartBound);
         }
-        if (renders != null) {
-            for (int id = 0; id < renders.length; id++) {
-                renders[id].render(canvas, chartBound, visibleBound);
-            }
+        if (render != null) {
+            render.render(canvas, chartBound, visibleBound);
         }
 
         if (hasContent) {
@@ -190,12 +190,8 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
             xyRender.renderY0TextAndLine(canvas,chartBound);
         }
 
-        if (selectIndex != NONE_INDEX) {
-            if (renders != null) {
-                for (BaseRender render: renders) {
-                    render.renderSelect(canvas, selectIndex, chartBound, visibleBound);
-                }
-            }
+        if (selectIndex != NONE_INDEX && render != null) {
+            render.renderSelect(canvas, selectIndex, chartBound, visibleBound);
         }
         gradientDrawable.draw(canvas);
         canvas.drawText(titleText, titleBound.left, titleBound.bottom, titlePaint);

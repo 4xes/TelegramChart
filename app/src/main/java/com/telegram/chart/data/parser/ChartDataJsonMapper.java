@@ -53,6 +53,9 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
                     if (BAR.equals(type)) {
                         typeChart = Chart.TYPE_BAR;
                     }
+                    if (LINE.equals(type)) {
+                        typeChart = Chart.TYPE_LINE;
+                    }
                     final int[] yPoints = new int[columnJson.length() - 1];
                     int minY = Integer.MAX_VALUE;
                     int maxY = Integer.MIN_VALUE;
@@ -79,6 +82,9 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
         }
         if (yScaled) {
             typeChart = Chart.TYPE_LINE_SCALED;
+        }
+        if (Chart.TYPE_BAR.equals(typeChart) && stacked) {
+            typeChart = Chart.TYPE_BAR_STACKED;
         }
         return new Chart(xPoints, lines.toArray(new Data[0]), typeChart);
     }
