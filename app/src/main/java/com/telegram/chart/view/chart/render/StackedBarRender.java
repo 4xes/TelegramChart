@@ -10,7 +10,6 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class StackedBarRender extends Render {
     private final Paint paintBars = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint paintPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintInsideCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float[][] drawBars;
@@ -31,10 +30,6 @@ class StackedBarRender extends Render {
         final float stroke = pxFromDp(2f);
         paintBars.setStyle(Paint.Style.STROKE);
         paintBars.setStrokeWidth(stroke);
-        paintBars.setStrokeCap(Paint.Cap.BUTT);
-        paintPoint.setStyle(Paint.Style.STROKE);
-        paintPoint.setStrokeCap(Paint.Cap.ROUND);
-        paintPoint.setStrokeWidth(stroke);
         paintCircle.setStyle(Paint.Style.STROKE);
         paintInsideCircle.setStyle(Paint.Style.FILL);
     }
@@ -48,7 +43,7 @@ class StackedBarRender extends Render {
                 final int iY0 = i * 4 + 1;
                 final int iX1 = i * 4 + 2;
                 final int iY1 = i * 4 + 3;
-                drawBars[id][iX0] = (float)Math.floor(i * matrixArray[SCALE_X] + matrixArray[OFFSET_X]);
+                drawBars[id][iX0] = i * matrixArray[SCALE_X] + matrixArray[OFFSET_X];
                 drawBars[id][iY0] = sum * matrixArray[SCALE_Y] + matrixArray[OFFSET_Y];
                 sum -= manager.chart.data[id].y[i];
                 drawBars[id][iX1] = drawBars[id][iX0];
@@ -78,7 +73,7 @@ class StackedBarRender extends Render {
                 paintBars.setStrokeCap(Paint.Cap.SQUARE);
                 paintBars.setColor(color[id]);
                 paintBars.setAlpha((int) Math.ceil(255 * currentAlpha));
-                paintBars.setStrokeWidth( (float) Math.round(matrixArray[SCALED_WIDTH] + 2f));
+                paintBars.setStrokeWidth(matrixArray[SCALED_WIDTH]);
                 canvas.drawLines(drawBars[id], lower * 4, (upper - lower) * 4 + 4, paintBars);
             }
         }
