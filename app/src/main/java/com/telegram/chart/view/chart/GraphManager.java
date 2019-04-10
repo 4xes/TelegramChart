@@ -128,6 +128,30 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
+    public void matrixPercentageBars(RectF r,  Matrix matrix) {
+        final float width = r.width();
+        final float barWidth = barWidth(width);
+        final float scaleX = getScaleRange() * barWidth;
+        final float scaleY = 1f;
+        final float dx = (-width * range.start) * getScaleRange();
+        final float offsetX = r.left + dx + scaleX / 2f;
+        final float offsetY = r.bottom;
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
+    }
+
+    public void matrixPercentagePreviewBars(RectF r,  Matrix matrix) {
+        final float width = r.width();
+        final float scaleX = sectionWidth(width);
+        final float scaleY = 1f;
+        final float offsetX = r.left;
+        final float offsetY = r.bottom;
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
+    }
+
     public void matrixPreview(int id, RectF r, Matrix matrix) {
         final float width = r.width();
         final float scaleX = sectionWidth(width);

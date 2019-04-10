@@ -12,6 +12,8 @@ public class CalculatorFabric {
                 return new LineCalculator();
             case Chart.TYPE_BAR_STACKED:
                 return new StackedCalculator();
+            case Chart.TYPE_PERCENTAGE:
+                return new PercentageCalculator();
             default:
                 throw new IllegalArgumentException();
         }

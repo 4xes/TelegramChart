@@ -10,6 +10,7 @@ public class Chart {
     public static final String TYPE_BAR_STACKED = "bar_stacked";
     public static final String TYPE_BAR = "bar";
     public static final String TYPE_LINE_SCALED = "line_scaled";
+    public static final String TYPE_PERCENTAGE = "percentage";
     public final Data[] data;
     public final int[] x;
     public final String type;

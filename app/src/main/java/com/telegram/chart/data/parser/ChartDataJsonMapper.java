@@ -21,6 +21,7 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
     private static final String Y_SCALED = "y_scaled";
     private static final String STACKED = "stacked";
     private static final String X = "x";
+    private static final String PERCENTAGE = "percentage";
 
     @Override
     public Chart map(JSONObject json) throws Throwable {
@@ -30,6 +31,7 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
         final JSONObject colors = json.getJSONObject(COLORS);
         final boolean yScaled = json.optBoolean(Y_SCALED, false);
         final boolean stacked = json.optBoolean(STACKED, false);
+        final boolean percentage = json.optBoolean(PERCENTAGE, false);
         String typeChart = Chart.TYPE_LINE;
 
         final ArrayList<Data> lines = new ArrayList<>();
@@ -86,6 +88,10 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
         if (Chart.TYPE_BAR.equals(typeChart) && stacked) {
             typeChart = Chart.TYPE_BAR_STACKED;
         }
+        if (percentage) {
+            typeChart = Chart.TYPE_PERCENTAGE;
+        }
+
         return new Chart(xPoints, lines.toArray(new Data[0]), typeChart);
     }
 }
