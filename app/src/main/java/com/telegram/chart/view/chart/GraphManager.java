@@ -130,8 +130,7 @@ public class GraphManager {
 
     public void matrixPercentageBars(RectF r,  Matrix matrix) {
         final float width = r.width();
-        final float barWidth = barWidth(width);
-        final float scaleX = getScaleRange() * barWidth;
+        final float scaleX = getScaleRange() * sectionWidth(width);
         final float scaleY = 1f;
         final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx + scaleX / 2f;
