@@ -8,7 +8,6 @@ import com.telegram.chart.data.Chart;
 
 import static com.telegram.chart.view.chart.render.Render.OFFSET_X;
 import static com.telegram.chart.view.chart.render.Render.OFFSET_Y;
-import static com.telegram.chart.view.chart.render.Render.SCALED_WIDTH;
 import static com.telegram.chart.view.chart.render.Render.SCALE_X;
 import static com.telegram.chart.view.chart.render.Render.SCALE_Y;
 
@@ -123,7 +122,7 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
-    public void matrixStackedBars(RectF r, float[] matrix) {
+    public void matrixStackedBars(RectF r,  Matrix matrix) {
         final float width = r.width();
         final float barWidth = barWidth(width);
         final float scaleX = getScaleRange() * barWidth;
@@ -131,11 +130,9 @@ public class GraphManager {
         final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx + scaleX / 2f;
         final float offsetY = r.bottom;
-        matrix[SCALE_X] = scaleX;
-        matrix[OFFSET_X] = offsetX;
-        matrix[SCALE_Y] = scaleY;
-        matrix[OFFSET_Y] = offsetY;
-        matrix[SCALED_WIDTH] = Math.round(getScaleRange() * sectionWidth(width));
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
     }
 
     public void matrixPreview(int id, RectF r, Matrix matrix) {

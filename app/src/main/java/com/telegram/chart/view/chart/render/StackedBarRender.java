@@ -9,7 +9,7 @@ import com.telegram.chart.view.chart.GraphManager;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class StackedBarRender extends Render {
-    private final Paint paintBars = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintBars = new Paint();
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintInsideCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float[][] drawBars;
@@ -34,8 +34,7 @@ class StackedBarRender extends Render {
         paintInsideCircle.setStyle(Paint.Style.FILL);
     }
 
-    public void recalculateBars(RectF r, int lower, int upper) {
-        manager.matrixStackedBars(r, matrixArray);
+    public void recalculateBars(int lower, int upper) {
         for (int i = lower; i <= upper; i++) {
             int sum = 0;
             for (int id = 0; id < manager.countLines(); id++) {
@@ -43,11 +42,11 @@ class StackedBarRender extends Render {
                 final int iY0 = i * 4 + 1;
                 final int iX1 = i * 4 + 2;
                 final int iY1 = i * 4 + 3;
-                drawBars[id][iX0] = i * matrixArray[SCALE_X] + matrixArray[OFFSET_X];
-                drawBars[id][iY0] = sum * matrixArray[SCALE_Y] + matrixArray[OFFSET_Y];
+                drawBars[id][iX0] = i;
+                drawBars[id][iY0] = sum;
                 sum -= manager.chart.data[id].y[i];
                 drawBars[id][iX1] = drawBars[id][iX0];
-                drawBars[id][iY1] = sum * matrixArray[SCALE_Y] + matrixArray[OFFSET_Y];
+                drawBars[id][iY1] = sum;
             }
         }
     }
@@ -65,7 +64,10 @@ class StackedBarRender extends Render {
         if (upper > maxIndex) {
             upper = maxIndex;
         }
-        recalculateBars(chart, lower, upper);
+        recalculateBars(lower, upper);
+        int saveCount = canvas.save();
+        manager.matrixStackedBars(chart, matrix);
+        canvas.setMatrix(matrix);
         for (int id = 0; id < manager.countLines(); id++) {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
             int alpha = (int) Math.ceil(255 * currentAlpha);
@@ -73,9 +75,10 @@ class StackedBarRender extends Render {
                 paintBars.setStrokeCap(Paint.Cap.SQUARE);
                 paintBars.setColor(color[id]);
                 paintBars.setAlpha((int) Math.ceil(255 * currentAlpha));
-                paintBars.setStrokeWidth(matrixArray[SCALED_WIDTH]);
+                paintBars.setStrokeWidth(1);
                 canvas.drawLines(drawBars[id], lower * 4, (upper - lower) * 4 + 4, paintBars);
             }
         }
+        canvas.restoreToCount(saveCount);
     }
 }
