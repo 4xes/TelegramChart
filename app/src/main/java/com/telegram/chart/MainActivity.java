@@ -137,8 +137,10 @@ public class MainActivity extends ThemeBaseActivity {
             final Chart chart1 = interactor.getChart(1);
             final Chart chart2 = interactor.getChart(2);
             final Chart chart3 = interactor.getChart(3);
+            final Chart chart4 = interactor.getChart(4);
             content.post(() -> {
                 renderDivider(ViewUtils.pxFromDp(28), SPACING_TAG);
+                renderChart(4, chart4);
                 renderChart(3, chart3);
                 renderChart(1, chart1);
                 renderChart(2, chart2);

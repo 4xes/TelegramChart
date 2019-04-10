@@ -21,14 +21,9 @@ class LineRender extends Render {
     private final float[][] drawPoints;
     private final float[][] lines;
     private final float[][] drawLines;
-    private final int[] color;
 
     public LineRender(GraphManager manager) {
         super(manager);
-        color = new int[manager.countLines()];
-        for (int id = 0; id < manager.countLines(); id++){
-            color[id] = manager.chart.data[id].color;
-        }
         final int pointsLength = manager.chart.x.length * 2;
         final int linePointsLength = 4 + (manager.chart.x.length - 2) * 4;
         lines = new float[manager.countLines()][linePointsLength];
@@ -122,8 +117,8 @@ class LineRender extends Render {
                 paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
                 canvas.drawLines(drawLines[id], lower * 4, (upper - lower) * 4, paintLine);
                 if (maxOptimize) {
-                    paintPoint.setAlpha((int) Math.ceil(255 * currentAlpha));
                     paintPoint.setColor(color[id]);
+                    paintPoint.setAlpha((int) Math.ceil(255 * currentAlpha));
                     canvas.drawPoints(drawPoints[id], lower * 2, (upper - lower) * 2 + 2, paintPoint);
                 }
             }
@@ -134,10 +129,11 @@ class LineRender extends Render {
     public void renderSelect(Canvas canvas, int index, RectF chart, RectF visible) {
         for (int id = 0; id < manager.countLines(); id++) {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
-            if (currentAlpha != 0f) {
+            int alpha = (int) Math.ceil(255 * currentAlpha);
+            if (alpha != 0) {
                 manager.calculatePoint(id, index, chart, point);
-                paintCircle.setAlpha((int) Math.ceil(255 * currentAlpha));
                 paintCircle.setColor(color[id]);
+                paintCircle.setAlpha(alpha);
                 canvas.drawCircle(point.x, point.y, radius, paintInsideCircle);
                 canvas.drawCircle(point.x, point.y, radius, paintCircle);
             }

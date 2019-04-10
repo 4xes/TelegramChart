@@ -6,11 +6,6 @@ import android.graphics.RectF;
 
 import com.telegram.chart.data.Chart;
 
-import static com.telegram.chart.view.chart.render.Render.OFFSET_X;
-import static com.telegram.chart.view.chart.render.Render.OFFSET_Y;
-import static com.telegram.chart.view.chart.render.Render.SCALE_X;
-import static com.telegram.chart.view.chart.render.Render.SCALE_Y;
-
 public class GraphManager {
     public final StateManager state;
     public final Chart chart;
@@ -97,19 +92,6 @@ public class GraphManager {
         return 1f / (range.end - range.start);
     }
 
-    public void matrix(int id, RectF r, float[] matrix) {
-        final float width = r.width();
-        final float scaleX = getScaleRange() * sectionWidth(width);
-        final float scaleY = (1f / (state.chart.yMaxCurrent[id] / r.height())) * state.chart.multiCurrent[id];
-        final float dx = (-width * range.start) * getScaleRange();
-        final float offsetX = r.left + dx;
-        final float offsetY = r.bottom;
-        matrix[SCALE_X] = scaleX;
-        matrix[OFFSET_X] = offsetX;
-        matrix[SCALE_Y] = scaleY;
-        matrix[OFFSET_Y] = offsetY;
-    }
-
     public void matrix(int id, RectF r, Matrix matrix) {
         final float width = r.width();
         final float scaleX = getScaleRange() * sectionWidth(width);
@@ -129,6 +111,17 @@ public class GraphManager {
         final float scaleY = (1f / (chart.stepMax(range)/ r.height()));
         final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx + scaleX / 2f;
+        final float offsetY = r.bottom;
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
+    }
+
+    public void matrixPreviewStackedBars(RectF r,  Matrix matrix) {
+        final float width = r.width();
+        final float scaleX = sectionWidth(width);
+        final float scaleY = (1f / (chart.max()/ r.height()));
+        final float offsetX = r.left;
         final float offsetY = r.bottom;
         matrix.reset();
         matrix.setScale(scaleX, scaleY);

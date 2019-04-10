@@ -8,6 +8,8 @@ public class CalculatorFabric {
                 return new LineCalculator();
             case Chart.TYPE_LINE_SCALED:
                 return new LineCalculator();
+            case Chart.TYPE_BAR:
+                return new LineCalculator();
             case Chart.TYPE_BAR_STACKED:
                 return new StackedCalculator();
             default:

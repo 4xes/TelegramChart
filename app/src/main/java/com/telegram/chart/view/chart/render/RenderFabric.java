@@ -14,6 +14,9 @@ public class RenderFabric {
             case Chart.TYPE_LINE_SCALED:
                 render = new LineRender(graphManager);
                 break;
+            case Chart.TYPE_BAR:
+                render = new BarRender(graphManager);
+                break;
             case Chart.TYPE_BAR_STACKED:
                 render = new StackedBarRender(graphManager);
                 break;
@@ -24,7 +27,6 @@ public class RenderFabric {
         return render;
     }
 
-
     public static Render getPreview(GraphManager graphManager) {
         Render render = null;
         switch (graphManager.chart.type) {
@@ -34,8 +36,11 @@ public class RenderFabric {
             case Chart.TYPE_LINE_SCALED:
                 render = new PreviewLineRender(graphManager);
                 break;
+            case Chart.TYPE_BAR:
+                render = new PreviewBarRender(graphManager);
+                break;
             case Chart.TYPE_BAR_STACKED:
-                render = new PreviewLineRender(graphManager);
+                render = new PreviewStackedBarRender(graphManager);
                 break;
         }
         if (render == null) {

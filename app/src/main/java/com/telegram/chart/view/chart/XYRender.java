@@ -9,7 +9,6 @@ import android.util.SparseArray;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.utils.DateUtils;
-import com.telegram.chart.view.utils.ViewUtils;
 
 import static com.telegram.chart.data.Chart.toStepped;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
@@ -25,9 +24,6 @@ public class XYRender implements Themable {
     private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valueHeight;
     private final float dateWidth;
-    public int lineColor;
-    public int textColor;
-    public int backgroundColor;
 
     public XYRender(GraphManager data) {
         this.manager = data;
@@ -51,9 +47,11 @@ public class XYRender implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        lineColor = theme.getAxisColor();
-        textColor = theme.getAxisValueColor();
-        backgroundColor = theme.getBackgroundWindowColor();
+        final int lineColor = theme.getAxisColor();
+        final int textColor = theme.getAxisValueColor();
+        linePaint.setColor(lineColor);
+        valuePaint.setColor(textColor);
+        datePaint.setColor(textColor);
     }
 
     public void renderYLines(Canvas canvas, RectF r) {
@@ -90,9 +88,9 @@ public class XYRender implements Themable {
 
         for (int i = 6; i < GRID; i = i + 6) {
             final float y = (float) Math.ceil((-step * i * scaleY) + offsetY);
-            if (alphaPercentage != 0f) {
-                final int blendColor =  ViewUtils.blendARGB( backgroundColor, lineColor, alphaPercentage);
-                linePaint.setColor(blendColor);
+            int alpha = (int) Math.ceil(255 * alphaPercentage);
+            if (alpha != 0) {
+                linePaint.setAlpha(alpha);
                 canvas.drawLine(r.left, y, r.right, y, linePaint);
             }
         }
@@ -104,15 +102,15 @@ public class XYRender implements Themable {
         for (int i = 6; i < GRID; i = i + 6) {
             final float y = (-step * i * scaleY) + offsetY;
             final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
-            if (alphaPercentage != 0f) {
+            int alpha = (int) Math.ceil(255 * alphaPercentage);
+            if (alpha != 0) {
                 int key = i * (int) stepText;
                 String value = sparseValues.get(key);
                 if (value == null) {
                     value = String.valueOf(key);
                     sparseValues.put(key, value);
                 }
-                final int blendColor =  ViewUtils.blendARGB( backgroundColor, textColor, alphaPercentage);
-                valuePaint.setColor(blendColor);
+                valuePaint.setAlpha(alpha);
                 canvas.drawText(value, r.left, valueY, valuePaint);
             }
         }
@@ -120,9 +118,9 @@ public class XYRender implements Themable {
 
     public void renderY0TextAndLine(Canvas canvas, RectF r) {
         final float text0Y = r.bottom - (valueHeight / 2f) + valuePaint.descent();
-        valuePaint.setColor(textColor);
+        valuePaint.setAlpha(255);
         canvas.drawText(ZERO_Y, r.left, text0Y, valuePaint);
-        linePaint.setColor(lineColor);
+        linePaint.setAlpha(255);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
     }
 
@@ -156,7 +154,8 @@ public class XYRender implements Themable {
             float x = chartBound.left + (blockW * i) * scale + dx + blockW / 2;
 
             final float alphaPercentage = Math.max(Math.min(scale - minScale, 1f), 0f);
-            if (alphaPercentage != 0f) {
+            int alpha = (int) Math.ceil(255 * alphaPercentage);
+            if (alpha != 0) {
                 int index = manager.getIndex(x, chartBound);
                 float left = x - dateWidth / 2;
                 float right = x + dateWidth / 2;
@@ -168,8 +167,7 @@ public class XYRender implements Themable {
                     date = DateUtils.getDateX(manager.chart.x[index] * 1000L);
                     sparseDates.put(index, date);
                 }
-                final int blendColor =  ViewUtils.blendARGB( backgroundColor, textColor, alphaPercentage);
-                datePaint.setColor(blendColor);
+                datePaint.setAlpha(alpha);
                 canvas.drawText(date, x, chartBound.centerY() + valueHeight / 2f, datePaint);
             }
         }
