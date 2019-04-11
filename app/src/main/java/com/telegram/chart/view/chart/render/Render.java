@@ -27,7 +27,7 @@ public abstract class Render implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        backgroundColor = theme.getBackgroundWindowColor();
+        backgroundColor = theme.backgroundWindowColor;
     }
 
     public void renderSelect(Canvas canvas, int index, RectF chart, RectF visible) {}

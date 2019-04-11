@@ -175,8 +175,8 @@ public class TooltipRender implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        paintDate.setColor(theme.getNameColor());
-        paintRect.setColor(theme.getTooltipColor());
+        paintDate.setColor(theme.nameColor);
+        paintRect.setColor(theme.tooltipColor);
         isDay = theme.getId() == Theme.DAY;
     }
 }

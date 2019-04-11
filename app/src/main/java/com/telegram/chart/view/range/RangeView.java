@@ -22,7 +22,7 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
 
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private GraphManager graphManager;
+    private GraphManager manager;
 
     private float selectVerticalWidth = pxFromDp(1f);
     private float selectHorizontalWidth = pxFromDp(4f);
@@ -50,8 +50,8 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
 
     @Override
     public void applyTheme(Theme theme) {
-        rangePaint.setColor(theme.getRangeColor());
-        selectedPaint.setColor(theme.getRangeSelectedColor());
+        rangePaint.setColor(theme.rangeColor);
+        selectedPaint.setColor(theme.rangeSelectedColor);
         invalidate();
     }
 
@@ -64,8 +64,8 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
     }
 
     public void seGraph(GraphManager graphManager) {
-        this.graphManager = graphManager;
-        this.graphManager.registerView(getViewId(), this);
+        this.manager = graphManager;
+        this.manager.registerView(getViewId(), this);
         invalidate();
     }
 

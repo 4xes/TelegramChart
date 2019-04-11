@@ -45,7 +45,7 @@ abstract class ThemeBaseActivity extends Activity implements Themable {
     private void setStatusBarColor(Theme theme) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            if (theme.getToolbarColor() == Color.BLACK && window.getNavigationBarColor() == Color.BLACK) {
+            if (theme.toolbarColor == Color.BLACK && window.getNavigationBarColor() == Color.BLACK) {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             } else {
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -58,15 +58,15 @@ abstract class ThemeBaseActivity extends Activity implements Themable {
                     }
                 }
             }
-            window.setStatusBarColor(theme.getToolbarColor());
+            window.setStatusBarColor(theme.toolbarColor);
         }
     }
 
     private void setToolbarColors(Theme theme) {
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
-            toolbar.setBackground(new ColorDrawable(theme.getToolbarColor()));
-            toolbar.setTitleTextColor(theme.getTitleColor());
+            toolbar.setBackground(new ColorDrawable(theme.toolbarColor));
+            toolbar.setTitleTextColor(theme.titleColor);
         }
 //        ActionBar actionBar = getActionBar();
 //        if (actionBar != null) {

@@ -4,4 +4,7 @@
     <dimen name="normal">16dp</dimen>
 
     <dimen name="preview_height">64dp</dimen>
+
+    <dimen name="block_margin_top">28dp</dimen>
+    <dimen name="block_margin_bottom">64dp</dimen>
 </resources>

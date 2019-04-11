@@ -11,20 +11,22 @@ import java.lang.annotation.RetentionPolicy;
 import static com.telegram.chart.view.utils.ViewUtils.getColor;
 
 public class Theme {
-    private @ThemeId int id;
-    private int toolbarColor;
-    private int titleColor;
-    private int backgroundWindowColor;
-    private int backgroundSpacingColor;
-    private int dividerColor;
-    private int axisValueColor;
-    private int axisColor;
-    private int nameColor;
-    private int rangeColor;
-    private int rangeSelectedColor;
-    private int tooltipColor;
+    public final @ThemeId int id;
+    public final int toolbarColor;
+    public final int titleColor;
+    public final int backgroundWindowColor;
+    public final int backgroundSpacingColor;
+    public final int dividerColor;
+    public final int axisValueColor;
+    public final int axisColor;
+    public final int nameColor;
+    public final int rangeColor;
+    public final int rangeSelectedColor;
+    public final int tooltipColor;
+    public final int shadowTop;
+    public final int shadowBottom;
 
-    public Theme(Context context, @ThemeId int id, int toolbarColor, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int tooltipColor) {
+    public Theme(Context context, @ThemeId int id, int toolbarColor, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int tooltipColor, int shadowTop, int shadowBottom) {
         this.id = id;
         this.toolbarColor = getColor(context, toolbarColor);
         this.titleColor = getColor(context, titleColor);
@@ -37,6 +39,8 @@ public class Theme {
         this.rangeColor = getColor(context, rangeColor);
         this.rangeSelectedColor = getColor(context, rangeSelectedColor);
         this.tooltipColor = getColor(context, tooltipColor);
+        this.shadowTop = shadowTop;
+        this.shadowBottom = shadowBottom;
     }
 
     public int getId() {
@@ -57,7 +61,9 @@ public class Theme {
                 R.color.column_name_night,
                 R.color.range_night,
                 R.color.range_selected_night,
-                R.color.tooltip_bg_night
+                R.color.tooltip_bg_night,
+                R.drawable.shadow_top_night,
+                R.drawable.shadow_bottom_night
         );
     }
 
@@ -75,45 +81,12 @@ public class Theme {
                 R.color.column_name_day,
                 R.color.range_day,
                 R.color.range_selected_day,
-                R.color.tooltip_bg_day
+                R.color.tooltip_bg_day,
+                R.drawable.shadow_top_day,
+                R.drawable.shadow_bottom_day
         );
     }
 
-    public int getBackgroundWindowColor() {
-        return backgroundWindowColor;
-    }
-
-    public int getBackgroundSpacingColor() {
-        return backgroundSpacingColor;
-    }
-
-    public int getDividerColor() {
-        return dividerColor;
-    }
-
-    public int getAxisValueColor() {
-        return axisValueColor;
-    }
-
-    public int getAxisColor() {
-        return axisColor;
-    }
-
-    public int getNameColor() {
-        return nameColor;
-    }
-
-    public int getRangeColor() {
-        return rangeColor;
-    }
-
-    public int getRangeSelectedColor() {
-        return rangeSelectedColor;
-    }
-
-    public int getTooltipColor() {
-        return tooltipColor;
-    }
 
     public static Theme createTheme(Context context, @ThemeId int themeId) {
         switch (themeId) {
@@ -123,14 +96,6 @@ public class Theme {
                 return createNight(context);
         }
         return createDay(context);
-    }
-
-    public int getToolbarColor() {
-        return toolbarColor;
-    }
-
-    public int getTitleColor() {
-        return titleColor;
     }
 
     public static final int DAY = 0;

@@ -1,57 +1,34 @@
 package com.telegram.chart.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import com.telegram.chart.R;
-import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.chart.GraphManager;
+import com.telegram.chart.view.flow.FlowLayout;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
-import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
-
-public class CheckboxesView extends LinearLayout implements Themable {
-
-    private float dividerPaddingLeft = pxFromDp(56f);
-    private final Paint dividerPaint = new Paint();
+public class CheckboxesView extends FlowLayout implements Themable {
     private Theme theme;
 
     public CheckboxesView(Context context) {
         super(context);
-        init(context);
     }
 
-    public CheckboxesView(Context context, @Nullable AttributeSet attrs) {
+    public CheckboxesView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
-    }
-
-    public CheckboxesView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    private void init(Context context) {
-        setWillNotDraw(false);
-        setOrientation(VERTICAL);
-
-        dividerPaint.setStyle(Paint.Style.STROKE);
-        dividerPaint.setStrokeWidth(pxFromDp(1f));
     }
 
     public void init(GraphManager graphManager, OnLineVisibleListener onLineVisibleListener) {
         for (int id = 0; id < graphManager.countLines(); id++) {
             CheckBox checkBox = new CheckBox(getContext());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT
             );
             int padding = getResources().getDimensionPixelOffset(R.dimen.normal);
             params.setMargins(padding, 0, 0, 0);
@@ -59,7 +36,7 @@ public class CheckboxesView extends LinearLayout implements Themable {
             checkBox.setPadding(padding, padding, padding, padding);
             checkBox.setText(graphManager.chart.data[id].name);
             if (theme != null) {
-                checkBox.setTextColor(theme.getNameColor());
+                checkBox.setTextColor(theme.nameColor);
             }
             checkBox.setChecked(true);
             checkBox.setTag(id);
@@ -74,31 +51,16 @@ public class CheckboxesView extends LinearLayout implements Themable {
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        dividerPaint.setColor(theme.getDividerColor());
-        setBackgroundColor(theme.getBackgroundWindowColor());
+        setBackgroundColor(theme.backgroundWindowColor);
 
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             if (child instanceof CheckBox) {
-                ((CheckBox) child).setTextColor(theme.getNameColor());
+                ((CheckBox) child).setTextColor(theme.nameColor);
             }
         }
 
         invalidate();
-    }
-
-    private void drawVerticalSeparators(Canvas canvas) {
-        for (int i = 0; i < getChildCount() - 1; i++) {
-            View child = getChildAt(i);
-            final float y = child.getBottom();
-            canvas.drawLine(dividerPaddingLeft, y, (float) (canvas.getWidth()), y, dividerPaint);
-        }
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        drawVerticalSeparators(canvas);
     }
 
     public interface OnLineVisibleListener {

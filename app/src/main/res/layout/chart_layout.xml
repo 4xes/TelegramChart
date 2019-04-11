@@ -1,27 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_marginTop="@dimen/block_margin_top"
+    android:layout_marginBottom="@dimen/block_margin_bottom"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical">
 
-    <com.telegram.chart.view.chart.ChartView
-        android:id="@+id/chart"
+    <View
+        android:id="@+id/shadowTop"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:paddingLeft="@dimen/normal"
-        android:paddingStart="@dimen/normal"
-        android:paddingRight="@dimen/normal"
-        android:paddingEnd="@dimen/normal"
-        />
+        android:layout_height="3dp" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.telegram.chart.view.chart.TooltipView
-        android:id="@+id/info"
+        <com.telegram.chart.view.chart.ChartView
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:paddingLeft="@dimen/normal"
+            android:paddingStart="@dimen/normal"
+            android:paddingRight="@dimen/normal"
+            android:paddingEnd="@dimen/normal"
+            />
+
+        <com.telegram.chart.view.chart.TooltipView
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:paddingLeft="@dimen/normal"
+            android:paddingStart="@dimen/normal"
+            android:paddingRight="@dimen/normal"
+            android:paddingEnd="@dimen/normal"
+            android:visibility="gone"
+            />
+    </FrameLayout>
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:paddingLeft="@dimen/normal"
-        android:paddingStart="@dimen/normal"
-        android:paddingRight="@dimen/normal"
-        android:paddingEnd="@dimen/normal"
-        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <com.telegram.chart.view.chart.PreviewChartView
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/preview_height"
+            android:paddingTop="@dimen/normal"
+            android:paddingLeft="@dimen/normal"
+            android:paddingStart="@dimen/normal"
+            android:paddingRight="@dimen/normal"
+            android:paddingEnd="@dimen/normal"
+            android:paddingBottom="@dimen/small"
+            />
+
+        <!-- padding for touch zone -->
+        <com.telegram.chart.view.range.RangeView
+            android:id="@+id/range"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/preview_height"
+            android:paddingTop="@dimen/normal"
+            android:paddingLeft="@dimen/normal"
+            android:paddingStart="@dimen/normal"
+            android:paddingRight="@dimen/normal"
+            android:paddingEnd="@dimen/normal"
+            android:paddingBottom="@dimen/small"
+            />
+    </FrameLayout>
+    <com.telegram.chart.view.CheckboxesView
+        android:id="@+id/checkboxes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         />
-</FrameLayout>
+    <View
+        android:id="@+id/shadowBottom"
+        android:layout_width="match_parent"
+        android:layout_height="6dp" />
+</LinearLayout>

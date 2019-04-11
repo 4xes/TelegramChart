@@ -6,7 +6,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Toolbar;
 
@@ -22,20 +21,17 @@ import com.telegram.chart.view.chart.TooltipView;
 import com.telegram.chart.view.range.RangeView;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
-import com.telegram.chart.view.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class MainActivity extends ThemeBaseActivity {
 
     private LinearLayout content;
     private List<ChartView> chartViews = new ArrayList<>();
+    private List<View> shadows = new ArrayList<>();
     private List<Themable> themables = new ArrayList<>();
-    private Menu menu;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,29 +50,6 @@ public class MainActivity extends ThemeBaseActivity {
 
     private void initViews() {
         content = findViewById(R.id.content);
-    }
-
-    private void renderCheckboxes(final GraphManager graphManager, final TooltipView tooltipView) {
-        CheckboxesView checkboxesView = new CheckboxesView(this);
-        checkboxesView.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
-        checkboxesView.init(graphManager, (id, isVisible) -> {
-            graphManager.setVisible(id, isVisible);
-            if (tooltipView.isShowing()) {
-                tooltipView.invalidate();
-            }
-        });
-        content.addView(checkboxesView);
-        themables.add(checkboxesView);
-    }
-
-    private void renderDivider(int height, String tag) {
-        View line = new View(this);
-        line.setTag(tag);
-        line.setLayoutParams(new LinearLayout.LayoutParams(
-                MATCH_PARENT,
-                height
-        ));
-        content.addView(line);
     }
 
     @Override
@@ -101,32 +74,41 @@ public class MainActivity extends ThemeBaseActivity {
 
     private void renderChart(int number, final Chart chart) {
         final GraphManager graphManager = new GraphManager(chart);
-        LayoutInflater li = LayoutInflater.from(this);
-        final View chartWrapper = li.inflate(R.layout.chart_layout, content, false);
-        final View previewWrapper = li.inflate(R.layout.preview_layout, content, false);
-        final TooltipView tooltipView = chartWrapper.findViewById(R.id.info);
-        final ChartView chartView = chartWrapper.findViewById(R.id.chart);
-        final RangeView rangeView = previewWrapper.findViewById(R.id.range);
-        final PreviewChartView previewChartView = previewWrapper.findViewById(R.id.preview);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.chart_layout, content, false);
+        final View shadowTop = view.findViewById(R.id.shadowTop);
+        final View shadowBottom = view.findViewById(R.id.shadowBottom);
+        final ChartView chartView = view.findViewById(R.id.chart);
+        final TooltipView tooltipView = view.findViewById(R.id.info);
+        final RangeView rangeView = view.findViewById(R.id.range);
+        final PreviewChartView previewChartView = view.findViewById(R.id.preview);
+        final CheckboxesView checkboxesView = view.findViewById(R.id.checkboxes);
         chartView.setTitleText(getString(R.string.chart_title, number));
+        shadowTop.setTag(SHADOW_TOP);
+        shadowBottom.setTag(SHADOW_BOTTOM);
+        shadows.add(shadowTop);
+        shadows.add(shadowBottom);
         chartViews.add(chartView);
         themables.add(tooltipView);
         themables.add(chartView);
         themables.add(rangeView);
         themables.add(previewChartView);
-        content.addView(chartWrapper);
-        content.addView(previewWrapper);
-        renderCheckboxes(graphManager, tooltipView);
-        renderDivider(ViewUtils.pxFromDp(1), DIVIDER_TAG);
-        renderDivider(ViewUtils.pxFromDp(40), SPACING_TAG);
+        themables.add(checkboxesView);
+        content.addView(view);
         chartView.seGraph(graphManager);
         previewChartView.setGraph(graphManager);
         rangeView.seGraph(graphManager);
         tooltipView.seGraph(graphManager);
+        checkboxesView.init(graphManager, (id, isVisible) -> {
+            graphManager.setVisible(id, isVisible);
+            if (tooltipView.isShowing()) {
+                tooltipView.invalidate();
+            }
+        });
         rangeView.setOnRangeListener((start, end) -> {
             chartView.resetIndex();
             tooltipView.hideInfo();
-           graphManager.update(rangeView.getViewId(), start, end);
+            graphManager.update(rangeView.getViewId(), start, end);
         });
         chartView.setOnShowInfoListener(tooltipView);
     }
@@ -140,7 +122,6 @@ public class MainActivity extends ThemeBaseActivity {
             final Chart chart4 = interactor.getChart(4);
             final Chart chart5 = interactor.getChart(5);
             content.post(() -> {
-                renderDivider(ViewUtils.pxFromDp(28), SPACING_TAG);
                 renderChart(5, chart5);
                 renderChart(4, chart4);
                 renderChart(3, chart3);
@@ -165,24 +146,23 @@ public class MainActivity extends ThemeBaseActivity {
     @Override
     public void applyTheme(Theme theme) {
         super.applyTheme(theme);
-        for (int i = 0; i < content.getChildCount(); i++) {
-            View child = content.getChildAt(i);
-            if (child instanceof LinearLayout) {
-                child.setBackgroundColor(getCurrentTheme().getBackgroundWindowColor());
+        content.setBackgroundColor(theme.backgroundSpacingColor);
+        for (int i = 0; i < shadows.size(); i++) {
+            final View shadow = shadows.get(i);
+            if (shadow != null) {
+                if (SHADOW_TOP.equals(shadow.getTag())) {
+                    shadow.setBackgroundResource(theme.shadowTop);
+                }
+                if (SHADOW_BOTTOM.equals(shadow.getTag())) {
+                    shadow.setBackgroundResource(theme.shadowBottom);
+                }
             }
-            if (DIVIDER_TAG.equals(child.getTag())) {
-                child.setBackgroundColor(getCurrentTheme().getDividerColor());
-            }
-            if (SPACING_TAG.equals(child.getTag())) {
-                child.setBackgroundColor(getCurrentTheme().getBackgroundSpacingColor());
-            }
-            if (child instanceof CheckBox) {
-                ((CheckBox) child).setTextColor(getCurrentTheme().getNameColor());
-            }
+
         }
-        for (Themable themable: themables) {
+        for (int i = 0; i < themables.size(); i++) {
+            Themable themable = themables.get(i);
             if (themable != null) {
-                themable.applyTheme(getCurrentTheme());
+                themable.applyTheme(theme);
             }
         }
     }
@@ -192,6 +172,7 @@ public class MainActivity extends ThemeBaseActivity {
         super.onDestroy();
         chartViews.clear();
         themables.clear();
+        shadows.clear();
     }
 
     @Override
@@ -206,6 +187,6 @@ public class MainActivity extends ThemeBaseActivity {
         }
     }
 
-    private static final String DIVIDER_TAG = "divider";
-    private static final String SPACING_TAG = "spacing";
+    private static final String SHADOW_TOP = "shadow_top";
+    private static final String SHADOW_BOTTOM= "shadow_bottom";
 }

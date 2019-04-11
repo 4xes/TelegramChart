@@ -96,10 +96,10 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         if (render != null) {
             render.applyTheme(theme);
         }
-        gradientColors[0] = theme.getBackgroundWindowColor();
+        gradientColors[0] = theme.backgroundWindowColor;
         gradientDrawable.setColors(gradientColors);
 
-        titlePaint.setColor(theme.getTitleColor());
+        titlePaint.setColor(theme.titleColor);
         invalidate();
     }
 
@@ -165,7 +165,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
             Log.d(TAG, "onDraw");
         }
         if (theme != null) {
-            canvas.drawColor(theme.getBackgroundWindowColor());
+            canvas.drawColor(theme.backgroundWindowColor);
         }
 
         boolean hasContent = graphManager.countVisible() > 0;

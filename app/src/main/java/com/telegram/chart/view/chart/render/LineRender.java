@@ -49,7 +49,7 @@ class LineRender extends Render {
 
     @Override
     public void applyTheme(Theme theme) {
-        int backgroundColor = theme.getBackgroundWindowColor();
+        int backgroundColor = theme.backgroundWindowColor;
         paintInsideCircle.setColor(backgroundColor);
     }
 

@@ -47,8 +47,8 @@ public class XYRender implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        final int lineColor = theme.getAxisColor();
-        final int textColor = theme.getAxisValueColor();
+        final int lineColor = theme.axisColor;
+        final int textColor = theme.axisValueColor;
         linePaint.setColor(lineColor);
         valuePaint.setColor(textColor);
         datePaint.setColor(textColor);
