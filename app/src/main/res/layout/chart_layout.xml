@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="@dimen/block_margin_top"
     android:layout_marginBottom="@dimen/block_margin_bottom"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -70,6 +70,14 @@
         android:id="@+id/checkboxes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:flChildSpacing="@dimen/checkbox_spacing"
+        app:flRowSpacing="@dimen/checkbox_spacing"
+        android:paddingTop="@dimen/small"
+        android:paddingLeft="@dimen/normal"
+        android:paddingStart="@dimen/normal"
+        android:paddingRight="@dimen/normal"
+        android:paddingEnd="@dimen/normal"
+        android:paddingBottom="@dimen/normal"
         />
     <View
         android:id="@+id/shadowBottom"

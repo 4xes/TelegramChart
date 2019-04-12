@@ -80,7 +80,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         titlePaint.setStyle(Paint.Style.FILL);
         titlePaint.setTextSize(pxFromSp(15f));
         titlePaint.setTextAlign(Paint.Align.LEFT);
-        titlePaint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
+        titlePaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 
         debugPaint.setStyle(Paint.Style.STROKE);
 

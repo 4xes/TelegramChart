@@ -2,11 +2,9 @@ package com.telegram.chart.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
-import com.telegram.chart.R;
+import com.telegram.chart.view.chart.Checkbox;
 import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.flow.FlowLayout;
 import com.telegram.chart.view.theme.Themable;
@@ -23,26 +21,21 @@ public class CheckboxesView extends FlowLayout implements Themable {
         super(context, attrs);
     }
 
-    public void init(GraphManager graphManager, OnLineVisibleListener onLineVisibleListener) {
-        for (int id = 0; id < graphManager.countLines(); id++) {
-            CheckBox checkBox = new CheckBox(getContext());
+    public void init(GraphManager manager, OnLineVisibleListener onLineVisibleListener) {
+        for (int id = 0; id < manager.countLines(); id++) {
+            Checkbox checkBox = new Checkbox(getContext());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LayoutParams.WRAP_CONTENT,
                     LayoutParams.WRAP_CONTENT
             );
-            int padding = getResources().getDimensionPixelOffset(R.dimen.normal);
-            params.setMargins(padding, 0, 0, 0);
             checkBox.setLayoutParams(params);
-            checkBox.setPadding(padding, padding, padding, padding);
-            checkBox.setText(graphManager.chart.data[id].name);
-            if (theme != null) {
-                checkBox.setTextColor(theme.nameColor);
-            }
+            checkBox.setText(manager.chart.data[id].name);
+            checkBox.setColor(manager.chart.data[id].color);
             checkBox.setChecked(true);
             checkBox.setTag(id);
-            checkBox.setOnCheckedChangeListener((buttonView, isVisible) -> {
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 final int lineId = (int) buttonView.getTag();
-                onLineVisibleListener.onLineVisibleChange(lineId, isVisible);
+                onLineVisibleListener.onLineVisibleChange(lineId, isChecked);
             });
             addView(checkBox);
         }
@@ -52,13 +45,6 @@ public class CheckboxesView extends FlowLayout implements Themable {
     public void applyTheme(Theme theme) {
         this.theme = theme;
         setBackgroundColor(theme.backgroundWindowColor);
-
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            if (child instanceof CheckBox) {
-                ((CheckBox) child).setTextColor(theme.nameColor);
-            }
-        }
 
         invalidate();
     }

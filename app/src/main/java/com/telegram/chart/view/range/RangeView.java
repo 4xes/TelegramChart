@@ -22,13 +22,14 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 public class RangeView extends BaseRangeView implements Themable, GraphManager.InvalidateListener {
 
+    public static final String TAG = RangeView.class.getSimpleName();
+
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint roundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF roundRect = new RectF();
     private RectF fingerRect = new RectF();
-    private GraphManager manager;
 
     private float paddingFinger = pxFromDp(1f);
     private float lineWidth = pxFromDp(2f);
@@ -36,7 +37,7 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
     private float[] linePoints = new float[8];
     private float withFinger = pxFromDp(10f);
     private float RANGE_RADIUS = pxFromDp(6f);
-    public static final String TAG = RangeView.class.getSimpleName();
+
 
     public RangeView(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -55,19 +56,23 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
 
     private void init() {
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        initPaint();
+    }
+
+    private void initPaint() {
+        linePaint.setStrokeWidth(lineWidth);
+        linePaint.setColor(Color.WHITE);
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setStrokeCap(Paint.Cap.ROUND);
+        roundPaint.setStyle(Paint.Style.STROKE);
+        roundPaint.setStrokeWidth(RANGE_RADIUS);
     }
 
     @Override
     public void applyTheme(Theme theme) {
         rangePaint.setColor(theme.rangeColor);
         selectedPaint.setColor(theme.rangeSelectedColor);
-        linePaint.setStrokeWidth(lineWidth);
-        linePaint.setColor(Color.WHITE);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeCap(Paint.Cap.ROUND);
         roundPaint.setColor(theme.backgroundWindowColor);
-        roundPaint.setStyle(Paint.Style.STROKE);
-        roundPaint.setStrokeWidth(RANGE_RADIUS);
         invalidate();
     }
 
@@ -81,14 +86,13 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
     @Override
     public void needInvalidate() {
         if (BuildConfig.DEBUG) {
-            Log.d("RangeView", "needInvalidate");
+            Log.d(TAG, "needInvalidate");
         }
         invalidate();
     }
 
-    public void seGraph(GraphManager graphManager) {
-        this.manager = graphManager;
-        this.manager.registerView(getViewId(), this);
+    public void seGraph(GraphManager manager) {
+        manager.registerView(getViewId(), this);
         invalidate();
     }
 

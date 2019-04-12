@@ -2,6 +2,7 @@
 <resources>
     <dimen name="small">8dp</dimen>
     <dimen name="normal">16dp</dimen>
+    <dimen name="checkbox_spacing">6dp</dimen>
 
     <dimen name="preview_height">64dp</dimen>
 
