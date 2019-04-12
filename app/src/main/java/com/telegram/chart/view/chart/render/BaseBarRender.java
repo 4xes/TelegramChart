@@ -45,7 +45,6 @@ abstract class BaseBarRender extends Render {
         int upper = getUpper(chart, visible);
         updateMatrix(chart);
         int saveCount = canvas.save();
-        manager.matrixBar(chart, matrix);
         canvas.setMatrix(matrix);
         for (int id = 0; id < manager.countLines(); id++) {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
