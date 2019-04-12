@@ -2,10 +2,11 @@ package com.telegram.chart.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
-import com.telegram.chart.view.chart.Checkbox;
 import com.telegram.chart.view.chart.GraphManager;
+import com.telegram.chart.view.chart.TagCheckBox;
 import com.telegram.chart.view.flow.FlowLayout;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
@@ -22,8 +23,11 @@ public class CheckboxesView extends FlowLayout implements Themable {
     }
 
     public void init(GraphManager manager, OnLineVisibleListener onLineVisibleListener) {
+        if (manager.countLines() == 1) {
+            return;
+        }
         for (int id = 0; id < manager.countLines(); id++) {
-            Checkbox checkBox = new Checkbox(getContext());
+            TagCheckBox checkBox = new TagCheckBox(getContext());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LayoutParams.WRAP_CONTENT,
                     LayoutParams.WRAP_CONTENT
@@ -46,6 +50,12 @@ public class CheckboxesView extends FlowLayout implements Themable {
         this.theme = theme;
         setBackgroundColor(theme.backgroundWindowColor);
 
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child instanceof TagCheckBox) {
+                ((TagCheckBox) child).applyTheme(theme);
+            }
+        }
         invalidate();
     }
 

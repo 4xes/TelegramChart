@@ -15,24 +15,30 @@ import android.widget.Checkable;
 
 import com.telegram.chart.view.annotation.NonNull;
 import com.telegram.chart.view.annotation.Nullable;
-import com.telegram.chart.view.utils.ViewUtils;
+import com.telegram.chart.view.theme.Themable;
+import com.telegram.chart.view.theme.Theme;
+import com.telegram.chart.view.utils.ColorUtils;
 
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 import static com.telegram.chart.view.utils.ViewUtils.reconcileSize;
 
-public class Checkbox extends View implements Checkable, ValueAnimator.AnimatorUpdateListener, View.OnClickListener {
+public class TagCheckBox extends View implements Checkable, ValueAnimator.AnimatorUpdateListener, View.OnClickListener, Themable {
     protected RectF bound = new RectF();
     private String text = "";
     private TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private float[] hsl = new float[3];
+
+    private Theme theme;
 
     private OnCheckedChangeListener onCheckedChangeListener;
 
     private ValueAnimator animator = null;
     private int color;
+    private int saturationColor;
     private int currentAlpha = 255;
     private boolean isChecked = true;
 
@@ -42,17 +48,17 @@ public class Checkbox extends View implements Checkable, ValueAnimator.AnimatorU
     private final float textLeftPadding = pxFromDp(28f);
     private final float textRightPadding = pxFromDp(16f);
 
-    public Checkbox(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
+    public TagCheckBox(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
-    public Checkbox(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TagCheckBox(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public Checkbox(@Nullable Context context) {
+    public TagCheckBox(@Nullable Context context) {
         super(context);
         init();
     }
@@ -95,8 +101,26 @@ public class Checkbox extends View implements Checkable, ValueAnimator.AnimatorU
 
     public void setColor(int color) {
         this.color = color;
-        strokePaint.setColor(color);
-        fillPaint.setColor(color);
+        this.saturationColor = color;
+        if (theme != null) {
+            applyTheme(theme);
+        }
+    }
+
+    @Override
+    public void applyTheme(Theme theme) {
+        this.theme = theme;
+
+        ColorUtils.colorToHSL(color, hsl);
+        if (theme.id == Theme.DAY) {
+            hsl[1] = hsl[1] - 0.10f;
+        } else {
+            hsl[1] = hsl[1] - 0.25f;
+        }
+        this.saturationColor = ColorUtils.HSLToColor(hsl);
+        strokePaint.setColor(this.saturationColor);
+        fillPaint.setColor(this.saturationColor);
+        invalidate();
     }
 
     @Override
@@ -131,7 +155,7 @@ public class Checkbox extends View implements Checkable, ValueAnimator.AnimatorU
         }
         canvas.drawRoundRect(bound, RADIUS, RADIUS, strokePaint);
 
-        textPaint.setColor(ViewUtils.blendARGB(color, Color.WHITE, (float) currentAlpha / 255));
+        textPaint.setColor(ColorUtils.blendARGB(saturationColor, Color.WHITE, (float) currentAlpha / 255));
         float textHeight = textPaint.descent() - textPaint.ascent();
         float textOffset = (textHeight / 2) - textPaint.descent();
         canvas.drawText(text, bound.left + textLeftPadding, bound.centerY() + textOffset, textPaint);
@@ -178,6 +202,6 @@ public class Checkbox extends View implements Checkable, ValueAnimator.AnimatorU
     }
 
     public interface OnCheckedChangeListener {
-        void onCheckedChanged(Checkbox buttonView, boolean isChecked);
+        void onCheckedChanged(TagCheckBox buttonView, boolean isChecked);
     }
 }

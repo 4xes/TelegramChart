@@ -5,7 +5,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
-import com.telegram.chart.view.utils.ViewUtils;
+import com.telegram.chart.view.utils.ColorUtils;
 
 abstract class BaseBarRender extends Render {
     private final Paint paintBars = new Paint();
@@ -50,7 +50,7 @@ abstract class BaseBarRender extends Render {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
             int alpha = (int) Math.ceil(255 * currentAlpha);
             if (alpha != 0) {
-                final int blendColor =  ViewUtils.blendARGB(backgroundColor, color[0], currentAlpha);
+                final int blendColor =  ColorUtils.blendARGB(backgroundColor, color[0], currentAlpha);
                 paintBars.setColor(blendColor);
                 if (isPreview) {
                     canvas.drawLines(drawBars, paintBars);
