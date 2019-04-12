@@ -84,7 +84,7 @@ public abstract class BaseRangeView extends View {
     }
 
 
-    private void recalculateBounds() {
+    public void recalculateBounds() {
         selectedRange.left = line.left + (line.width() * start);
         selectedRange.right = line.left + (line.width() * end);
 

@@ -7,7 +7,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toolbar;
 
 import com.telegram.chart.data.Chart;
 import com.telegram.chart.data.parser.ChartsInteractor;
@@ -37,10 +36,6 @@ public class MainActivity extends ThemeBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setActionBar(toolbar);
-        }
 
         setTitle(R.string.app_title);
         initViews();

@@ -7,4 +7,5 @@
 
     <dimen name="block_margin_top">28dp</dimen>
     <dimen name="block_margin_bottom">64dp</dimen>
+
 </resources>

@@ -43,6 +43,14 @@ public class ViewUtils {
         }
     }
 
+    public static void clipSupport(Canvas canvas, Path path) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canvas.clipOutPath(path);
+        } else {
+            canvas.clipPath(path, Region.Op.DIFFERENCE);
+        }
+    }
+
     public static void drawRoundRectSupport(Canvas canvas, Paint paint, RectF rect, Path path, float radius) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             canvas.drawRoundRect(rect, radius, radius, paint);

@@ -12,7 +12,8 @@ import static com.telegram.chart.view.utils.ViewUtils.getColor;
 
 public class Theme {
     public final @ThemeId int id;
-    public final int toolbarColor;
+    public final int actionBar;
+    public final String actionBarColorTitle;
     public final int titleColor;
     public final int backgroundWindowColor;
     public final int backgroundSpacingColor;
@@ -26,9 +27,10 @@ public class Theme {
     public final int shadowTop;
     public final int shadowBottom;
 
-    public Theme(Context context, @ThemeId int id, int toolbarColor, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int tooltipColor, int shadowTop, int shadowBottom) {
+    public Theme(Context context, @ThemeId int id, int actionBar, String actionBarColorTitle, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int tooltipColor, int shadowTop, int shadowBottom) {
         this.id = id;
-        this.toolbarColor = getColor(context, toolbarColor);
+        this.actionBar = getColor(context, actionBar);
+        this.actionBarColorTitle = actionBarColorTitle;
         this.titleColor = getColor(context, titleColor);
         this.backgroundWindowColor = getColor(context, backgroundWindowColor);
         this.backgroundSpacingColor = getColor(context, backgroundSpacingColor);
@@ -52,6 +54,7 @@ public class Theme {
                 context,
                 NIGHT,
                 R.color.toolbar_night,
+                "#FFFFFF",
                 R.color.toolbar_title_night,
                 R.color.background_night,
                 R.color.background_spacing_night,
@@ -72,6 +75,7 @@ public class Theme {
                 context,
                 DAY,
                 R.color.toolbar_day,
+                "#000000",
                 R.color.toolbar_title_day,
                 R.color.background_day,
                 R.color.background_spacing_day,

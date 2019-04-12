@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
+import com.telegram.chart.data.Chart;
 import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.chart.render.Render;
 import com.telegram.chart.view.chart.render.RenderFabric;
@@ -23,6 +24,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
     private Render render;
+    private GraphManager manager;
     public static final String TAG = PreviewChartView.class.getSimpleName();
     private Theme theme;
 
@@ -45,12 +47,21 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
-    public void setGraph(GraphManager graphManager) {
-        render = RenderFabric.getPreview(graphManager);
-        graphManager.registerView(getViewId(), this);
+    public void setGraph(GraphManager manager) {
+        this.manager = manager;
+        render = RenderFabric.getPreview(manager);
+        chartBound.set(bound);
+        if (manager.chart.type.equals(Chart.TYPE_LINE) || manager.chart.type.equals(Chart.TYPE_LINE_SCALED)) {
+            chartBound.inset(horizontalPadding, verticalPadding);
+        }
+        if (manager.chart.type.equals(Chart.TYPE_BAR_STACKED)) {
+            chartBound.top = bound.top + verticalPadding;
+        }
+        manager.registerView(getViewId(), this);
         if (theme != null){
             applyTheme(theme);
         }
+        onChangeBounds();
         invalidate();
     }
 
@@ -69,11 +80,27 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         invalidate();
     }
 
+    private void onChangeBounds() {
+        if (manager != null) {
+            chartBound.set(bound);
+            switch (manager.chart.type) {
+                case Chart.TYPE_LINE:
+                    chartBound.inset(horizontalPadding, verticalPadding);
+                    break;
+                case Chart.TYPE_LINE_SCALED:
+                    chartBound.inset(horizontalPadding, verticalPadding);
+                    break;
+                case Chart.TYPE_BAR_STACKED:
+                    chartBound.top = bound.top + verticalPadding;
+                    break;
+            }
+        }
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        chartBound.set(bound);
-        chartBound.inset(horizontalPadding, verticalPadding);
+        onChangeBounds();
     }
 
     @Override
@@ -86,9 +113,12 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "onDraw");
         }
+
         if (theme != null) {
             canvas.drawColor(theme.backgroundWindowColor);
         }
+
+
         if (render != null) {
             render.render(canvas, chartBound, null);
         }

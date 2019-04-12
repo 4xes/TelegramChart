@@ -1,14 +1,15 @@
 package com.telegram.chart;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toolbar;
 
 import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.theme.Themable;
@@ -45,7 +46,7 @@ abstract class ThemeBaseActivity extends Activity implements Themable {
     private void setStatusBarColor(Theme theme) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            if (theme.toolbarColor == Color.BLACK && window.getNavigationBarColor() == Color.BLACK) {
+            if (theme.actionBar == Color.BLACK && window.getNavigationBarColor() == Color.BLACK) {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             } else {
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -58,20 +59,16 @@ abstract class ThemeBaseActivity extends Activity implements Themable {
                     }
                 }
             }
-            window.setStatusBarColor(theme.toolbarColor);
+            window.setStatusBarColor(theme.actionBar);
         }
     }
 
     private void setToolbarColors(Theme theme) {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setBackground(new ColorDrawable(theme.toolbarColor));
-            toolbar.setTitleTextColor(theme.titleColor);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setBackgroundDrawable(new ColorDrawable(theme.actionBar));
+            actionBar.setTitle(Html.fromHtml("<font color='" + theme.actionBarColorTitle + "'>Your Title</font>"));
         }
-//        ActionBar actionBar = getActionBar();
-//        if (actionBar != null) {
-//            actionBar.setBackgroundDrawable(new ColorDrawable(theme.getToolbarColor()));
-//        }
 
     }
 
