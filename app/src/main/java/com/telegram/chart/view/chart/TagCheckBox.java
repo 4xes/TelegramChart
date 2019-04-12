@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
@@ -53,7 +54,9 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     private final float markHeight = pxFromDp(8f);
     private final float markMiddleSize = pxFromDp(3f);
     private final float markPadding = pxFromDp(6f);
+    private Matrix matrix = new Matrix();
     private float[] mark = new float[8];
+    private float[] markDraw = new float[8];
 
     public TagCheckBox(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -166,6 +169,10 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         mark[5] = mark[3];
         mark[6] = topX;
         mark[7] = topY;
+
+        for(int i = 0; i < mark.length; i++) {
+            markDraw[i] = mark[i];
+        }
     }
 
     @Override
@@ -184,7 +191,8 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         float textOffset = (textHeight / 2) - textPaint.descent();
         float offsetXText = (markWidth + markPadding) * (1f - progress) / 2;
         canvas.drawText(text, bound.left + textLeftPadding + markWidth + markPadding - offsetXText, bound.centerY() + textOffset, textPaint);
-        canvas.drawLines(mark, linePaint);
+
+        canvas.drawLines(markDraw, linePaint);
     }
 
     public void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
