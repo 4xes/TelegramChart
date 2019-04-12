@@ -39,14 +39,21 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     private ValueAnimator animator = null;
     private int color;
     private int saturationColor;
-    private int currentAlpha = 255;
+    private float progress = 1f;
     private boolean isChecked = true;
 
     private float lineWidth = pxFromDp(2f);
     private float strokeWidth = pxFromDp(2f);
     private final float RADIUS = pxFromDp(18f);
-    private final float textLeftPadding = pxFromDp(28f);
+    private final float HEIGHT = pxFromDp(36f);
+    private final float textLeftPadding = pxFromDp(16f);
+    private final float markOffsetX = -pxFromDp(4f);
     private final float textRightPadding = pxFromDp(16f);
+    private final float markWidth = pxFromDp(10f);
+    private final float markHeight = pxFromDp(8f);
+    private final float markMiddleSize = pxFromDp(3f);
+    private final float markPadding = pxFromDp(6f);
+    private float[] mark = new float[8];
 
     public TagCheckBox(@NonNull Context context, @Nullable AttributeSet attrs, @Nullable int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -126,8 +133,8 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        final int minWidth = Math.round(textLeftPadding + textPaint.measureText(text) + textRightPadding);
-        final int minHeight = pxFromDp(38);
+        final int minWidth = Math.round(textLeftPadding + markWidth + markPadding + markOffsetX + textPaint.measureText(text) + textRightPadding);
+        final int minHeight = Math.round(HEIGHT);
 
         int measuredWidth = reconcileSize(minWidth, widthMeasureSpec);
         int measuredHeight = reconcileSize(minHeight, heightMeasureSpec);
@@ -143,22 +150,41 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         bound.right = getWidth() - getPaddingRight();
         bound.bottom = getHeight() - getPaddingBottom();
         bound.inset(strokeWidth, strokeWidth);
+
+        float diff = ((bound.height() - markHeight) / 2f);
+        float topY = bound.top + diff;
+        float bottomY = topY + markHeight;
+        float leftY = bottomY - markMiddleSize;
+        float leftX = bound.left + textLeftPadding + markOffsetX;
+        float topX = leftX + markWidth;
+        float bottomX = leftX + markMiddleSize;
+        mark[0] = leftX;
+        mark[1] = leftY;
+        mark[2] = bottomX;
+        mark[3] = bottomY;
+        mark[4] = mark[2];
+        mark[5] = mark[3];
+        mark[6] = topX;
+        mark[7] = topY;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        int currentAlpha = (int) Math.ceil(255 * progress);
         if (currentAlpha != 0) {
             fillPaint.setAlpha(currentAlpha);
             canvas.drawRoundRect(bound, RADIUS, RADIUS, fillPaint);
         }
         canvas.drawRoundRect(bound, RADIUS, RADIUS, strokePaint);
 
-        textPaint.setColor(ColorUtils.blendARGB(saturationColor, Color.WHITE, (float) currentAlpha / 255));
+        textPaint.setColor(ColorUtils.blendARGB(saturationColor, Color.WHITE, progress));
         float textHeight = textPaint.descent() - textPaint.ascent();
         float textOffset = (textHeight / 2) - textPaint.descent();
-        canvas.drawText(text, bound.left + textLeftPadding, bound.centerY() + textOffset, textPaint);
+        float offsetXText = (markWidth + markPadding) * (1f - progress) / 2;
+        canvas.drawText(text, bound.left + textLeftPadding + markWidth + markPadding - offsetXText, bound.centerY() + textOffset, textPaint);
+        canvas.drawLines(mark, linePaint);
     }
 
     public void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
@@ -170,14 +196,14 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         if (animator != null) {
             animator.cancel();
         }
-        animator = ValueAnimator.ofInt(currentAlpha, isChecked? 255: 0);
+        animator = ValueAnimator.ofFloat(progress, isChecked? 1f: 0f);
         animator.addUpdateListener(this);
         animator.start();
     }
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
-        currentAlpha = (int) animation.getAnimatedValue();
+        progress = (float) animation.getAnimatedValue();
         invalidate();
     }
 
