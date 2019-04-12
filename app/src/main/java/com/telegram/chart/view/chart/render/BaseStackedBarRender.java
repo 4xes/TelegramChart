@@ -11,8 +11,8 @@ abstract class BaseStackedBarRender extends Render {
     private final Paint paintBars = new Paint();
     private final float[][] drawBars;
 
-    public BaseStackedBarRender(GraphManager manager) {
-        super(manager);
+    public BaseStackedBarRender(GraphManager manager, boolean isPreview) {
+        super(manager, isPreview);
 
         final int linePointsLength = manager.chart.x.length * 4;
         drawBars = new float[manager.countLines()][linePointsLength];
@@ -42,9 +42,6 @@ abstract class BaseStackedBarRender extends Render {
         }
     }
 
-    protected abstract int getLower(RectF chart, RectF visible);
-    protected abstract int getUpper(RectF chart, RectF visible);
-
     protected abstract void updateMatrix(RectF chart);
 
     public void render(Canvas canvas, RectF chart, RectF visible) {
@@ -60,7 +57,11 @@ abstract class BaseStackedBarRender extends Render {
             if (alpha != 0) {
                 final int blendColor =  ViewUtils.blendARGB(backgroundColor, color[id], currentAlpha);
                 paintBars.setColor(blendColor);
-                canvas.drawLines(drawBars[id], lower * 4, (upper - lower) * 4 + 4, paintBars);
+                if (isPreview) {
+                    canvas.drawLines(drawBars[id], paintBars);
+                } else {
+                    canvas.drawLines(drawBars[id], lower * 4, (upper - lower) * 4 + 4, paintBars);
+                }
             }
         }
         canvas.restoreToCount(saveCount);

@@ -6,17 +6,7 @@ import com.telegram.chart.view.chart.GraphManager;
 class PreviewStackedBarRender extends BaseStackedBarRender {
 
     public PreviewStackedBarRender(GraphManager manager) {
-        super(manager);
-    }
-
-    @Override
-    protected int getLower(RectF chart, RectF visible) {
-        return 0;
-    }
-
-    @Override
-    protected int getUpper(RectF chart, RectF visible) {
-        return manager.chart.x.length - 1;
+        super(manager, true);
     }
 
     @Override

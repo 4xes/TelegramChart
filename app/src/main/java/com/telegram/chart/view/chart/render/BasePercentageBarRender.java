@@ -12,8 +12,8 @@ abstract class BasePercentageBarRender extends Render {
     protected final Paint paintBars = new Paint();
     protected final Path[] drawPaths;
 
-    public BasePercentageBarRender(GraphManager manager) {
-        super(manager);
+    public BasePercentageBarRender(GraphManager manager, boolean isPreview) {
+        super(manager, isPreview);
         drawPaths = new Path[manager.countLines()];
         for (int id = 0; id < manager.countLines(); id++) {
             drawPaths[id] = new Path();
@@ -55,9 +55,6 @@ abstract class BasePercentageBarRender extends Render {
             drawPaths[id].transform(matrix);
         }
     }
-
-    protected abstract int getLower(RectF chart, RectF visible);
-    protected abstract int getUpper(RectF chart, RectF visible);
 
     protected abstract void updateMatrix(RectF chart);
 

@@ -15,7 +15,7 @@ class PreviewLineRender extends Render {
     public final int[] color;
 
     public PreviewLineRender(GraphManager manager) {
-        super(manager);
+        super(manager, true);
         color = new int[manager.countLines()];
         for (int id = 0; id < manager.countLines(); id++){
             color[id] = manager.chart.data[id].color;

@@ -23,7 +23,7 @@ class LineRender extends Render {
     private final float[][] drawLines;
 
     public LineRender(GraphManager manager) {
-        super(manager);
+        super(manager, false);
         final int pointsLength = manager.chart.x.length * 2;
         final int linePointsLength = 4 + (manager.chart.x.length - 2) * 4;
         lines = new float[manager.countLines()][linePointsLength];
@@ -88,24 +88,13 @@ class LineRender extends Render {
         }
     }
 
-
     public void render(Canvas canvas, RectF chart, RectF visible) {
+        final int lower = getLower(chart, visible);
+        final int upper = getUpper(chart, visible);
         for (int id = 0; id < manager.countLines(); id++) {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
             int alpha = (int) Math.ceil(255 * currentAlpha);
             if (alpha != 0) {
-                final int maxIndex = manager.chart.x.length - 1;
-                final float sectionWidth = manager.sectionWidth(chart.width());
-                final int addIndexLeft = (int) Math.rint((chart.left - visible.left) / sectionWidth);
-                final int addIndexRight = (int) Math.rint((visible.right - chart.right) / sectionWidth);
-                int lower = manager.chart.getLower(manager.range.start) - 1 - addIndexLeft;
-                if (lower < 0) {
-                    lower = 0;
-                }
-                int upper = manager.chart.getUpper(manager.range.end) + 1 + addIndexRight;
-                if (upper > maxIndex) {
-                    upper = maxIndex;
-                }
                 recalculateLines(chart, lower, upper);
                 boolean maxOptimize = upper - lower < MAX_OPTIMIZE_LINES;
                 if (maxOptimize) {

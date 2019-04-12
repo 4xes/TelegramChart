@@ -9,14 +9,15 @@ import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
 public abstract class Render implements Themable {
-    final GraphManager manager;
-    protected final float[] matrixArray = new float[5];
+    protected final GraphManager manager;
     protected final int[] color;
-    final Matrix matrix = new Matrix();
+    protected final Matrix matrix = new Matrix();
     protected int backgroundColor;
+    protected final boolean isPreview;
 
-    public Render(GraphManager graphManager) {
+    public Render(GraphManager graphManager, boolean isPreview) {
         this.manager = graphManager;
+        this.isPreview = isPreview;
         color = new int[manager.countLines()];
         for (int id = 0; id < manager.countLines(); id++){
             color[id] = manager.chart.data[id].color;
@@ -32,8 +33,29 @@ public abstract class Render implements Themable {
 
     public void renderSelect(Canvas canvas, int index, RectF chart, RectF visible) {}
 
-    public static final int SCALE_X = 0;
-    public static final int SCALE_Y = 1;
-    public static final int OFFSET_X = 2;
-    public static final int OFFSET_Y = 3;
+    protected int getLower(RectF chart, RectF visible) {
+        if (isPreview) {
+            return 0;
+        }
+        final float sectionWidth = manager.sectionWidth(chart.width());
+        final int addIndexLower= (int) Math.rint((chart.left - visible.left) / sectionWidth);
+        final int lower = manager.chart.getLower(manager.range.start) - 1 - addIndexLower;
+        if (lower < 0) {
+            return 0;
+        }
+        return lower;
+    }
+
+    protected int getUpper(RectF chart, RectF visible) {
+        if (isPreview) {
+            return manager.chart.x.length - 1;
+        }
+        final float sectionWidth = manager.sectionWidth(chart.width());
+        final int addIndexUpper = (int) Math.rint((visible.right - chart.right) / sectionWidth);
+        final int upper = manager.chart.getUpper(manager.range.end) + 1 + addIndexUpper;
+        if (upper > manager.chart.x.length - 1) {
+            return manager.chart.x.length - 1;
+        }
+        return upper;
+    }
 }

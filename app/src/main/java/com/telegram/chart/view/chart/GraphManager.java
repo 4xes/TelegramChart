@@ -104,10 +104,32 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
+    public void matrixBar(RectF r, Matrix matrix) {
+        final float width = r.width();
+        final float scaleX = getScaleRange() * barWidth(width);
+        final float scaleY = (1f / (state.chart.yMaxCurrent[0] / r.height())) * state.chart.multiCurrent[0];
+        final float dx = (-width * range.start) * getScaleRange();
+        final float offsetX = r.left + dx + scaleX / 2f;
+        final float offsetY = r.bottom;
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
+    }
+
+    public void matrixBarPreview(RectF r, Matrix matrix) {
+        final float width = r.width();
+        final float scaleX = barWidth(width);
+        final float scaleY = (1f / (state.preview.yMaxCurrent[0] / r.height()) * state.preview.multiCurrent[0]);
+        final float offsetX = r.left + scaleX / 2f;
+        final float offsetY = r.bottom;
+        matrix.reset();
+        matrix.setScale(scaleX, scaleY);
+        matrix.postTranslate(offsetX, offsetY);
+    }
+
     public void matrixStackedBars(RectF r,  Matrix matrix) {
         final float width = r.width();
-        final float barWidth = barWidth(width);
-        final float scaleX = getScaleRange() * barWidth;
+        final float scaleX = getScaleRange() * barWidth(width);
         final float scaleY = (1f / (chart.stepMax(range)/ r.height()));
         final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx + scaleX / 2f;
@@ -119,9 +141,9 @@ public class GraphManager {
 
     public void matrixPreviewStackedBars(RectF r,  Matrix matrix) {
         final float width = r.width();
-        final float scaleX = sectionWidth(width);
+        final float scaleX = barWidth(width);
         final float scaleY = (1f / (chart.max()/ r.height()));
-        final float offsetX = r.left;
+        final float offsetX = r.left + scaleX / 2f;
         final float offsetY = r.bottom;
         matrix.reset();
         matrix.setScale(scaleX, scaleY);
@@ -133,7 +155,7 @@ public class GraphManager {
         final float scaleX = getScaleRange() * sectionWidth(width);
         final float scaleY = 1f;
         final float dx = (-width * range.start) * getScaleRange();
-        final float offsetX = r.left + dx + scaleX / 2f;
+        final float offsetX = r.left + dx;
         final float offsetY = r.bottom;
         matrix.reset();
         matrix.setScale(scaleX, scaleY);

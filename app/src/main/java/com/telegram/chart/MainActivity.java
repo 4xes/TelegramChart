@@ -141,7 +141,6 @@ public class MainActivity extends ThemeBaseActivity {
     @Override
     public void applyTheme(Theme theme) {
         super.applyTheme(theme);
-        content.setBackgroundColor(theme.backgroundSpacingColor);
         for (int i = 0; i < shadows.size(); i++) {
             final View shadow = shadows.get(i);
             if (shadow != null) {
