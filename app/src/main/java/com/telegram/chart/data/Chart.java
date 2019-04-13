@@ -57,8 +57,4 @@ public class Chart {
     public int stepMax(int id, Range range) {
         return toStepped(calculator.max(this, id, range));
     }
-
-    public int stepMax(Range range) {
-        return toStepped(calculator.max(this, range));
-    }
 }

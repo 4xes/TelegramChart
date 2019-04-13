@@ -14,9 +14,10 @@ public class LineStateManager extends StateManager {
         this.preview = new LineState(manager.countLines());
 
         int maxPreview = manager.chart.max();
-        int newCurrent = manager.chart.max(manager.range);
-        int maxChart = toStepped(newCurrent);
-        previousStep = step(newCurrent);
+        int maxRange = manager.chart.max(manager.range);
+        int maxChart = toStepped(maxRange);
+        maxCurrent = maxRange;
+        previousStep = step(maxRange);
         currentStep = previousStep;
 
         for (int id = 0; id < manager.countLines(); id++) {
@@ -99,6 +100,7 @@ public class LineStateManager extends StateManager {
 
         int max = manager.chart.max();
         int maxRange = manager.chart.max(manager.range);
+        maxCurrent = maxRange;
         int maxStepped = toStepped(maxRange);
         if (max == Integer.MIN_VALUE) {
             max = manager.chart.data[targetId].max;

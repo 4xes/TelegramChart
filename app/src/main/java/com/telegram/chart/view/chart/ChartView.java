@@ -169,9 +169,6 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         }
 
         boolean hasContent = graphManager.countVisible() > 0;
-        if (xyRender != null && hasContent) {
-            xyRender.renderYLines(canvas, chartBound);
-        }
         if (render != null) {
             render.render(canvas, chartBound, visibleBound);
         }
@@ -188,6 +185,9 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         }
         if (xyRender != null) {
             xyRender.renderY0TextAndLine(canvas,chartBound);
+            if (hasContent) {
+                xyRender.renderYLines(canvas, chartBound);
+            }
         }
 
         if (selectIndex != NONE_INDEX && render != null) {

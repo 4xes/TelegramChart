@@ -19,7 +19,7 @@ public class Theme {
     public final int backgroundSpacingColor;
     public final int dividerColor;
     public final int axisValueColor;
-    public final int axisColor;
+    public final int gridColor;
     public final int nameColor;
     public final int rangeColor;
     public final int rangeSelectedColor;
@@ -27,7 +27,7 @@ public class Theme {
     public final int shadowTop;
     public final int shadowBottom;
 
-    public Theme(Context context, @ThemeId int id, int actionBar, String actionBarColorTitle, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int axisColor, int nameColor, int rangeColor, int rangeSelectedColor, int tooltipColor, int shadowTop, int shadowBottom) {
+    public Theme(Context context, @ThemeId int id, int actionBar, String actionBarColorTitle, int titleColor, int backgroundWindowColor, int backgroundSpacingColor, int dividerColor, int axisValueColor, int gridColor, int nameColor, int rangeColor, int rangeSelectedColor, int tooltipColor, int shadowTop, int shadowBottom) {
         this.id = id;
         this.actionBar = getColor(context, actionBar);
         this.actionBarColorTitle = actionBarColorTitle;
@@ -36,7 +36,7 @@ public class Theme {
         this.backgroundSpacingColor = getColor(context, backgroundSpacingColor);
         this.dividerColor = getColor(context, dividerColor);
         this.axisValueColor = getColor(context, axisValueColor);
-        this.axisColor = getColor(context, axisColor);
+        this.gridColor = getColor(context, gridColor);
         this.nameColor = getColor(context, nameColor);
         this.rangeColor = getColor(context, rangeColor);
         this.rangeSelectedColor = getColor(context, rangeSelectedColor);
@@ -60,7 +60,7 @@ public class Theme {
                 R.color.background_spacing_night,
                 R.color.divider_night,
                 R.color.axis_value_night,
-                R.color.axis_night,
+                R.color.grid_lines_night,
                 R.color.column_name_night,
                 R.color.range_night,
                 R.color.range_selected_night,
@@ -81,7 +81,7 @@ public class Theme {
                 R.color.background_spacing_day,
                 R.color.divider_day,
                 R.color.axis_value_day,
-                R.color.axis_day,
+                R.color.grid_lines_day,
                 R.color.column_name_day,
                 R.color.range_day,
                 R.color.range_selected_day,

@@ -15,9 +15,10 @@ public class PercentageStateManager extends StateManager {
         this.preview = new StackedState(manager.countLines());
 
         int max = manager.chart.max();
-        int newRange = manager.chart.max(manager.range);
-        float step = step(newRange);
-        int maxChart = toStepped(newRange);
+        int maxRange = manager.chart.max(manager.range);
+        maxCurrent = maxRange;
+        float step = step(maxRange);
+        int maxChart = toStepped(maxRange);
 
         previousStep = step;
         currentStep = previousStep;
@@ -61,6 +62,7 @@ public class PercentageStateManager extends StateManager {
     public void updateRange() {
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
         int maxRange = manager.chart.max(manager.range);
+        maxCurrent = maxRange;
         updateAxisAnimation(maxRange);
         int maxStepped = toStepped(maxRange);
         chart.maxStart = chart.maxCurrent;
@@ -85,6 +87,7 @@ public class PercentageStateManager extends StateManager {
 
         int max = manager.chart.max();
         int maxRange = manager.chart.max(manager.range);
+        maxCurrent = maxRange;
         chart.maxStart = chart.maxCurrent;
         chart.maxEnd = maxRange;
         preview.maxStart = preview.maxCurrent;

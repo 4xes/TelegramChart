@@ -24,6 +24,7 @@ public class XYRender implements Themable {
     private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valueHeight;
     private final float dateWidth;
+    private int lineColor;
 
     public XYRender(GraphManager manager) {
         this.manager = manager;
@@ -47,7 +48,7 @@ public class XYRender implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        final int lineColor = theme.axisColor;
+        lineColor = theme.gridColor;
         final int textColor = theme.axisValueColor;
         linePaint.setColor(lineColor);
         valuePaint.setColor(textColor);
@@ -55,7 +56,7 @@ public class XYRender implements Themable {
     }
 
     public void renderYLines(Canvas canvas, RectF r) {
-        final int max = manager.chart.max(manager.range);
+        final int max = manager.state.maxCurrent;
         final int maxStepped = toStepped(max);
         final float step = calculateStep(0f, max, GRID);
         final float percent = manager.state.progressAxis();
@@ -69,7 +70,7 @@ public class XYRender implements Themable {
     }
 
     public void renderYText(Canvas canvas, RectF r) {
-        final int max = manager.chart.max(manager.range);
+        final int max = manager.state.maxCurrent;
         final int maxStepped = toStepped(max);
         final float step = calculateStep(0f, max, GRID);
         final float percent = manager.state.progressAxis();
@@ -88,7 +89,7 @@ public class XYRender implements Themable {
 
         for (int i = 6; i < GRID; i = i + 6) {
             final float y = (float) Math.ceil((-step * i * scaleY) + offsetY);
-            int alpha = (int) Math.ceil(255 * alphaPercentage);
+            int alpha = (int) Math.ceil(26 * alphaPercentage);
             if (alpha != 0) {
                 linePaint.setAlpha(alpha);
                 canvas.drawLine(r.left, y, r.right, y, linePaint);
@@ -120,7 +121,7 @@ public class XYRender implements Themable {
         final float text0Y = r.bottom - (valueHeight / 2f) + valuePaint.descent();
         valuePaint.setAlpha(255);
         canvas.drawText(ZERO_Y, r.left, text0Y, valuePaint);
-        linePaint.setAlpha(255);
+        linePaint.setAlpha(26);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
     }
 

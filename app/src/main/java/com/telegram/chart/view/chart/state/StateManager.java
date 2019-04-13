@@ -7,6 +7,7 @@ import static com.telegram.chart.view.chart.state.State.ANIMATION_TICK;
 public abstract class StateManager {
     public long executedAxisTime = ANIMATION_DURATION_LONG;
     public long durationAxis = ANIMATION_DURATION_LONG;
+    public int maxCurrent;
     public float previousStep;
     public float currentStep;
 
