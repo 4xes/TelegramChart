@@ -78,7 +78,7 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
     public void applyTheme(Theme theme) {
         rangePaint.setColor(theme.rangeColor);
         selectedPaint.setColor(theme.rangeSelectedColor);
-        roundPaint.setColor(theme.backgroundWindowColor);
+        roundPaint.setColor(theme.contentColor);
         invalidate();
     }
 

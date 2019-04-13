@@ -115,7 +115,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         }
 
         if (theme != null) {
-            canvas.drawColor(theme.backgroundWindowColor);
+            canvas.drawColor(theme.contentColor);
         }
 
 

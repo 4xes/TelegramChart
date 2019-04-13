@@ -121,7 +121,7 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        this.backgroundColor = theme.backgroundWindowColor;
+        this.backgroundColor = theme.contentColor;
         if (theme.id == Theme.DAY) {
             strokePaint.setColor(this.color);
             fillPaint.setColor(this.color);

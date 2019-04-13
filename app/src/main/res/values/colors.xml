@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_night">#242F3E</color>
-    <color name="background_day">#FFFFFF</color>
-    <color name="background_spacing_night">#1B2433</color>
-    <color name="background_spacing_day">#F0F0F0</color>
+    <color name="content_night">#242F3E</color>
+    <color name="content_day">#FFFFFF</color>
+    <color name="window_night">#1B2433</color>
+    <color name="window_day">#F0F0F0</color>
     <color name="toolbar_day">#FFFFFF</color>
     <color name="toolbar_title_day">#000000</color>
     <color name="toolbar_icon_day">#8E8E93</color>
@@ -11,27 +11,28 @@
     <color name="toolbar_title_night">#FFFFFF</color>
     <color name="toolbar_icon_night">#FFFFFF</color>
 
-    <color name="divider_day">#E7E7E7</color>
-    <color name="divider_night">#151D25</color>
-
-    <color name="axis_value_day">#98989C</color>
-    <color name="axis_value_night">#697584</color>
-    <color name="axis_day">#E8EAEC</color>
-    <color name="axis_night">#394350</color>
-    <color name="grid_lines_day">#1A182D3B</color>
-    <color name="grid_lines_night">#1AFFFFFF</color>
     <color name="zoom_out_text_day">#108BE3</color>
     <color name="zoom_out_text_night">#48AAF0</color>
+    <color name="grid_lines_day">#1A182D3B</color>
+    <color name="grid_lines_night">#1AFFFFFF</color>
 
-    <color name="column_name_day">#212121</color>
-    <color name="column_name_night">#FFFFFF</color>
+    <color name="axis_x_day">#8E8E93</color>
+    <color name="axis_y_day">#8E8E93</color>
+    <color name="axis_x_night">#99A3B1C2</color>
+    <color name="axis_y_night">#99A3B1C2</color>
 
-    <color name="text_color">#5295CF</color>
+    <color name="axis_x_stacked_day">#80252529</color>
+    <color name="axis_y_stacked_day">#80252529</color>
+    <color name="axis_x_stacked_night">#99A3B1C2</color>
+    <color name="axis_y_stacked_night">#80ECF2F8</color>
 
-    <color name="range_day">#99E2EEF9</color>
-    <color name="range_night">#99304259</color>
-    <color name="range_selected_day">#8C86A9C4</color>
-    <color name="range_selected_night">#806F899E</color>
+    <color name="mask_day">#80FFFFFF</color>
+    <color name="mask_night">#80242F3E</color>
+
+    <color name="scroll_day">#99E2EEF9</color>
+    <color name="scroll_night">#99304259</color>
+    <color name="scroll_selected_day">#8C86A9C4</color>
+    <color name="scroll_selected_night">#806F899E</color>
 
     <color name="tooltip_bg_day">#FFFFFF</color>
     <color name="tooltip_bg_night">#1C2533</color>

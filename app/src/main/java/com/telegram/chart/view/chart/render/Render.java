@@ -32,7 +32,7 @@ public abstract class Render implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        backgroundColor = theme.backgroundWindowColor;
+        backgroundColor = theme.contentColor;
         for (int id = 0; id < manager.countLines(); id++){
             if (theme.id == Theme.DAY) {
                 color[id] = manager.chart.data[id].color;

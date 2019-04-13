@@ -39,7 +39,7 @@ abstract class ThemeBaseActivity extends Activity implements Themable {
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        setWindowBackground(theme.backgroundSpacingColor);
+        setWindowBackground(theme.windowColor);
         setStatusBarColor(theme);
         setToolbarColors(theme);
     }

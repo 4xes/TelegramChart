@@ -1,11 +1,13 @@
 package com.telegram.chart.view.chart;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.text.TextPaint;
 import android.util.SparseArray;
 
+import com.telegram.chart.data.Chart;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.utils.DateUtils;
@@ -17,30 +19,32 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
 public class XYRender implements Themable {
     private final GraphManager manager;
-    private final TextPaint valuePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private final TextPaint datePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint yPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint xPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint linePaint = new Paint();
     private final SparseArray<String> sparseDates = new SparseArray<>();
     private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valueHeight;
     private final float dateWidth;
-    private int lineColor;
+    private int yAxisAlpha;
+    private int xAxisAlpha;
+    private int lineAlpha;
 
     public XYRender(GraphManager manager) {
         this.manager = manager;
         initPaints();
-        valueHeight = measureHeightText(valuePaint);
-        dateWidth = datePaint.measureText(DateUtils.X_FORMAT_MAX);
+        valueHeight = measureHeightText(yPaint);
+        dateWidth = xPaint.measureText(DateUtils.X_FORMAT_MAX);
     }
 
     private void initPaints() {
-        valuePaint.setStyle(Paint.Style.FILL);
-        valuePaint.setTextSize(pxFromSp(11f));
-        valuePaint.setTextAlign(Paint.Align.LEFT);
+        yPaint.setStyle(Paint.Style.FILL);
+        yPaint.setTextSize(pxFromSp(11f));
+        yPaint.setTextAlign(Paint.Align.LEFT);
 
-        datePaint.setStyle(Paint.Style.FILL);
-        datePaint.setTextSize(pxFromSp(11f));
-        datePaint.setTextAlign(Paint.Align.CENTER);
+        xPaint.setStyle(Paint.Style.FILL);
+        xPaint.setTextSize(pxFromSp(11f));
+        xPaint.setTextAlign(Paint.Align.CENTER);
 
         linePaint.setStrokeWidth(pxFromDp(1f));
         linePaint.setStyle(Paint.Style.STROKE);
@@ -48,11 +52,19 @@ public class XYRender implements Themable {
 
     @Override
     public void applyTheme(Theme theme) {
-        lineColor = theme.gridColor;
-        final int textColor = theme.axisValueColor;
-        linePaint.setColor(lineColor);
-        valuePaint.setColor(textColor);
-        datePaint.setColor(textColor);
+        lineAlpha = Color.alpha(theme.gridColor);
+        linePaint.setColor(theme.gridColor);
+        if (manager.chart.type.equals(Chart.TYPE_BAR_STACKED) || manager.chart.type.equals(Chart.TYPE_PERCENTAGE)) {
+            xAxisAlpha = Color.alpha(theme.axisStackedX);
+            yAxisAlpha = Color.alpha(theme.axisStackedY);
+            xPaint.setColor(theme.axisStackedX);
+            yPaint.setColor(theme.axisStackedY);
+        } else {
+            xAxisAlpha = Color.alpha(theme.axisX);
+            yAxisAlpha = Color.alpha(theme.axisY);
+            xPaint.setColor(theme.axisX);
+            yPaint.setColor(theme.axisY);
+        }
     }
 
     public void renderYLines(Canvas canvas, RectF r) {
@@ -89,7 +101,7 @@ public class XYRender implements Themable {
 
         for (int i = 6; i < GRID; i = i + 6) {
             final float y = (float) Math.ceil((-step * i * scaleY) + offsetY);
-            int alpha = (int) Math.ceil(26 * alphaPercentage);
+            int alpha = (int) Math.ceil(lineAlpha * alphaPercentage);
             if (alpha != 0) {
                 linePaint.setAlpha(alpha);
                 canvas.drawLine(r.left, y, r.right, y, linePaint);
@@ -102,8 +114,8 @@ public class XYRender implements Themable {
         final float scaleY = 1f / ((maxStepped * Math.max(offsetPercentage, 0.0000001f)) / r.height());
         for (int i = 6; i < GRID; i = i + 6) {
             final float y = (-step * i * scaleY) + offsetY;
-            final float valueY = y -(valueHeight / 2f) + valuePaint.descent();
-            int alpha = (int) Math.ceil(255 * alphaPercentage);
+            final float valueY = y -(valueHeight / 2f) + yPaint.descent();
+            int alpha = (int) Math.ceil(yAxisAlpha * alphaPercentage);
             if (alpha != 0) {
                 int key = i * (int) stepText;
                 String value = sparseValues.get(key);
@@ -111,17 +123,17 @@ public class XYRender implements Themable {
                     value = String.valueOf(key);
                     sparseValues.put(key, value);
                 }
-                valuePaint.setAlpha(alpha);
-                canvas.drawText(value, r.left, valueY, valuePaint);
+                yPaint.setAlpha(alpha);
+                canvas.drawText(value, r.left, valueY, yPaint);
             }
         }
     }
 
     public void renderY0TextAndLine(Canvas canvas, RectF r) {
-        final float text0Y = r.bottom - (valueHeight / 2f) + valuePaint.descent();
-        valuePaint.setAlpha(255);
-        canvas.drawText(ZERO_Y, r.left, text0Y, valuePaint);
-        linePaint.setAlpha(26);
+        final float text0Y = r.bottom - (valueHeight / 2f) + yPaint.descent();
+        yPaint.setAlpha(yAxisAlpha);
+        canvas.drawText(ZERO_Y, r.left, text0Y, yPaint);
+        linePaint.setAlpha(lineAlpha);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
     }
 
@@ -155,7 +167,7 @@ public class XYRender implements Themable {
             float x = chartBound.left + (blockW * i) * scale + dx + blockW / 2;
 
             final float alphaPercentage = Math.max(Math.min(scale - minScale, 1f), 0f);
-            int alpha = (int) Math.ceil(255 * alphaPercentage);
+            int alpha = (int) Math.ceil(xAxisAlpha * alphaPercentage);
             if (alpha != 0) {
                 int index = manager.getIndex(x, chartBound);
                 float left = x - dateWidth / 2;
@@ -168,8 +180,8 @@ public class XYRender implements Themable {
                     date = DateUtils.getDateX(manager.chart.x[index] * 1000L);
                     sparseDates.put(index, date);
                 }
-                datePaint.setAlpha(alpha);
-                canvas.drawText(date, x, chartBound.centerY() + valueHeight / 2f, datePaint);
+                xPaint.setAlpha(alpha);
+                canvas.drawText(date, x, chartBound.centerY() + valueHeight / 2f, xPaint);
             }
         }
     }

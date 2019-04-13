@@ -48,7 +48,7 @@ public class CheckboxesView extends FlowLayout implements Themable {
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-        setBackgroundColor(theme.backgroundWindowColor);
+        setBackgroundColor(theme.contentColor);
 
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
