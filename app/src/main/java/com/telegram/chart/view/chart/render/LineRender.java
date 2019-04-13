@@ -65,6 +65,11 @@ class LineRender extends Render {
             } else {
                 paint[id].setColor(manager.chart.data[id].colorNight);
             }
+            if (theme.id == Theme.DAY) {
+                paintPoint[id].setColor(manager.chart.data[id].color);
+            } else {
+                paintPoint[id].setColor(manager.chart.data[id].colorNight);
+            }
         }
     }
 

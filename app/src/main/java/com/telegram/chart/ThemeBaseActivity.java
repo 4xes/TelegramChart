@@ -72,7 +72,7 @@ abstract class ThemeBaseActivity extends Activity implements Themable {
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setBackgroundDrawable(new ColorDrawable(theme.actionBar));
-            actionBar.setTitle(Html.fromHtml("<font color='" + theme.actionBarColorTitle + "'>Your Title</font>"));
+            actionBar.setTitle(Html.fromHtml("<font color='" + theme.actionBarColorTitle + "'>" + getString(R.string.app_title)+ "</font>"));
         }
 
     }

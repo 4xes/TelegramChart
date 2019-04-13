@@ -18,10 +18,10 @@ public class RenderFabric {
                 render = new BarRender(graphManager);
                 break;
             case Chart.TYPE_BAR_STACKED:
-                render = new StackedBarRender(graphManager);
+                render = new StackedRender(graphManager);
                 break;
             case Chart.TYPE_PERCENTAGE:
-                render = new PercentageBarRender(graphManager);
+                render = new PercentageRender(graphManager);
                 break;
         }
         if (render == null) {
@@ -43,10 +43,10 @@ public class RenderFabric {
                 render = new PreviewBarRender(graphManager);
                 break;
             case Chart.TYPE_BAR_STACKED:
-                render = new PreviewStackedBarRender(graphManager);
+                render = new PreviewStackedRender(graphManager);
                 break;
             case Chart.TYPE_PERCENTAGE:
-                render = new PreviewPercentageBarRender(graphManager);
+                render = new PreviewPercentageRender(graphManager);
                 break;
         }
         if (render == null) {

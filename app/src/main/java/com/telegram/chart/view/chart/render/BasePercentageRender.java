@@ -8,10 +8,10 @@ import android.graphics.RectF;
 import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.theme.Theme;
 
-abstract class BasePercentageBarRender extends Render {
+abstract class BasePercentageRender extends Render {
     protected final Path[] path;
 
-    public BasePercentageBarRender(GraphManager manager, boolean isPreview) {
+    public BasePercentageRender(GraphManager manager, boolean isPreview) {
         super(manager, isPreview);
         final int count = manager.countLines();
         path = new Path[count];
@@ -57,11 +57,11 @@ abstract class BasePercentageBarRender extends Render {
             float sumPoint = 0;
 
             for (int id = 0; id < manager.countLines(); id++) {
-                sumPoint += manager.chart.data[id].y[i] * manager.state.chart.alphaCurrent[id];
+                sumPoint += manager.chart.data[id].y[i] * manager.state.chart.percentCurrent[id];
             }
 
             for (int id = 0; id < manager.countLines(); id++) {
-                sum -= Math.ceil((manager.chart.data[id].y[i] * manager.state.chart.alphaCurrent[id]) / (sumPoint/ height));
+                sum -= Math.ceil((manager.chart.data[id].y[i] * manager.state.chart.percentCurrent[id]) / (sumPoint/ height));
                 if (sum < -height) {
                     sum = -height;
                 }

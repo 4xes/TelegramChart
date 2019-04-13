@@ -4,14 +4,14 @@ import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
 
-class PreviewPercentageBarRender extends BasePercentageBarRender {
+class StackedRender extends BaseStackedRender {
 
-    public PreviewPercentageBarRender(GraphManager manager) {
+    public StackedRender(GraphManager manager) {
         super(manager, true);
     }
 
     @Override
     protected void updateMatrix(RectF chart) {
-        manager.matrixPercentagePreviewBars(chart, matrix);
+        manager.matrixStacked(chart, matrix);
     }
 }

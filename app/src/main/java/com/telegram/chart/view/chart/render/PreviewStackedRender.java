@@ -3,14 +3,14 @@ package com.telegram.chart.view.chart.render;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
-class PreviewStackedBarRender extends BaseStackedBarRender {
+class PreviewStackedRender extends BaseStackedRender {
 
-    public PreviewStackedBarRender(GraphManager manager) {
+    public PreviewStackedRender(GraphManager manager) {
         super(manager, true);
     }
 
     @Override
     protected void updateMatrix(RectF chart) {
-        manager.matrixPreviewStackedBars(chart, matrix);
+        manager.matrixPreviewStacked(chart, matrix);
     }
 }

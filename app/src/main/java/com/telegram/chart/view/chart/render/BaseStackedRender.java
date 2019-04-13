@@ -6,10 +6,10 @@ import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
 
-abstract class BaseStackedBarRender extends Render {
+abstract class BaseStackedRender extends Render {
     private final float[][] bars;
 
-    public BaseStackedBarRender(GraphManager manager, boolean isPreview) {
+    public BaseStackedRender(GraphManager manager, boolean isPreview) {
         super(manager, isPreview);
 
         final int linePointsLength = manager.chart.x.length * 4;
@@ -36,7 +36,7 @@ abstract class BaseStackedBarRender extends Render {
                 final int iY1 = i * 4 + 3;
                 bars[id][iX0] = i;
                 bars[id][iY0] = sum;
-                sum -= Math.round(manager.chart.data[id].y[i] * manager.state.chart.alphaCurrent[id]);
+                sum -= Math.round(manager.chart.data[id].y[i] * manager.state.chart.percentCurrent[id]);
                 bars[id][iX1] = bars[id][iX0];
                 bars[id][iY1] = sum;
             }

@@ -5,6 +5,8 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 
 import com.telegram.chart.data.Chart;
+import com.telegram.chart.view.chart.state.StateFabric;
+import com.telegram.chart.view.chart.state.StateManager;
 
 public class GraphManager {
     public final StateManager state;
@@ -56,7 +58,7 @@ public class GraphManager {
 
     public GraphManager(Chart chart) {
         this.chart = chart;
-        this.state = new StateManager(this);
+        this.state = StateFabric.getStateManager(this);
     }
 
     public void registerView(int id, InvalidateListener invalidateListener) {
@@ -127,10 +129,10 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
-    public void matrixStackedBars(RectF r,  Matrix matrix) {
+    public void matrixStacked(RectF r,  Matrix matrix) {
         final float width = r.width();
         final float scaleX = getScaleRange() * barWidth(width);
-        final float scaleY = (1f / (chart.stepMax(range)/ r.height()));
+        final float scaleY = (1f / (state.chart.maxCurrent / r.height()));
         final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx + scaleX / 2f;
         final float offsetY = r.bottom;
@@ -139,10 +141,10 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
-    public void matrixPreviewStackedBars(RectF r,  Matrix matrix) {
+    public void matrixPreviewStacked(RectF r,  Matrix matrix) {
         final float width = r.width();
         final float scaleX = barWidth(width);
-        final float scaleY = (1f / (chart.max()/ r.height()));
+        final float scaleY = (1f / (state.preview.maxCurrent / r.height()));
         final float offsetX = r.left + scaleX / 2f;
         final float offsetY = r.bottom;
         matrix.reset();
@@ -150,7 +152,7 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
-    public void matrixPercentageBars(RectF r,  Matrix matrix) {
+    public void matrixPercentage(RectF r,  Matrix matrix) {
         final float width = r.width();
         final float scaleX = getScaleRange() * sectionWidth(width);
         final float scaleY = 1f;
@@ -162,7 +164,7 @@ public class GraphManager {
         matrix.postTranslate(offsetX, offsetY);
     }
 
-    public void matrixPercentagePreviewBars(RectF r,  Matrix matrix) {
+    public void matrixPercentagePreview(RectF r, Matrix matrix) {
         final float width = r.width();
         final float scaleX = sectionWidth(width);
         final float scaleY = 1f;

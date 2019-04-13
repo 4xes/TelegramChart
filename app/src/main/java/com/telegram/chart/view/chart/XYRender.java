@@ -58,7 +58,7 @@ public class XYRender implements Themable {
         final int max = manager.chart.max(manager.range);
         final int maxStepped = toStepped(max);
         final float step = calculateStep(0f, max, GRID);
-        final float percent = manager.state.progressY();
+        final float percent = manager.state.progressAxis();
         if (manager.state.previousStep < manager.state.currentStep) {
             renderYLines(canvas, r, step, 1f + (percent), 1f - percent, maxStepped);
             renderYLines(canvas, r, step,  percent, percent, maxStepped);
@@ -72,7 +72,7 @@ public class XYRender implements Themable {
         final int max = manager.chart.max(manager.range);
         final int maxStepped = toStepped(max);
         final float step = calculateStep(0f, max, GRID);
-        final float percent = manager.state.progressY();
+        final float percent = manager.state.progressAxis();
         if (manager.state.previousStep < manager.state.currentStep) {
             renderYText(canvas, r, step, manager.state.previousStep, 1f + (percent), 1f - percent, maxStepped);
             renderYText(canvas, r, step, manager.state.currentStep, percent, percent, maxStepped);
