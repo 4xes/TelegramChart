@@ -52,6 +52,7 @@ class LineRender extends Render {
             paintPoint[id].setStrokeWidth(stroke);
         }
         paintCircle.setStyle(Paint.Style.STROKE);
+        paintCircle.setStrokeWidth(stroke);
         paintInsideCircle.setStyle(Paint.Style.FILL);
     }
 
