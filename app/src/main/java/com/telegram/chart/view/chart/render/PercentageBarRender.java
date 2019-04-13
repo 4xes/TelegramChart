@@ -11,14 +11,6 @@ class PercentageBarRender extends BasePercentageBarRender {
     }
 
     @Override
-    protected void initPaints() {
-        super.initPaints();
-        for (int id = 0; id < manager.countLines(); id++) {
-            paint[id].setAntiAlias(true);
-        }
-    }
-
-    @Override
     protected void updateMatrix(RectF chart) {
         manager.matrixPercentageBars(chart, matrix);
     }

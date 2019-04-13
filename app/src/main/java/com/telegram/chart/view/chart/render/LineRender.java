@@ -11,8 +11,7 @@ import com.telegram.chart.view.theme.Theme;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class LineRender extends Render {
-    private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint paintPoint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint[] paintPoint;
     private final Paint paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintInsideCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final PointF point = new PointF();
@@ -26,10 +25,16 @@ class LineRender extends Render {
         super(manager, false);
         final int pointsLength = manager.chart.x.length * 2;
         final int linePointsLength = 4 + (manager.chart.x.length - 2) * 4;
-        lines = new float[manager.countLines()][linePointsLength];
-        drawLines = new float[manager.countLines()][linePointsLength];
-        points = new float[manager.countLines()][pointsLength];
-        drawPoints = new float[manager.countLines()][pointsLength];
+        int count = manager.countLines();
+        lines = new float[count][linePointsLength];
+        drawLines = new float[count][linePointsLength];
+        points = new float[count][pointsLength];
+        drawPoints = new float[count][pointsLength];
+
+        paintPoint = new Paint[count];
+        for(int id = 0; id < count; id++) {
+            paintPoint[id] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        }
 
         initPaints();
         initDrawArrays();
@@ -37,12 +42,15 @@ class LineRender extends Render {
 
     private void initPaints() {
         final float stroke = pxFromDp(2f);
-        paintLine.setStyle(Paint.Style.STROKE);
-        paintLine.setStrokeWidth(stroke);
-        paintLine.setStrokeCap(Paint.Cap.BUTT);
-        paintPoint.setStyle(Paint.Style.STROKE);
-        paintPoint.setStrokeCap(Paint.Cap.ROUND);
-        paintPoint.setStrokeWidth(stroke);
+        for (int id = 0; id < manager.countLines(); id++) {
+            paint[id].setAntiAlias(true);
+            paint[id].setStyle(Paint.Style.STROKE);
+            paint[id].setStrokeWidth(stroke);
+            paint[id].setStrokeCap(Paint.Cap.BUTT);
+            paintPoint[id].setStyle(Paint.Style.STROKE);
+            paintPoint[id].setStrokeCap(Paint.Cap.ROUND);
+            paintPoint[id].setStrokeWidth(stroke);
+        }
         paintCircle.setStyle(Paint.Style.STROKE);
         paintInsideCircle.setStyle(Paint.Style.FILL);
     }
@@ -51,6 +59,13 @@ class LineRender extends Render {
     public void applyTheme(Theme theme) {
         super.applyTheme(theme);
         paintInsideCircle.setColor(backgroundColor);
+        for (int id = 0; id < manager.countLines(); id++) {
+            if (theme.id == Theme.DAY) {
+                paint[id].setColor(manager.chart.data[id].color);
+            } else {
+                paint[id].setColor(manager.chart.data[id].colorNight);
+            }
+        }
     }
 
     public void initDrawArrays() {
@@ -98,17 +113,15 @@ class LineRender extends Render {
                 recalculateLines(chart, lower, upper);
                 boolean maxOptimize = upper - lower < MAX_OPTIMIZE_LINES;
                 if (maxOptimize) {
-                    paintLine.setStrokeCap(Paint.Cap.BUTT);
+                    paint[id].setStrokeCap(Paint.Cap.BUTT);
                 } else {
-                    paintLine.setStrokeCap(Paint.Cap.SQUARE);
+                    paint[id].setStrokeCap(Paint.Cap.SQUARE);
                 }
-                paintLine.setColor(color[id]);
-                paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
-                canvas.drawLines(drawLines[id], lower * 4, (upper - lower) * 4, paintLine);
+                paint[id].setAlpha((int) Math.ceil(255 * currentAlpha));
+                canvas.drawLines(drawLines[id], lower * 4, (upper - lower) * 4, paint[id]);
                 if (maxOptimize) {
-                    paintPoint.setColor(color[id]);
-                    paintPoint.setAlpha((int) Math.ceil(255 * currentAlpha));
-                    canvas.drawPoints(drawPoints[id], lower * 2, (upper - lower) * 2 + 2, paintPoint);
+                    paintPoint[id].setAlpha((int) Math.ceil(255 * currentAlpha));
+                    canvas.drawPoints(drawPoints[id], lower * 2, (upper - lower) * 2 + 2, paintPoint[id]);
                 }
             }
         }

@@ -9,17 +9,11 @@ import com.telegram.chart.view.chart.GraphManager;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class PreviewLineRender extends Render {
-    private final Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
     public final float[][] lines;
     public final float[][] drawLines;
-    public final int[] color;
 
     public PreviewLineRender(GraphManager manager) {
         super(manager, true);
-        color = new int[manager.countLines()];
-        for (int id = 0; id < manager.countLines(); id++){
-            color[id] = manager.chart.data[id].color;
-        }
         final int linePointsLength = 4 + (manager.chart.x.length - 2) * 4;
         lines = new float[manager.countLines()][linePointsLength];
         drawLines = new float[manager.countLines()][linePointsLength];
@@ -29,9 +23,11 @@ class PreviewLineRender extends Render {
 
     private void initPaints() {
         final float stroke = pxFromDp(1f);
-        paintLine.setStyle(Paint.Style.STROKE);
-        paintLine.setStrokeWidth(stroke);
-        paintLine.setStrokeCap(Paint.Cap.SQUARE);
+        for (int id = 0; id < manager.countLines(); id++) {
+            paint[id].setStyle(Paint.Style.STROKE);
+            paint[id].setStrokeWidth(stroke);
+            paint[id].setStrokeCap(Paint.Cap.SQUARE);
+        }
     }
 
     public void initDrawArrays() {
@@ -60,9 +56,8 @@ class PreviewLineRender extends Render {
             int alpha = (int) Math.ceil(255 * currentAlpha);
             if (alpha != 0) {
                 calculate(chart);
-                paintLine.setColor(color[id]);
-                paintLine.setAlpha((int) Math.ceil(255 * currentAlpha));
-                canvas.drawLines(drawLines[id], paintLine);
+                paint[id].setAlpha((int) Math.ceil(255 * currentAlpha));
+                canvas.drawLines(drawLines[id], paint[id]);
             }
         }
     }

@@ -12,10 +12,10 @@ public class GraphManager {
     public final Range range = new Range();
 
     public void setVisible(int id, boolean isVisible) {
-        if (state.visible[id] == isVisible) {
+        if (chart.visible[id] == isVisible) {
             return;
         }
-        state.visible[id] = isVisible;
+        chart.visible[id] = isVisible;
         state.setAnimationHide(id);
 
         invalidateById(Ids.CHART);
@@ -45,7 +45,7 @@ public class GraphManager {
     public int countVisible() {
         int count = 0;
         for (int id = 0; id < countLines(); id++) {
-            if (state.visible[id]) {
+            if (chart.visible[id]) {
                 count++;
             }
         }

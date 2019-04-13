@@ -2,6 +2,7 @@ package com.telegram.chart.view.chart.render;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
@@ -9,16 +10,22 @@ import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
 public abstract class Render implements Themable {
+    protected final Paint[] paint;
     protected final GraphManager manager;
     protected final int[] color;
     protected final Matrix matrix = new Matrix();
     protected int backgroundColor;
     protected final boolean isPreview;
 
-    public Render(GraphManager graphManager, boolean isPreview) {
-        this.manager = graphManager;
+    public Render(GraphManager manager, boolean isPreview) {
+        this.manager = manager;
         this.isPreview = isPreview;
-        color = new int[manager.countLines()];
+        int count = manager.countLines();
+        paint = new Paint[count];
+        for (int id = 0; id < count; id++) {
+            paint[id] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        }
+        color = new int[this.manager.countLines()];
     }
 
     public abstract void render(Canvas canvas, RectF chart, RectF visible);
@@ -32,6 +39,7 @@ public abstract class Render implements Themable {
             } else {
                 color[id] = manager.chart.data[id].colorNight;
             }
+            paint[id].setColor(color[id]);
         }
     }
 

@@ -21,7 +21,7 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
 public class TooltipRender implements Themable {
 
-    private GraphManager graphManager;
+    private GraphManager manager;
     private final Paint paintRect = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintDate = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintValue = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -51,14 +51,14 @@ public class TooltipRender implements Themable {
     private final int[] colorsNights;
     private final float namesHeight;
 
-    public TooltipRender(GraphManager graphManager, Context context) {
-        this.graphManager = graphManager;
-        values = new String[graphManager.countLines()];
-        names = new String[graphManager.countLines()];
-        valuesWidth = new float[graphManager.countLines()];
-        namesWidth = new float[graphManager.countLines()];
-        colors = new int[graphManager.countLines()];
-        colorsNights = new int[graphManager.countLines()];
+    public TooltipRender(GraphManager manager, Context context) {
+        this.manager = manager;
+        values = new String[manager.countLines()];
+        names = new String[manager.countLines()];
+        valuesWidth = new float[manager.countLines()];
+        namesWidth = new float[manager.countLines()];
+        colors = new int[manager.countLines()];
+        colorsNights = new int[manager.countLines()];
         initPaints();
 
         dateHeight = measureHeightText(paintDate);
@@ -94,21 +94,21 @@ public class TooltipRender implements Themable {
     }
 
     public void render(Canvas canvas, int index, RectF bound, PointF pointF) {
-        int visible = graphManager.countVisible();
+        int visible = manager.countVisible();
         if (visible == 0) {
             return;
         }
-        final String date = DateUtils.getInfoDate(graphManager.chart.x[index] * 1000L);
+        final String date = DateUtils.getInfoDate(manager.chart.x[index] * 1000L);
 
         int n = 0;
-        for (int id = 0; id < graphManager.countLines(); id++) {
-            if (graphManager.state.visible[id]) {
-                values[n] = String.valueOf(graphManager.chart.data[id].y[index]);
-                names[n] = graphManager.chart.data[id].name;
+        for (int id = 0; id < manager.countLines(); id++) {
+            if (manager.chart.visible[id]) {
+                values[n] = String.valueOf(manager.chart.data[id].y[index]);
+                names[n] = manager.chart.data[id].name;
                 valuesWidth[n] = paintValue.measureText(values[n]);
                 namesWidth[n] = paintName.measureText(names[n]);
-                colors[n] = graphManager.chart.data[id].color;
-                colorsNights[n] = graphManager.chart.data[id].colorNight;
+                colors[n] = manager.chart.data[id].color;
+                colorsNights[n] = manager.chart.data[id].colorNight;
                 n++;
             }
         }

@@ -9,24 +9,25 @@ import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.theme.Theme;
 
 abstract class BasePercentageBarRender extends Render {
-    protected final Paint[] paint;
     protected final Path[] path;
 
     public BasePercentageBarRender(GraphManager manager, boolean isPreview) {
         super(manager, isPreview);
         final int count = manager.countLines();
         path = new Path[count];
-        paint = new Paint[count];
         for (int id = 0; id < count; id++) {
             path[id] = new Path();
-
-            paint[id] = new Paint();
         }
         initPaints();
     }
 
     protected void initPaints() {
         for (int id = 0; id < manager.countLines(); id++) {
+            if (isPreview) {
+                paint[id].setAntiAlias(false);
+            } else {
+                paint[id].setAntiAlias(true);
+            }
             paint[id].setStyle(Paint.Style.FILL);
         }
     }
@@ -35,7 +36,11 @@ abstract class BasePercentageBarRender extends Render {
     public void applyTheme(Theme theme) {
         super.applyTheme(theme);
         for (int id = 0; id < manager.countLines(); id++) {
-            paint[id].setColor(color[id]);
+            if (theme.id == Theme.DAY) {
+                paint[id].setColor(manager.chart.data[id].color);
+            } else {
+                paint[id].setColor(manager.chart.data[id].colorNight);
+            }
         }
     }
 

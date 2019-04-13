@@ -10,7 +10,6 @@ public class StateManager {
     private final GraphManager manager;
     public State chart;
     public State preview;
-    public boolean[] visible;
     public long executedYTime = ANIMATION_DURATION_LONG;
 
 
@@ -24,8 +23,6 @@ public class StateManager {
         this.manager = manager;
         this.chart = new State(manager.countLines());
         this.preview = new State(manager.countLines());
-        this.visible = new boolean[manager.countLines()];
-        Arrays.fill(visible, true);
 
         int maxPreview = manager.chart.max();
         int newCurrent = manager.chart.max(manager.range);
@@ -88,7 +85,7 @@ public class StateManager {
 
         int maxStepped = toStepped(maxRange);
         for (int id = 0; id < manager.countLines(); id++) {
-            if (visible[id]) {
+            if (manager.chart.visible[id]) {
                 chart.yMaxStart[id] = chart.yMaxCurrent[id];
                 chart.yMaxEnd[id] = maxStepped;
             }
@@ -171,10 +168,10 @@ public class StateManager {
 
         for (int id = 0; id < manager.countLines(); id++) {
             preview.alphaStart[id] = chart.alphaCurrent[id];
-            preview.alphaEnd[id] = visible[id] ? 1f : 0f;
+            preview.alphaEnd[id] = manager.chart.visible[id] ? 1f : 0f;
 
             chart.alphaStart[id] = chart.alphaCurrent[id];
-            chart.alphaEnd[id] = visible[id] ? 1f : 0f;
+            chart.alphaEnd[id] = manager.chart.visible[id] ? 1f : 0f;
 
             if ((targetId != id || manager.chart.data[targetId].max == max)) {
                 preview.yMaxStart[id] = preview.yMaxCurrent[id];
@@ -193,7 +190,7 @@ public class StateManager {
 
         if (targetMaxStepped == maxStepped) {
             chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
-            chart.yMaxEnd[targetId] = visible[targetId] ? maxStepped : maxStepped / 4;
+            chart.yMaxEnd[targetId] = manager.chart.visible[targetId] ? maxStepped : maxStepped / 4;
         }
 
         updateCurrentAnimation(maxRange);

@@ -5,24 +5,25 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
-import com.telegram.chart.view.utils.ColorUtils;
 
 abstract class BaseStackedBarRender extends Render {
-    private final Paint paintBars = new Paint();
-    private final float[][] drawBars;
+    private final float[][] bars;
 
     public BaseStackedBarRender(GraphManager manager, boolean isPreview) {
         super(manager, isPreview);
 
         final int linePointsLength = manager.chart.x.length * 4;
-        drawBars = new float[manager.countLines()][linePointsLength];
+        bars = new float[manager.countLines()][linePointsLength];
         initPaints();
     }
 
     private void initPaints() {
-        paintBars.setStyle(Paint.Style.STROKE);
-        paintBars.setStrokeCap(Paint.Cap.SQUARE);
-        paintBars.setStrokeWidth(1);
+        for (int id = 0; id < manager.countLines(); id++) {
+            paint[id].setAntiAlias(false);
+            paint[id].setStyle(Paint.Style.STROKE);
+            paint[id].setStrokeCap(Paint.Cap.SQUARE);
+            paint[id].setStrokeWidth(1);
+        }
     }
 
     public void recalculateBars(int lower, int upper) {
@@ -33,11 +34,11 @@ abstract class BaseStackedBarRender extends Render {
                 final int iY0 = i * 4 + 1;
                 final int iX1 = i * 4 + 2;
                 final int iY1 = i * 4 + 3;
-                drawBars[id][iX0] = i;
-                drawBars[id][iY0] = sum;
-                sum -= manager.chart.data[id].y[i];
-                drawBars[id][iX1] = drawBars[id][iX0];
-                drawBars[id][iY1] = sum;
+                bars[id][iX0] = i;
+                bars[id][iY0] = sum;
+                sum -= Math.round(manager.chart.data[id].y[i] * manager.state.chart.alphaCurrent[id]);
+                bars[id][iX1] = bars[id][iX0];
+                bars[id][iY1] = sum;
             }
         }
     }
@@ -55,12 +56,10 @@ abstract class BaseStackedBarRender extends Render {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
             int alpha = (int) Math.ceil(255 * currentAlpha);
             if (alpha != 0) {
-                final int blendColor =  ColorUtils.blendARGB(backgroundColor, color[id], currentAlpha);
-                paintBars.setColor(blendColor);
                 if (isPreview) {
-                    canvas.drawLines(drawBars[id], paintBars);
+                    canvas.drawLines(bars[id], paint[id]);
                 } else {
-                    canvas.drawLines(drawBars[id], lower * 4, (upper - lower) * 4 + 4, paintBars);
+                    canvas.drawLines(bars[id], lower * 4, (upper - lower) * 4 + 4, paint[id]);
                 }
             }
         }

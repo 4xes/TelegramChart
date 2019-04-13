@@ -8,7 +8,6 @@ import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.utils.ColorUtils;
 
 abstract class BaseBarRender extends Render {
-    private final Paint paintBars = new Paint();
     protected final float[] drawBars;
 
     public BaseBarRender(GraphManager manager, boolean isPreview) {
@@ -19,9 +18,12 @@ abstract class BaseBarRender extends Render {
     }
 
     private void initPaints() {
-        paintBars.setStyle(Paint.Style.STROKE);
-        paintBars.setStrokeWidth(1);
-        paintBars.setStrokeCap(Paint.Cap.BUTT);
+        for (int id = 0; id <  manager.countLines(); id++) {
+            paint[id].setAntiAlias(false);
+            paint[id].setStyle(Paint.Style.STROKE);
+            paint[id].setStrokeWidth(1);
+            paint[id].setStrokeCap(Paint.Cap.BUTT);
+        }
     }
 
     public void calculateBars() {
@@ -51,11 +53,11 @@ abstract class BaseBarRender extends Render {
             int alpha = (int) Math.ceil(255 * currentAlpha);
             if (alpha != 0) {
                 final int blendColor =  ColorUtils.blendARGB(backgroundColor, color[0], currentAlpha);
-                paintBars.setColor(blendColor);
+                paint[id].setColor(blendColor);
                 if (isPreview) {
-                    canvas.drawLines(drawBars, paintBars);
+                    canvas.drawLines(drawBars, paint[id]);
                 } else {
-                    canvas.drawLines(drawBars, lower * 4, (upper - lower) * 4 + 4, paintBars);
+                    canvas.drawLines(drawBars, lower * 4, (upper - lower) * 4 + 4, paint[id]);
                 }
             }
         }
