@@ -16,8 +16,7 @@ public class LineStateManager extends StateManager {
         int maxPreview = manager.chart.max();
         int newCurrent = manager.chart.max(manager.range);
         int maxChart = toStepped(newCurrent);
-        float step = step(newCurrent);
-        previousStep = step;
+        previousStep = step(newCurrent);
         currentStep = previousStep;
 
         for (int id = 0; id < manager.countLines(); id++) {

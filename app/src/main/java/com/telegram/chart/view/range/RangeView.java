@@ -27,7 +27,8 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint roundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint linePaint = new Paint();
+    private Paint pointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF roundRect = new RectF();
     private RectF fingerRect = new RectF();
 
@@ -63,7 +64,12 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
         linePaint.setStrokeWidth(lineWidth);
         linePaint.setColor(Color.WHITE);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeCap(Paint.Cap.ROUND);
+        linePaint.setStrokeCap(Paint.Cap.BUTT);
+
+        pointPaint.setStrokeWidth(lineWidth);
+        pointPaint.setColor(Color.WHITE);
+        pointPaint.setStyle(Paint.Style.STROKE);
+
         roundPaint.setStyle(Paint.Style.STROKE);
         roundPaint.setStrokeWidth(RANGE_RADIUS);
     }
@@ -126,6 +132,7 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
         canvas.drawRoundRect(roundRect, RANGE_RADIUS * 1.5f, RANGE_RADIUS * 1.5f, roundPaint);
         canvas.drawRoundRect(fingerRect, RANGE_RADIUS, RANGE_RADIUS, selectedPaint);
         canvas.drawLines(linePoints, linePaint);
+        canvas.drawPoints(linePoints, pointPaint);
         canvas.restoreToCount(saveRange);
     }
 

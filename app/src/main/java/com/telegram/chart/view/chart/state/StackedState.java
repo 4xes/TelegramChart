@@ -23,6 +23,8 @@ public class StackedState extends State {
 
     @Override
     void endScale() {
+        maxStart = maxEnd;
+        maxCurrent = maxEnd;
         for (int id = 0; id < size; id++) {
             percentStart[id] = percentEnd[id];
             percentCurrent[id] = percentEnd[id];

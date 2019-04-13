@@ -57,5 +57,4 @@ public abstract class StateManager {
     }
 
     private final static long ANIMATION_DURATION_LONG = 300L;
-    private final static long ANIMATION_DURATION_SHORT = 150L;
 }
