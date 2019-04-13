@@ -18,19 +18,23 @@
     <color name="axis_value_night">#697584</color>
     <color name="axis_day">#E8EAEC</color>
     <color name="axis_night">#394350</color>
+    <color name="grid_lines_day">#1A182D3B</color>
+    <color name="grid_lines_night">#1AFFFFFF</color>
+    <color name="zoom_out_text_day">#108BE3</color>
+    <color name="zoom_out_text_night">#48AAF0</color>
 
     <color name="column_name_day">#212121</color>
     <color name="column_name_night">#FFFFFF</color>
 
     <color name="text_color">#5295CF</color>
 
-    <color name="range_day">#B3F3F7F9</color>
-    <color name="range_night">#B31A222B</color>
-    <color name="range_selected_day">#334A82AC</color>
-    <color name="range_selected_night">#3375ADD8</color>
+    <color name="range_day">#99E2EEF9</color>
+    <color name="range_night">#99304259</color>
+    <color name="range_selected_day">#8C86A9C4</color>
+    <color name="range_selected_night">#806F899E</color>
 
     <color name="tooltip_bg_day">#FFFFFF</color>
     <color name="tooltip_bg_night">#1C2533</color>
     <color name="tooltip_arrow_day">#D2D5D7</color>
-    <color name="tooltip_arrow_night">#767C85</color>
+    <color name="tooltip_arrow_night">#D2D5D7</color>
 </resources>

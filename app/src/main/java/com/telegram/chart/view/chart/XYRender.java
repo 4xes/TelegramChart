@@ -25,11 +25,11 @@ public class XYRender implements Themable {
     private final float valueHeight;
     private final float dateWidth;
 
-    public XYRender(GraphManager data) {
-        this.manager = data;
+    public XYRender(GraphManager manager) {
+        this.manager = manager;
         initPaints();
         valueHeight = measureHeightText(valuePaint);
-        dateWidth = datePaint.measureText(DateUtils.XMAX);
+        dateWidth = datePaint.measureText(DateUtils.X_FORMAT_MAX);
     }
 
     private void initPaints() {

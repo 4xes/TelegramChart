@@ -41,6 +41,7 @@ public class TooltipRender implements Themable {
     private final Drawable shadowDrawableNight;
     private boolean isDay = true;
     private final float dateHeight;
+    private final float dateWidth;
     private final String[] names;
     private final String[] values;
     private final float[] valuesWidth;
@@ -61,6 +62,7 @@ public class TooltipRender implements Themable {
         dateHeight = measureHeightText(paintDate);
         namesHeight = measureHeightText(paintName);
         valuesHeight = measureHeightText(paintValue);
+        dateWidth = paintDate.measureText(DateUtils.TOOLTIP_FORMAT_MAX);
 
         shadowDrawableDay = context.getResources().getDrawable(R.drawable.shadow_day);
         shadowDrawableNight = context.getResources().getDrawable(R.drawable.shadow_night);
@@ -95,7 +97,6 @@ public class TooltipRender implements Themable {
             return;
         }
         final String date = DateUtils.getInfoDate(graphManager.chart.x[index] * 1000L);
-        final float dateWidth = paintDate.measureText(date);
 
         int n = 0;
         for (int id = 0; id < graphManager.countLines(); id++) {

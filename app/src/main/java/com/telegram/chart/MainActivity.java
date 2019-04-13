@@ -67,8 +67,8 @@ public class MainActivity extends ThemeBaseActivity {
         }
     }
 
-    private void renderChart(int number, final Chart chart) {
-        final GraphManager graphManager = new GraphManager(chart);
+    private void renderChart(String title, final Chart chart) {
+        final GraphManager manager = new GraphManager(chart);
         LayoutInflater inflater = LayoutInflater.from(this);
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.chart_layout, content, false);
         final View shadowTop = view.findViewById(R.id.shadowTop);
@@ -78,7 +78,7 @@ public class MainActivity extends ThemeBaseActivity {
         final RangeView rangeView = view.findViewById(R.id.range);
         final PreviewChartView previewChartView = view.findViewById(R.id.preview);
         final CheckboxesView checkboxesView = view.findViewById(R.id.checkboxes);
-        chartView.setTitleText(getString(R.string.chart_title, number));
+        chartView.setTitleText(title);
         shadowTop.setTag(SHADOW_TOP);
         shadowBottom.setTag(SHADOW_BOTTOM);
         shadows.add(shadowTop);
@@ -90,12 +90,12 @@ public class MainActivity extends ThemeBaseActivity {
         themables.add(previewChartView);
         themables.add(checkboxesView);
         content.addView(view);
-        chartView.seGraph(graphManager);
-        previewChartView.setGraph(graphManager);
-        rangeView.seGraph(graphManager);
-        tooltipView.seGraph(graphManager);
-        checkboxesView.init(graphManager, (id, isVisible) -> {
-            graphManager.setVisible(id, isVisible);
+        chartView.seGraph(manager);
+        previewChartView.setGraph(manager);
+        rangeView.seGraph(manager);
+        tooltipView.seGraph(manager);
+        checkboxesView.init(manager, (id, isVisible) -> {
+            manager.setVisible(id, isVisible);
             if (tooltipView.isShowing()) {
                 tooltipView.invalidate();
             }
@@ -103,7 +103,7 @@ public class MainActivity extends ThemeBaseActivity {
         rangeView.setOnRangeListener((start, end) -> {
             chartView.resetIndex();
             tooltipView.hideInfo();
-            graphManager.update(rangeView.getViewId(), start, end);
+            manager.update(rangeView.getViewId(), start, end);
         });
         chartView.setOnShowInfoListener(tooltipView);
     }
@@ -117,11 +117,11 @@ public class MainActivity extends ThemeBaseActivity {
             final Chart chart4 = interactor.getChart(4);
             final Chart chart5 = interactor.getChart(5);
             content.post(() -> {
-                renderChart(5, chart5);
-                renderChart(4, chart4);
-                renderChart(3, chart3);
-                renderChart(1, chart1);
-                renderChart(2, chart2);
+                renderChart("Followers", chart1);
+                renderChart("Interactions", chart2);
+                renderChart("Messages", chart3);
+                renderChart("Views", chart4);
+                renderChart("Apps", chart5);
                 applyTheme(getCurrentTheme());
             });
         } catch (Throwable throwable) {

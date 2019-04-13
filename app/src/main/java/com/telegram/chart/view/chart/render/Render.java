@@ -19,9 +19,6 @@ public abstract class Render implements Themable {
         this.manager = graphManager;
         this.isPreview = isPreview;
         color = new int[manager.countLines()];
-        for (int id = 0; id < manager.countLines(); id++){
-            color[id] = manager.chart.data[id].color;
-        }
     }
 
     public abstract void render(Canvas canvas, RectF chart, RectF visible);
@@ -29,6 +26,13 @@ public abstract class Render implements Themable {
     @Override
     public void applyTheme(Theme theme) {
         backgroundColor = theme.backgroundWindowColor;
+        for (int id = 0; id < manager.countLines(); id++){
+            if (theme.id == Theme.DAY) {
+                color[id] = manager.chart.data[id].color;
+            } else {
+                color[id] = manager.chart.data[id].colorNight;
+            }
+        }
     }
 
     public void renderSelect(Canvas canvas, int index, RectF chart, RectF visible) {}

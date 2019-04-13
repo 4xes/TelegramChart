@@ -6,10 +6,11 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateUtils {
-	public static String INFO_FORMAT = "EEE, MMM d";
+	public static String TOOLTIP_FORMAT = "EEE, MMM d yyyy";
+	public static String TOOLTIP_FORMAT_MAX = "EEE, MMM dd yyyy";
 	public static String X_FORMAT = "MMM d";
-	public static String XMAX = "MMM dd";
-	private static SimpleDateFormat INFO_DATE_FORMAT = new SimpleDateFormat(INFO_FORMAT, Locale.ENGLISH);
+	public static String X_FORMAT_MAX = "MMM dd";
+	private static SimpleDateFormat INFO_DATE_FORMAT = new SimpleDateFormat(TOOLTIP_FORMAT, Locale.ENGLISH);
 	private static SimpleDateFormat X_DATE_FORMAT = new SimpleDateFormat(X_FORMAT, Locale.ENGLISH);
 	private static Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 

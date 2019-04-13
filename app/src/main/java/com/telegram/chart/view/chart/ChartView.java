@@ -103,11 +103,11 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         invalidate();
     }
 
-    public void seGraph(GraphManager graphManager) {
-        this.graphManager = graphManager;
-        render = RenderFabric.getChart(graphManager);
-        xyRender = new XYRender(graphManager);
-        graphManager.registerView(getViewId(), this);
+    public void seGraph(GraphManager manager) {
+        this.graphManager = manager;
+        render = RenderFabric.getChart(manager);
+        xyRender = new XYRender(manager);
+        manager.registerView(getViewId(), this);
         if (theme != null){
             applyTheme(theme);
         }

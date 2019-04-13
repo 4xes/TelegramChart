@@ -16,6 +16,7 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
     private static final String COLUMNS = "columns";
     private static final String NAMES = "names";
     private static final String COLORS = "colors";
+    private static final String COLORS_NIGHT = "colors_night";
     private static final String LINE = "line";
     private static final String BAR = "bar";
     private static final String Y_SCALED = "y_scaled";
@@ -29,6 +30,7 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
         final JSONArray columns = json.getJSONArray(COLUMNS);
         final JSONObject names = json.getJSONObject(NAMES);
         final JSONObject colors = json.getJSONObject(COLORS);
+        final JSONObject colorsNights = json.getJSONObject(COLORS_NIGHT);
         final boolean yScaled = json.optBoolean(Y_SCALED, false);
         final boolean stacked = json.optBoolean(STACKED, false);
         final boolean percentage = json.optBoolean(PERCENTAGE, false);
@@ -74,6 +76,7 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
                     lines.add(new Data(
                             names.getString(key),
                             Color.parseColor(colors.getString(key)),
+                            Color.parseColor(colorsNights.getString(key)),
                             yPoints,
                             maxY,
                             minY

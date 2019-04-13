@@ -6,6 +6,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
+import com.telegram.chart.view.theme.Theme;
 
 abstract class BasePercentageBarRender extends Render {
     protected final Paint[] paint;
@@ -27,7 +28,14 @@ abstract class BasePercentageBarRender extends Render {
     protected void initPaints() {
         for (int id = 0; id < manager.countLines(); id++) {
             paint[id].setStyle(Paint.Style.FILL);
-            paint[id].setColor(manager.chart.data[id].color);
+        }
+    }
+
+    @Override
+    public void applyTheme(Theme theme) {
+        super.applyTheme(theme);
+        for (int id = 0; id < manager.countLines(); id++) {
+            paint[id].setColor(color[id]);
         }
     }
 
