@@ -13,7 +13,9 @@ class PercentageBarRender extends BasePercentageBarRender {
     @Override
     protected void initPaints() {
         super.initPaints();
-        paintBars.setAntiAlias(true);
+        for (int id = 0; id < manager.countLines(); id++) {
+            paint[id].setAntiAlias(true);
+        }
     }
 
     @Override

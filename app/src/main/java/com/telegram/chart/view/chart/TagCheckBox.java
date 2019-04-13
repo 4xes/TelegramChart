@@ -40,6 +40,7 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     private ValueAnimator animator = null;
     private int color;
     private int saturationColor;
+    private int backgroundColor;
     private float progress = 1f;
     private boolean isChecked = true;
 
@@ -53,7 +54,7 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     private final float markWidth = pxFromDp(10f);
     private final float markHeight = pxFromDp(8f);
     private final float markMiddleSize = pxFromDp(3f);
-    private final float markPadding = pxFromDp(6f);
+    private final float markPadding = pxFromDp(8f);
     private Matrix matrix = new Matrix();
     private float[] mark = new float[8];
     private float[] markDraw = new float[8];
@@ -93,7 +94,7 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         strokePaint.setStrokeWidth(strokeWidth);
         fillPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextSize(pxFromSp(14f));
-        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextAlign(Paint.Align.CENTER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             textPaint.setTypeface(Typeface.create("sans-serif-medium",Typeface.NORMAL));
         } else {
@@ -128,6 +129,7 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
             hsl[1] = hsl[1] - 0.25f;
         }
         this.saturationColor = ColorUtils.HSLToColor(hsl);
+        this.backgroundColor = theme.backgroundWindowColor;
         strokePaint.setColor(this.saturationColor);
         fillPaint.setColor(this.saturationColor);
         invalidate();
@@ -136,7 +138,8 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        final int minWidth = Math.round(textLeftPadding + markWidth + markPadding + markOffsetX + textPaint.measureText(text) + textRightPadding);
+        float widthText = textPaint.measureText(text);
+        final int minWidth = Math.round(textLeftPadding + markWidth + markPadding + markOffsetX + widthText + textRightPadding);
         final int minHeight = Math.round(HEIGHT);
 
         int measuredWidth = reconcileSize(minWidth, widthMeasureSpec);
@@ -169,10 +172,6 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         mark[5] = mark[3];
         mark[6] = topX;
         mark[7] = topY;
-
-        for(int i = 0; i < mark.length; i++) {
-            markDraw[i] = mark[i];
-        }
     }
 
     @Override
@@ -183,16 +182,21 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         if (currentAlpha != 0) {
             fillPaint.setAlpha(currentAlpha);
             canvas.drawRoundRect(bound, RADIUS, RADIUS, fillPaint);
+            linePaint.setAlpha(currentAlpha);
+            matrix.reset();
+            matrix.setScale(progress, progress, mark[2], mark[3]);
+            matrix.mapPoints(markDraw, mark);
+
+            linePaint.setColor(ColorUtils.blendARGB(backgroundColor, Color.WHITE, progress));
+            canvas.drawLines(markDraw, linePaint);
         }
         canvas.drawRoundRect(bound, RADIUS, RADIUS, strokePaint);
 
         textPaint.setColor(ColorUtils.blendARGB(saturationColor, Color.WHITE, progress));
         float textHeight = textPaint.descent() - textPaint.ascent();
         float textOffset = (textHeight / 2) - textPaint.descent();
-        float offsetXText = (markWidth + markPadding) * (1f - progress) / 2;
-        canvas.drawText(text, bound.left + textLeftPadding + markWidth + markPadding - offsetXText, bound.centerY() + textOffset, textPaint);
-
-        canvas.drawLines(markDraw, linePaint);
+        float offsetXText = (markWidth + markPadding) * progress * 0.5f;
+        canvas.drawText(text, bound.centerX() + offsetXText, bound.centerY() + textOffset, textPaint);
     }
 
     public void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
