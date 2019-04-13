@@ -31,7 +31,6 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
     private Paint strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private float[] hsl = new float[3];
 
     private Theme theme;
 
@@ -39,7 +38,7 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
 
     private ValueAnimator animator = null;
     private int color;
-    private int saturationColor;
+    private int colorNight;
     private int backgroundColor;
     private float progress = 1f;
     private boolean isChecked = true;
@@ -110,28 +109,26 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         requestLayout();
     }
 
-    public void setColor(int color) {
+    public void setColor(int color, int colorNight) {
         this.color = color;
-        this.saturationColor = color;
+        this.colorNight = colorNight;
         if (theme != null) {
             applyTheme(theme);
         }
+        invalidate();
     }
 
     @Override
     public void applyTheme(Theme theme) {
         this.theme = theme;
-
-        ColorUtils.colorToHSL(color, hsl);
-        if (theme.id == Theme.DAY) {
-            hsl[1] = hsl[1] - 0.10f;
-        } else {
-            hsl[1] = hsl[1] - 0.25f;
-        }
-        this.saturationColor = ColorUtils.HSLToColor(hsl);
         this.backgroundColor = theme.backgroundWindowColor;
-        strokePaint.setColor(this.saturationColor);
-        fillPaint.setColor(this.saturationColor);
+        if (theme.id == Theme.DAY) {
+            strokePaint.setColor(this.color);
+            fillPaint.setColor(this.color);
+        } else {
+            strokePaint.setColor(this.colorNight);
+            fillPaint.setColor(this.colorNight);
+        }
         invalidate();
     }
 
@@ -192,7 +189,7 @@ public class TagCheckBox extends View implements Checkable, ValueAnimator.Animat
         }
         canvas.drawRoundRect(bound, RADIUS, RADIUS, strokePaint);
 
-        textPaint.setColor(ColorUtils.blendARGB(saturationColor, Color.WHITE, progress));
+        textPaint.setColor(ColorUtils.blendARGB(color, Color.WHITE, progress));
         float textHeight = textPaint.descent() - textPaint.ascent();
         float textOffset = (textHeight / 2) - textPaint.descent();
         float offsetXText = (markWidth + markPadding) * progress * 0.5f;

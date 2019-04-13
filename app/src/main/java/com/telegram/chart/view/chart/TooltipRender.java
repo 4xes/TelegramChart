@@ -48,6 +48,7 @@ public class TooltipRender implements Themable {
     private final float valuesHeight;
     private final float[] namesWidth;
     private final int[] colors;
+    private final int[] colorsNights;
     private final float namesHeight;
 
     public TooltipRender(GraphManager graphManager, Context context) {
@@ -57,6 +58,7 @@ public class TooltipRender implements Themable {
         valuesWidth = new float[graphManager.countLines()];
         namesWidth = new float[graphManager.countLines()];
         colors = new int[graphManager.countLines()];
+        colorsNights = new int[graphManager.countLines()];
         initPaints();
 
         dateHeight = measureHeightText(paintDate);
@@ -106,6 +108,7 @@ public class TooltipRender implements Themable {
                 valuesWidth[n] = paintValue.measureText(values[n]);
                 namesWidth[n] = paintName.measureText(names[n]);
                 colors[n] = graphManager.chart.data[id].color;
+                colorsNights[n] = graphManager.chart.data[id].colorNight;
                 n++;
             }
         }
@@ -167,9 +170,10 @@ public class TooltipRender implements Themable {
             final float yValues = top + dateHeight + offsetValuesY + SPACING_VERTICAL + (iRow * (namesHeight + valuesHeight + SPACING_VERTICAL));
             final float offsetNamesY = (namesHeight / 2f) + paintName.descent();
             final float yNames = yValues - offsetValuesY + valuesHeight + offsetNamesY;
-            paintValue.setColor(colors[i]);
+            int color = isDay? colors[i]: colorsNights[i];
+            paintValue.setColor(color);
             canvas.drawText(values[i], x, yValues, paintValue);
-            paintName.setColor(colors[i]);
+            paintName.setColor(color);
             canvas.drawText(names[i], x, yNames, paintName);
         }
     }

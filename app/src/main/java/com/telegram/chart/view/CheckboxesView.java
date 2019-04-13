@@ -34,7 +34,7 @@ public class CheckboxesView extends FlowLayout implements Themable {
             );
             checkBox.setLayoutParams(params);
             checkBox.setText(manager.chart.data[id].name);
-            checkBox.setColor(manager.chart.data[id].color);
+            checkBox.setColor(manager.chart.data[id].color, manager.chart.data[id].colorNight);
             checkBox.setChecked(true);
             checkBox.setTag(id);
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
