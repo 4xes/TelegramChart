@@ -16,6 +16,17 @@ public abstract class StateManager {
     public float previousStep;
     public float currentStep;
 
+    public long executedAxisTime2 = ANIMATION_DURATION_LONG;
+    public long durationAxis2 = ANIMATION_DURATION_LONG;
+    public int maxCurrent2;
+    public int previousMinChart2 = 0;
+    public int previousMaxChart2 = 0;
+    public int currentMinChart2 = 0;
+    public int currentMaxChart2 = 0;
+    public int minCurrent2 = 0;
+    public float previousStep2;
+    public float currentStep2;
+
     public State chart;
     public State preview;
 

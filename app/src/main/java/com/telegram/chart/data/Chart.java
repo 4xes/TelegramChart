@@ -18,6 +18,8 @@ public class Chart {
     public final Calculator calculator;
     public final boolean isPercentage;
     public final boolean isLine;
+    public final boolean isScaled;
+    public final boolean isStacked;
 
     public Chart(int[] x, Data[] data, String type) {
         this.x = x;
@@ -28,6 +30,8 @@ public class Chart {
         calculator = CalculatorFabric.getCalculator(this);
         isPercentage = Chart.TYPE_PERCENTAGE.equals(type);
         isLine = Chart.TYPE_LINE.equals(type) || Chart.TYPE_LINE_SCALED.equals(type);
+        isScaled = Chart.TYPE_LINE_SCALED.equals(type);
+        isStacked = Chart.TYPE_BAR_STACKED.equals(type);
 
     }
 

@@ -19,7 +19,8 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
 public class XYRender implements Themable {
     private final GraphManager manager;
-    private final TextPaint yPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint yPaintLeft = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint yPaintRight = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint xPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint linePaint = new Paint();
     private final SparseArray<String> sparseDates = new SparseArray<>();
@@ -33,14 +34,18 @@ public class XYRender implements Themable {
     public XYRender(GraphManager manager) {
         this.manager = manager;
         initPaints();
-        valueHeight = measureHeightText(yPaint);
+        valueHeight = measureHeightText(yPaintLeft);
         dateWidth = xPaint.measureText(DateUtils.X_FORMAT_MAX);
     }
 
     private void initPaints() {
-        yPaint.setStyle(Paint.Style.FILL);
-        yPaint.setTextSize(pxFromSp(11f));
-        yPaint.setTextAlign(Paint.Align.LEFT);
+        yPaintLeft.setStyle(Paint.Style.FILL);
+        yPaintLeft.setTextSize(pxFromSp(11f));
+        yPaintLeft.setTextAlign(Paint.Align.LEFT);
+
+        yPaintRight.setStyle(Paint.Style.FILL);
+        yPaintRight.setTextSize(pxFromSp(11f));
+        yPaintRight.setTextAlign(Paint.Align.RIGHT);
 
         xPaint.setStyle(Paint.Style.FILL);
         xPaint.setTextSize(pxFromSp(11f));
@@ -54,16 +59,26 @@ public class XYRender implements Themable {
     public void applyTheme(Theme theme) {
         lineAlpha = Color.alpha(theme.gridColor);
         linePaint.setColor(theme.gridColor);
-        if (manager.chart.type.equals(Chart.TYPE_BAR_STACKED) || manager.chart.type.equals(Chart.TYPE_PERCENTAGE)) {
+        if (manager.chart.isStacked || manager.chart.isPercentage) {
             xAxisAlpha = Color.alpha(theme.axisStackedX);
             yAxisAlpha = Color.alpha(theme.axisStackedY);
             xPaint.setColor(theme.axisStackedX);
-            yPaint.setColor(theme.axisStackedY);
+            yPaintLeft.setColor(theme.axisStackedY);
         } else {
             xAxisAlpha = Color.alpha(theme.axisX);
             yAxisAlpha = Color.alpha(theme.axisY);
             xPaint.setColor(theme.axisX);
-            yPaint.setColor(theme.axisY);
+            yPaintLeft.setColor(theme.axisY);
+        }
+        if (manager.chart.isScaled) {
+            yAxisAlpha = 255;
+            if (theme.id == Theme.DAY) {
+                yPaintLeft.setColor(manager.chart.data[0].color);
+                yPaintRight.setColor(manager.chart.data[1].color);
+            } else {
+                yPaintLeft.setColor(manager.chart.data[0].colorNight);
+                yPaintRight.setColor(manager.chart.data[1].colorNight);
+            }
         }
     }
 
@@ -82,13 +97,22 @@ public class XYRender implements Themable {
         if (manager.state.previousMaxChart < manager.state.currentMaxChart) {
             renderYLines(canvas, r, step, 1f + (percent), 1f - percent, scaleMax);
             renderYLines(canvas, r, step,  percent, percent, scaleMax);
-            renderYText(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart, 1f + (percent), 1f - percent, scaleMax);
-            renderYText(canvas, r, step, manager.state.currentStep, manager.state.currentMinChart, percent, percent, scaleMax);
+            renderYTextLeft(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart, 1f + (percent), 1f - percent, scaleMax);
+            renderYTextLeft(canvas, r, step, manager.state.currentStep, manager.state.currentMinChart, percent, percent, scaleMax);
         } else {
             renderYLines(canvas, r, step, 1f - percent, 1f - percent, scaleMax);
             renderYLines(canvas, r, step, 1f / percent, percent, scaleMax);
-            renderYText(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart,1f - percent, 1f - percent, scaleMax);
-            renderYText(canvas, r, step, manager.state.currentStep, manager.state.currentMinChart, 1f / percent, percent, scaleMax);
+            renderYTextLeft(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart,1f - percent, 1f - percent, scaleMax);
+            renderYTextLeft(canvas, r, step, manager.state.currentStep, manager.state.currentMinChart, 1f / percent, percent, scaleMax);
+        }
+        if (manager.chart.isScaled) {
+            if (manager.state.previousMaxChart2 < manager.state.currentMaxChart2) {
+                renderYTextRight(canvas, r, step, manager.state.previousStep2, manager.state.previousMinChart2, 1f + (percent), 1f - percent, scaleMax);
+                renderYTextRight(canvas, r, step, manager.state.currentStep2, manager.state.currentMinChart2, percent, percent, scaleMax);
+            } else {
+                renderYTextRight(canvas, r, step, manager.state.previousStep2, manager.state.previousMinChart2,1f - percent, 1f - percent, scaleMax);
+                renderYTextRight(canvas, r, step, manager.state.currentStep2, manager.state.currentMinChart2, 1f / percent, percent, scaleMax);
+            }
         }
 
         renderMinTextAndLine(canvas, r, minStepped);
@@ -108,13 +132,13 @@ public class XYRender implements Themable {
         }
     }
 
-    public void renderYText(Canvas canvas, RectF r, float step, float stepText, int previousMinText, float offsetPercentage, float alphaPercentage, int scaleMax) {
+    public void renderYTextLeft(Canvas canvas, RectF r, float step, float stepText, int previousMinText, float offsetPercentage, float alphaPercentage, int scaleMax) {
         final float offsetY = r.bottom;
         final float scaleY = 1f / ((scaleMax * Math.max(offsetPercentage, 0.0000001f)) / r.height());
         final int start = manager.chart.isLine ? 0 : STEP;
         for (int i = start; i < GRID; i = i + STEP) {
             final float y = (-step * i * scaleY) + offsetY;
-            final float valueY = y -(valueHeight / 2f) + yPaint.descent();
+            final float valueY = y -(valueHeight / 2f) + yPaintLeft.descent();
             int alpha = (int) Math.ceil(yAxisAlpha * alphaPercentage);
             if (alpha != 0) {
                 int key = i * (int) stepText + previousMinText;
@@ -123,23 +147,44 @@ public class XYRender implements Themable {
                     value = String.valueOf(key);
                     sparseValues.put(key, value);
                 }
-                yPaint.setAlpha(alpha);
-                canvas.drawText(value, r.left, valueY, yPaint);
+                yPaintLeft.setAlpha(alpha);
+                canvas.drawText(value, r.left, valueY, yPaintLeft);
+            }
+        }
+    }
+
+    public void renderYTextRight(Canvas canvas, RectF r, float step, float stepText, int previousMinText, float offsetPercentage, float alphaPercentage, int scaleMax) {
+        final float offsetY = r.bottom;
+        final float scaleY = 1f / ((scaleMax * Math.max(offsetPercentage, 0.0000001f)) / r.height());
+        final int start = manager.chart.isLine ? 0 : STEP;
+        for (int i = start; i < GRID; i = i + STEP) {
+            final float y = (-step * i * scaleY) + offsetY;
+            final float valueY = y -(valueHeight / 2f) + yPaintLeft.descent();
+            int alpha = (int) Math.ceil(yAxisAlpha * alphaPercentage);
+            if (alpha != 0) {
+                int key = i * (int) stepText + previousMinText;
+                String value = sparseValues.get(key);
+                if (value == null) {
+                    value = String.valueOf(key);
+                    sparseValues.put(key, value);
+                }
+                yPaintRight.setAlpha(alpha);
+                canvas.drawText(value, r.right, valueY, yPaintRight);
             }
         }
     }
 
     public void renderMinTextAndLine(Canvas canvas, RectF r, float min) {
         if (!manager.chart.isLine) {
-            final float text0Y = r.bottom - (valueHeight / 2f) + yPaint.descent();
-            yPaint.setAlpha(yAxisAlpha);
+            final float text0Y = r.bottom - (valueHeight / 2f) + yPaintLeft.descent();
+            yPaintLeft.setAlpha(yAxisAlpha);
             int key = (int) min;
             String value = sparseValues.get(key);
             if (value == null) {
                 value = String.valueOf(key);
                 sparseValues.put(key, value);
             }
-            canvas.drawText(value, r.left, text0Y, yPaint);
+            canvas.drawText(value, r.left, text0Y, yPaintLeft);
         }
         linePaint.setAlpha(lineAlpha);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
@@ -223,5 +268,4 @@ public class XYRender implements Themable {
 
     public static final int GRID = 100;
     public static final int STEP = 15;
-    public static final String ZERO_Y = "0";
 }

@@ -11,16 +11,6 @@ import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_SHORT
 import static com.telegram.chart.view.chart.state.State.ANIMATION_TICK;
 
 public class ScaledStateManager extends StateManager {
-    public long executedAxisTime2 = ANIMATION_DURATION_LONG;
-    public long durationAxis2 = ANIMATION_DURATION_LONG;
-    public int maxCurrent2;
-    public int previousMinChart2 = 0;
-    public int previousMaxChart2 = 0;
-    public int currentMinChart2 = 0;
-    public int currentMaxChart2 = 0;
-    public int minCurrent2 = 0;
-    public float previousStep2;
-    public float currentStep2;
 
     public ScaledStateManager(GraphManager manager) {
         super(manager);
