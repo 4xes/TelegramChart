@@ -141,6 +141,15 @@ public class LineStateManager extends StateManager {
         int max = manager.chart.max();
         int maxRange = manager.chart.max(manager.range);
         int minRange = manager.chart.min(manager.range);
+
+        if (maxRange == Integer.MIN_VALUE) {
+            maxRange = manager.chart.max(targetId, manager.range);
+        }
+
+        if (minRange == Integer.MAX_VALUE) {
+            minRange = manager.chart.min(targetId, manager.range);
+        }
+
         maxCurrent = maxRange;
         float step = step(maxRange);
         int minChart = minStepped(minRange, step);
@@ -154,6 +163,10 @@ public class LineStateManager extends StateManager {
         int targetMaxStepped = manager.chart.stepMax(targetId, manager.range);
         if (maxChart == Integer.MIN_VALUE) {
             maxChart = targetMaxStepped;
+        }
+
+        if (minChart == Integer.MAX_VALUE) {
+            minChart = manager.chart.stepMin(targetId, manager.range, step);
         }
 
         for (int id = 0; id < manager.countLines(); id++) {
@@ -181,7 +194,7 @@ public class LineStateManager extends StateManager {
             chart.yMaxEnd[id] = maxChart;
         }
 
-        if (targetMaxStepped == maxChart) {
+        if (targetMaxStepped == maxChart && manager.countVisible() > 0) {
             chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
             chart.yMaxEnd[targetId] = manager.chart.visible[targetId] ? maxChart : maxChart / 4;
         }

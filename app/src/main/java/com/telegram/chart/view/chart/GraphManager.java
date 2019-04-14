@@ -192,12 +192,11 @@ public class GraphManager {
 
     public void calculatePoint(int id, int index, RectF r, PointF point) {
         final float width = r.width();
-        final float scaleRange = getScaleRange();
-        final float scaleX = scaleRange * sectionWidth(width);
-        final float dx = (-width * range.start) * scaleRange - sectionWidth(width) / 2f;
+        final float scaleX = getScaleRange() * sectionWidth(width);
+        final float scaleY = (1f / ((state.chart.yMaxCurrent[id] - state.chart.yMinCurrent[id]) / r.height())) * state.chart.multiCurrent[id];
+        final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx;
-        final float scaleY = 1f / (state.chart.yMaxCurrent[id] / r.height());
-        final float offsetY = r.bottom;
+        final float offsetY = r.bottom + (scaleY * state.chart.yMinCurrent[id]);
         point.set(index * scaleX + offsetX, -(chart.data[id].y[index] * scaleY) + offsetY);
     }
 

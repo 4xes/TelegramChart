@@ -111,7 +111,8 @@ public class XYRender implements Themable {
     public void renderYText(Canvas canvas, RectF r, float step, float stepText, int previousMinText, float offsetPercentage, float alphaPercentage, int scaleMax) {
         final float offsetY = r.bottom;
         final float scaleY = 1f / ((scaleMax * Math.max(offsetPercentage, 0.0000001f)) / r.height());
-        for (int i = STEP; i < GRID; i = i + STEP) {
+        final int start = manager.chart.isLine ? 0 : STEP;
+        for (int i = start; i < GRID; i = i + STEP) {
             final float y = (-step * i * scaleY) + offsetY;
             final float valueY = y -(valueHeight / 2f) + yPaint.descent();
             int alpha = (int) Math.ceil(yAxisAlpha * alphaPercentage);
@@ -129,15 +130,17 @@ public class XYRender implements Themable {
     }
 
     public void renderMinTextAndLine(Canvas canvas, RectF r, float min) {
-        final float text0Y = r.bottom - (valueHeight / 2f) + yPaint.descent();
-        yPaint.setAlpha(yAxisAlpha);
-        int key = (int) min;
-        String value = sparseValues.get(key);
-        if (value == null) {
-            value = String.valueOf(key);
-            sparseValues.put(key, value);
+        if (!manager.chart.isLine) {
+            final float text0Y = r.bottom - (valueHeight / 2f) + yPaint.descent();
+            yPaint.setAlpha(yAxisAlpha);
+            int key = (int) min;
+            String value = sparseValues.get(key);
+            if (value == null) {
+                value = String.valueOf(key);
+                sparseValues.put(key, value);
+            }
+            canvas.drawText(value, r.left, text0Y, yPaint);
         }
-        canvas.drawText(value, r.left, text0Y, yPaint);
         linePaint.setAlpha(lineAlpha);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
     }

@@ -51,6 +51,15 @@ public class Chart {
         return calculator.min(this, range);
     }
 
+    public int max(int id, Range range) {
+        return calculator.max(this, id, range);
+    }
+
+    public int min(int id,Range range) {
+        return calculator.min(this, id, range);
+    }
+
+
     public static int maxStepped(int max) {
         if (max != Integer.MIN_VALUE) {
             float step = step(max);
@@ -69,6 +78,10 @@ public class Chart {
 
     public int stepMax(int id, Range range) {
         return maxStepped(calculator.max(this, id, range));
+    }
+
+    public int stepMin(int id, Range range, float step) {
+        return minStepped(calculator.min(this, id, range), step);
     }
 
 }
