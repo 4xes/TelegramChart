@@ -10,5 +10,6 @@ interface Calculator {
 
     int min(Chart chart);
     int min(Chart chart, Range range);
+    int min(Chart chart, int id);
     int min(Chart chart, int id, Range range);
 }

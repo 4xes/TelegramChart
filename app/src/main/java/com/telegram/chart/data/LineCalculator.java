@@ -86,4 +86,9 @@ public class LineCalculator implements Calculator {
         final int upper = chart.getUpper(range.end);
         return chart.data[id].min(lower, upper);
     }
+
+    @Override
+    public int min(Chart chart, int id) {
+        return chart.data[id].min;
+    }
 }

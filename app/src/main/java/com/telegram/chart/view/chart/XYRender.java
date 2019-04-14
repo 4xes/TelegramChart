@@ -221,7 +221,7 @@ public class XYRender implements Themable {
         return step;
     }
 
-    public static final int GRID = 38;
-    public static final int STEP = 7;
+    public static final int GRID = 100;
+    public static final int STEP = 15;
     public static final String ZERO_Y = "0";
 }

@@ -39,6 +39,10 @@ public class Chart {
         return (int) Math.floor(upper * (float)(x.length - 1));
     }
 
+    public int max(int id) {
+        return calculator.max(this, id);
+    }
+
     public int max() {
         return calculator.max(this);
     }
@@ -53,6 +57,10 @@ public class Chart {
 
     public int min() {
         return calculator.min(this);
+    }
+
+    public int min(int id) {
+        return calculator.min(this, id);
     }
 
     public int max(int id, Range range) {

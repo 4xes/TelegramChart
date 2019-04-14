@@ -41,7 +41,7 @@ class LineRender extends Render {
     }
 
     private void initPaints() {
-        final float stroke = pxFromDp(2f);
+        final float stroke = pxFromDp(1.5f);
         for (int id = 0; id < manager.countLines(); id++) {
             paint[id].setAntiAlias(true);
             paint[id].setStyle(Paint.Style.STROKE);

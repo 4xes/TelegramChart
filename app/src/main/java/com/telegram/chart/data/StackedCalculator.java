@@ -79,4 +79,9 @@ public class StackedCalculator implements Calculator {
     public int min(Chart chart, int id, Range range) {
         return 0;
     }
+
+    @Override
+    public int min(Chart chart, int id) {
+        return 0;
+    }
 }
