@@ -100,7 +100,7 @@ public class GraphManager {
         final float scaleY = (1f / ((state.chart.yMaxCurrent[id] - state.chart.yMinCurrent[id]) / r.height())) * state.chart.multiCurrent[id];
         final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx;
-        final float offsetY = r.bottom + (scaleY * state.chart.yMinCurrent[id]);
+        final float offsetY = r.bottom + (scaleY * state.chart.yMinCurrent[id] * state.chart.multiCurrent[id]);
         matrix.reset();
         matrix.setScale(scaleX, scaleY);
         matrix.postTranslate(offsetX, offsetY);

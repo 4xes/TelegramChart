@@ -47,6 +47,17 @@ public class PercentageCalculator implements Calculator {
     }
 
     @Override
+    public int max(Chart chart, int id) {
+        int max = 0;
+        for (int i = 0; i < chart.x.length; i++) {
+            if (max < chart.data[id].y[i]) {
+                max = chart.data[id].y[i];
+            }
+        }
+        return max;
+    }
+
+    @Override
     public int min(Chart chart) {
         return 0;
     }

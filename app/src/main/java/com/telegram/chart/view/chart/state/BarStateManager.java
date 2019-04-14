@@ -100,6 +100,10 @@ public class BarStateManager extends StateManager {
 
         int max = manager.chart.max();
         int maxRange = manager.chart.max(manager.range);
+
+        if (maxRange == Integer.MIN_VALUE) {
+            maxRange = manager.chart.max(targetId, manager.range);
+        }
         maxCurrent = maxRange;
         int maxStepped = maxStepped(maxRange);
         if (max == Integer.MIN_VALUE) {

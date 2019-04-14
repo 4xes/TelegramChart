@@ -87,6 +87,7 @@ abstract class BasePercentageRender extends Render {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
             int alpha = (int) Math.ceil(255 * currentAlpha);
             if (alpha != 0) {
+                paint[id].setAlpha(alpha);
                 canvas.drawPath(path[id], paint[id]);
             }
         }

@@ -165,10 +165,6 @@ public class LineStateManager extends StateManager {
             maxChart = targetMaxStepped;
         }
 
-        if (minChart == Integer.MAX_VALUE) {
-            minChart = manager.chart.stepMin(targetId, manager.range, step);
-        }
-
         for (int id = 0; id < manager.countLines(); id++) {
             preview.alphaStart[id] = chart.alphaCurrent[id];
             preview.alphaEnd[id] = manager.chart.visible[id] ? 1f : 0f;
@@ -192,11 +188,6 @@ public class LineStateManager extends StateManager {
 
             chart.yMaxStart[id] = chart.yMaxCurrent[id];
             chart.yMaxEnd[id] = maxChart;
-        }
-
-        if (targetMaxStepped == maxChart && manager.countVisible() > 0) {
-            chart.yMaxStart[targetId] = chart.yMaxCurrent[targetId];
-            chart.yMaxEnd[targetId] = manager.chart.visible[targetId] ? maxChart : maxChart / 4;
         }
 
         updateAxisAnimation(minChart, maxChart);

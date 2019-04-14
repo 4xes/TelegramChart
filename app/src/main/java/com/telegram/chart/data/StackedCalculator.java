@@ -6,7 +6,7 @@ public class StackedCalculator implements Calculator {
 
     @Override
     public int max(Chart chart) {
-        int max = Integer.MIN_VALUE;
+        int max = 0;
         for (int i = 0; i < chart.x.length; i++) {
             int iMax = 0;
             for (int id = 0; id < chart.data.length; id++) {
@@ -22,8 +22,19 @@ public class StackedCalculator implements Calculator {
     }
 
     @Override
+    public int max(Chart chart, int id) {
+        int max = 0;
+        for (int i = 0; i < chart.x.length; i++) {
+            if (max < chart.data[id].y[i]) {
+                max = chart.data[id].y[i];
+            }
+        }
+        return max;
+    }
+
+    @Override
     public int max(Chart chart, Range range) {
-        int max = Integer.MIN_VALUE;
+        int max = 0;
 
         final int lower = chart.getLower(range.start);
         final int upper = chart.getUpper(range.end);
@@ -43,7 +54,15 @@ public class StackedCalculator implements Calculator {
 
     @Override
     public int max(Chart chart, int id, Range range) {
-        return max(chart, range);
+        int max = 0;
+        final int lower = chart.getLower(range.start);
+        final int upper = chart.getUpper(range.end);
+        for (int i = lower; i < upper; i++) {
+            if (max < chart.data[id].y[i]) {
+                max = chart.data[id].y[i];
+            }
+        }
+        return max;
     }
 
     @Override

@@ -37,6 +37,11 @@ public class LineCalculator implements Calculator {
     }
 
     @Override
+    public int max(Chart chart, int id) {
+        return chart.data[id].max;
+    }
+
+    @Override
     public int max(Chart chart, int id, Range range) {
         final int lower = chart.getLower(range.start);
         final int upper = chart.getUpper(range.end);

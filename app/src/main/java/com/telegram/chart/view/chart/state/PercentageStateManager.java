@@ -87,18 +87,34 @@ public class PercentageStateManager extends StateManager {
 
         int max = manager.chart.max();
         int maxRange = manager.chart.max(manager.range);
+
+        if (maxRange == 0) {
+            maxRange = manager.chart.max(targetId, manager.range);
+        }
+
+        if (max == 0) {
+            max = manager.chart.max(targetId, manager.range);
+        }
+
         maxCurrent = maxRange;
         chart.maxStart = chart.maxCurrent;
         chart.maxEnd = maxRange;
         preview.maxStart = preview.maxCurrent;
         preview.maxEnd = max;
 
+        boolean hide = manager.countVisible() == 0;
         for (int id = 0; id < manager.countLines(); id++) {
             preview.percentStart[id] = chart.percentCurrent[id];
             preview.percentEnd[id] = manager.chart.visible[id] ? 1f : 0f;
 
+            preview.alphaStart[id] = chart.alphaCurrent[id];
+            preview.alphaEnd[id] = hide ? 0f : 1f;
+
             chart.percentStart[id] = chart.percentCurrent[id];
             chart.percentEnd[id] = manager.chart.visible[id] ? 1f : 0f;
+
+            chart.alphaStart[id] = chart.alphaCurrent[id];
+            chart.alphaEnd[id] = hide ? 0f : 1f;
         }
 
         updateAxisAnimation(maxRange);

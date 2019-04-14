@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.telegram.chart.view.SlopScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,5 +18,5 @@
             android:orientation="vertical"
             tools:context=".MainActivity"/>
 
-    </ScrollView>
+    </com.telegram.chart.view.SlopScrollView>
 </LinearLayout>
