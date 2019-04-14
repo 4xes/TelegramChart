@@ -83,6 +83,11 @@ public class XYRender implements Themable {
     }
 
     public void renderYLines(Canvas canvas, RectF r) {
+        if (manager.chart.isPercentage) {
+            renderYPercentageLines(canvas, r, r.height() / 4);
+            renderYPercentageTextLeft(canvas, r, 25f, r.height() / 4);
+            return;
+        }
         final int max = manager.state.maxCurrent;
         final int min = manager.state.minCurrent;
         final int maxStepped = maxStepped(max);
@@ -150,6 +155,31 @@ public class XYRender implements Themable {
                 yPaintLeft.setAlpha(alpha);
                 canvas.drawText(value, r.left, valueY, yPaintLeft);
             }
+        }
+    }
+
+    public void renderYPercentageLines(Canvas canvas, RectF r, float step) {
+        final float offsetY = r.bottom;
+
+        for (int i = 0; i < 5; i++) {
+            final float y = -step * i + offsetY;
+            canvas.drawLine(r.left, y, r.right, y, linePaint);
+        }
+    }
+
+    public void renderYPercentageTextLeft(Canvas canvas, RectF r, float percent, float step) {
+        final float offsetY = r.bottom;
+
+        for (int i = 0; i < 5; i++) {
+            final float y = -step * i + offsetY;
+            final float valueY = y -(valueHeight / 2f) + yPaintLeft.descent();
+            int key = i * (int) percent;
+            String value = sparseValues.get(key);
+            if (value == null) {
+                value = String.valueOf(key);
+                sparseValues.put(key, value);
+            }
+            canvas.drawText(value, r.left, valueY, yPaintLeft);
         }
     }
 

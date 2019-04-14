@@ -186,7 +186,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                     manager.calculateLine(selectIndex, chartBound, point);
                     xyRender.renderVLine(canvas, chartBound, point.x);
                 }
-                xyRender.renderYLines(canvas, chartBound);
+                xyRender.renderYLines(canvas, manager.chart.isPercentage? percentageBound : chartBound);
                 xyRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
             }
         }
