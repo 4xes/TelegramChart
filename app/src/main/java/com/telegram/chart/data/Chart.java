@@ -51,6 +51,10 @@ public class Chart {
         return calculator.min(this, range);
     }
 
+    public int min() {
+        return calculator.min(this);
+    }
+
     public int max(int id, Range range) {
         return calculator.max(this, id, range);
     }

@@ -180,7 +180,7 @@ public class GraphManager {
         final float scaleX = sectionWidth(width);
         final float scaleY = (1f / (state.preview.yMaxCurrent[id] / r.height()) * state.preview.multiCurrent[id]);
         final float offsetX = r.left;
-        final float offsetY = r.bottom;
+        final float offsetY = r.bottom + (scaleY * state.preview.yMinCurrent[id] * state.preview.multiCurrent[id]);
         matrix.reset();
         matrix.setScale(scaleX, scaleY);
         matrix.postTranslate(offsetX, offsetY);

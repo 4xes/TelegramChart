@@ -9,14 +9,13 @@ import static com.telegram.chart.view.chart.XYRender.GRID;
 import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_LONG;
 import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_SHORT;
 
-public class LineStateManager extends StateManager {
-    public LineStateManager(GraphManager manager) {
+public class ScaledStateManager extends StateManager {
+    public ScaledStateManager(GraphManager manager) {
         super(manager);
         this.chart = new LineState(manager.countLines());
         this.preview = new LineState(manager.countLines());
 
         int maxPreview = manager.chart.max();
-        int minPreview = manager.chart.min();
         int maxRange = manager.chart.max(manager.range);
         int minRange = manager.chart.min(manager.range);
         int maxChart = maxStepped(maxRange);
@@ -37,10 +36,6 @@ public class LineStateManager extends StateManager {
             preview.yMaxStart[id] = maxPreview;
             preview.yMaxCurrent[id] = preview.yMaxStart[id];
             preview.yMaxEnd[id] = maxPreview;
-
-            preview.yMinStart[id] = minPreview;
-            preview.yMinCurrent[id] = preview.yMinStart[id];
-            preview.yMinEnd[id] = minPreview;
 
             preview.alphaStart[id] = 1f;
             preview.alphaCurrent[id] = preview.alphaStart[id];
@@ -144,7 +139,6 @@ public class LineStateManager extends StateManager {
         preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
 
         int max = manager.chart.max();
-        int min = manager.chart.min();
         int maxRange = manager.chart.max(manager.range);
         int minRange = manager.chart.min(manager.range);
 
@@ -189,12 +183,6 @@ public class LineStateManager extends StateManager {
                     preview.yMaxStart[id] = max;
                     preview.yMaxCurrent[id] = max;
                     preview.yMaxEnd[id] = max;
-                }
-
-                if (manager.chart.data[targetId].min == min && targetId == id) {
-                    preview.yMinStart[id] = min;
-                    preview.yMinCurrent[id] = min;
-                    preview.yMinEnd[id] = min;
                 }
             }
 
