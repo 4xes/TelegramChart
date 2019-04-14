@@ -8,6 +8,11 @@ public abstract class StateManager {
     public long executedAxisTime = ANIMATION_DURATION_LONG;
     public long durationAxis = ANIMATION_DURATION_LONG;
     public int maxCurrent;
+    public int previousMinChart = 0;
+    public int previousMaxChart = 0;
+    public int currentMinChart = 0;
+    public int currentMaxChart = 0;
+    public int minCurrent = 0;
     public float previousStep;
     public float currentStep;
 
@@ -26,7 +31,7 @@ public abstract class StateManager {
     public abstract void setAnimationHide(int targetId);
 
     public void tick() {
-        chart.needInvalidate = chart.isNeedInvalidate() || currentStep != previousStep;
+        chart.needInvalidate = chart.isNeedInvalidate() || currentStep != previousStep || currentMaxChart != previousMaxChart || currentMinChart != previousMinChart;
         preview.needInvalidate = preview.isNeedInvalidate();
         chart.tickScale();
         chart.tickFading();
@@ -45,6 +50,8 @@ public abstract class StateManager {
 
             if (executedAxisTime == durationAxis) {
                 previousStep = currentStep;
+                previousMaxChart = currentMaxChart;
+                previousMinChart = currentMinChart;
             }
         }
     }

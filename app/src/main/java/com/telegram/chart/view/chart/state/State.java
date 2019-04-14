@@ -19,6 +19,9 @@ public abstract class State {
     public final int[] yMaxStart;
     public final int[] yMaxCurrent;
     public final int[] yMaxEnd;
+    public final int[] yMinStart;
+    public final int[] yMinCurrent;
+    public final int[] yMinEnd;
     public final float[] multiStart;
     public final float[] multiCurrent;
     public final float[] multiEnd;
@@ -112,6 +115,9 @@ public abstract class State {
         yMaxStart = new int[size];
         yMaxCurrent = new int[size];
         yMaxEnd = new int[size];
+        yMinStart = new int[size];
+        yMinCurrent = new int[size];
+        yMinEnd = new int[size];
         multiStart = new float[size];
         multiCurrent = new float[size];
         multiEnd = new float[size];

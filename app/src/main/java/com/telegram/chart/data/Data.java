@@ -12,9 +12,13 @@ public class Data {
     public final int max;
     public final int min;
 
-    private int tempLowerId = -1;
-    private int tempUpperId = -1;
+    private int tempMaxLowerId = -1;
+    private int tempMaxUpperId = -1;
     private int tempRangeMaxY = Integer.MIN_VALUE;
+
+    private int tempMinLowerId = -1;
+    private int tempMinUpperId = -1;
+    private int tempRangeMinY = Integer.MAX_VALUE;
 
     public Data(String name, int color, int colorNight, int buttonColor, int buttonColorNight, int tooltipColor, int tooltipColorNight, int[] y, int max, int min) {
         this.name = name;
@@ -31,7 +35,7 @@ public class Data {
 
     public int max(int lower, int upper) {
         if (tempRangeMaxY != Integer.MIN_VALUE) {
-            if (tempLowerId == lower && tempUpperId == upper) {
+            if (tempMaxLowerId == lower && tempMaxUpperId == upper) {
                 return tempRangeMaxY;
             }
         }
@@ -44,10 +48,31 @@ public class Data {
                 max = y[i];
             }
         }
-        tempLowerId = lower;
-        tempUpperId = upper;
+        tempMaxLowerId = lower;
+        tempMaxUpperId = upper;
         tempRangeMaxY = max;
         return max;
+    }
+
+    public int min(int lower, int upper) {
+        if (tempRangeMinY != Integer.MAX_VALUE) {
+            if (tempMinLowerId == lower && tempMinUpperId == upper) {
+                return tempRangeMinY;
+            }
+        }
+        if (lower == upper) {
+            return y[lower];
+        }
+        int min = y[lower];
+        for (int i = lower + 1; i <= upper; i++) {
+            if (min > y[i]) {
+                min = y[i];
+            }
+        }
+        tempMinLowerId = lower;
+        tempMinUpperId = upper;
+        tempRangeMinY = min;
+        return min;
     }
 
 }

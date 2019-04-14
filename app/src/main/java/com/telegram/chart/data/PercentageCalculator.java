@@ -45,4 +45,19 @@ public class PercentageCalculator implements Calculator {
     public int max(Chart chart, int id, Range range) {
         return max(chart, range);
     }
+
+    @Override
+    public int min(Chart chart) {
+        return 0;
+    }
+
+    @Override
+    public int min(Chart chart, Range range) {
+        return 0;
+    }
+
+    @Override
+    public int min(Chart chart, int id, Range range) {
+        return 0;
+    }
 }

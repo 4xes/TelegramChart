@@ -16,6 +16,8 @@ public class Chart {
     public final String type;
     public final boolean[] visible;
     public final Calculator calculator;
+    public final boolean isPercentage;
+    public final boolean isLine;
 
     public Chart(int[] x, Data[] data, String type) {
         this.x = x;
@@ -24,6 +26,9 @@ public class Chart {
         this.visible = new boolean[data.length];
         Arrays.fill(visible, true);
         calculator = CalculatorFabric.getCalculator(this);
+        isPercentage = Chart.TYPE_PERCENTAGE.equals(type);
+        isLine = Chart.TYPE_LINE.equals(type) || Chart.TYPE_LINE_SCALED.equals(type);
+
     }
 
     public int getLower(float lower) {
@@ -42,7 +47,11 @@ public class Chart {
         return calculator.max(this, range);
     }
 
-    public static int toStepped(int max) {
+    public int min(Range range) {
+        return calculator.min(this, range);
+    }
+
+    public static int maxStepped(int max) {
         if (max != Integer.MIN_VALUE) {
             float step = step(max);
             return (int) Math.floor(step * (XYRender.GRID));
@@ -50,11 +59,16 @@ public class Chart {
         return max;
     }
 
+    public static int minStepped(int min, float step) {
+        return (int) ((int) (min / step) * step);
+    }
+
     public static float step(int max) {
         return XYRender.calculateStep(0, max, XYRender.GRID);
     }
 
     public int stepMax(int id, Range range) {
-        return toStepped(calculator.max(this, id, range));
+        return maxStepped(calculator.max(this, id, range));
     }
+
 }

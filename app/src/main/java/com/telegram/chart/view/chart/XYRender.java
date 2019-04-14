@@ -12,7 +12,7 @@ import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 import com.telegram.chart.view.utils.DateUtils;
 
-import static com.telegram.chart.data.Chart.toStepped;
+import static com.telegram.chart.data.Chart.maxStepped;
 import static com.telegram.chart.view.utils.ViewUtils.measureHeightText;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
@@ -69,37 +69,36 @@ public class XYRender implements Themable {
 
     public void renderYLines(Canvas canvas, RectF r) {
         final int max = manager.state.maxCurrent;
-        final int maxStepped = toStepped(max);
-        final float step = calculateStep(0f, max, GRID);
+        final int min = manager.state.minCurrent;
+        final int maxStepped = maxStepped(max);
+        float step = calculateStep(0, max, GRID);
+        final int minStepped = Chart.minStepped(min, step);
+        step = (maxStepped - minStepped) / (float) GRID;
+
         final float percent = manager.state.progressAxis();
-        if (manager.state.previousStep < manager.state.currentStep) {
-            renderYLines(canvas, r, step, 1f + (percent), 1f - percent, maxStepped);
-            renderYLines(canvas, r, step,  percent, percent, maxStepped);
+
+        final int scaleMax = maxStepped - minStepped;
+
+        if (manager.state.previousMaxChart < manager.state.currentMaxChart) {
+            renderYLines(canvas, r, step, 1f + (percent), 1f - percent, scaleMax);
+            renderYLines(canvas, r, step,  percent, percent, scaleMax);
+            renderYText(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart, 1f + (percent), 1f - percent, scaleMax);
+            renderYText(canvas, r, step, manager.state.currentStep, manager.state.currentMinChart, percent, percent, scaleMax);
         } else {
-            renderYLines(canvas, r, step, 1f - percent, 1f - percent, maxStepped);
-            renderYLines(canvas, r, step, 1f / percent, percent, maxStepped);
+            renderYLines(canvas, r, step, 1f - percent, 1f - percent, scaleMax);
+            renderYLines(canvas, r, step, 1f / percent, percent, scaleMax);
+            renderYText(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart,1f - percent, 1f - percent, scaleMax);
+            renderYText(canvas, r, step, manager.state.currentStep, manager.state.currentMinChart, 1f / percent, percent, scaleMax);
         }
+
+        renderMinTextAndLine(canvas, r, minStepped);
     }
 
-    public void renderYText(Canvas canvas, RectF r) {
-        final int max = manager.state.maxCurrent;
-        final int maxStepped = toStepped(max);
-        final float step = calculateStep(0f, max, GRID);
-        final float percent = manager.state.progressAxis();
-        if (manager.state.previousStep < manager.state.currentStep) {
-            renderYText(canvas, r, step, manager.state.previousStep, 1f + (percent), 1f - percent, maxStepped);
-            renderYText(canvas, r, step, manager.state.currentStep, percent, percent, maxStepped);
-        } else {
-            renderYText(canvas, r, step, manager.state.previousStep, 1f - percent, 1f - percent, maxStepped);
-            renderYText(canvas, r, step, manager.state.currentStep, 1f / percent, percent, maxStepped);
-        }
-    }
-
-    public void renderYLines(Canvas canvas, RectF r, float step, float offsetPercentage, float alphaPercentage, int maxStepped) {
-        final float scaleY = 1f / ((maxStepped * Math.max(offsetPercentage, 0.0000001f)) / r.height());
+    public void renderYLines(Canvas canvas, RectF r, float step, float offsetPercentage, float alphaPercentage, int scaleMax) {
+        final float scaleY = 1f / ((scaleMax * Math.max(offsetPercentage, 0.0000001f)) / r.height());
         final float offsetY = r.bottom;
 
-        for (int i = 6; i < GRID; i = i + 6) {
+        for (int i = STEP; i < GRID; i = i + STEP) {
             final float y = (float) Math.ceil((-step * i * scaleY) + offsetY);
             int alpha = (int) Math.ceil(lineAlpha * alphaPercentage);
             if (alpha != 0) {
@@ -109,15 +108,15 @@ public class XYRender implements Themable {
         }
     }
 
-    public void renderYText(Canvas canvas, RectF r, float step, float stepText, float offsetPercentage, float alphaPercentage, int maxStepped) {
+    public void renderYText(Canvas canvas, RectF r, float step, float stepText, int previousMinText, float offsetPercentage, float alphaPercentage, int scaleMax) {
         final float offsetY = r.bottom;
-        final float scaleY = 1f / ((maxStepped * Math.max(offsetPercentage, 0.0000001f)) / r.height());
-        for (int i = 6; i < GRID; i = i + 6) {
+        final float scaleY = 1f / ((scaleMax * Math.max(offsetPercentage, 0.0000001f)) / r.height());
+        for (int i = STEP; i < GRID; i = i + STEP) {
             final float y = (-step * i * scaleY) + offsetY;
             final float valueY = y -(valueHeight / 2f) + yPaint.descent();
             int alpha = (int) Math.ceil(yAxisAlpha * alphaPercentage);
             if (alpha != 0) {
-                int key = i * (int) stepText;
+                int key = i * (int) stepText + previousMinText;
                 String value = sparseValues.get(key);
                 if (value == null) {
                     value = String.valueOf(key);
@@ -129,10 +128,16 @@ public class XYRender implements Themable {
         }
     }
 
-    public void renderY0TextAndLine(Canvas canvas, RectF r) {
+    public void renderMinTextAndLine(Canvas canvas, RectF r, float min) {
         final float text0Y = r.bottom - (valueHeight / 2f) + yPaint.descent();
         yPaint.setAlpha(yAxisAlpha);
-        canvas.drawText(ZERO_Y, r.left, text0Y, yPaint);
+        int key = (int) min;
+        String value = sparseValues.get(key);
+        if (value == null) {
+            value = String.valueOf(key);
+            sparseValues.put(key, value);
+        }
+        canvas.drawText(value, r.left, text0Y, yPaint);
         linePaint.setAlpha(lineAlpha);
         canvas.drawLine(r.left, r.bottom, r.right, r.bottom, linePaint);
     }
@@ -213,6 +218,7 @@ public class XYRender implements Themable {
         return step;
     }
 
-    public static final int GRID = 36;
+    public static final int GRID = 38;
+    public static final int STEP = 7;
     public static final String ZERO_Y = "0";
 }

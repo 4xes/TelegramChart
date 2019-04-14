@@ -2,8 +2,8 @@ package com.telegram.chart.view.chart.state;
 
 import com.telegram.chart.view.chart.GraphManager;
 
+import static com.telegram.chart.data.Chart.maxStepped;
 import static com.telegram.chart.data.Chart.step;
-import static com.telegram.chart.data.Chart.toStepped;
 import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_LONG;
 import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_SHORT;
 
@@ -18,7 +18,7 @@ public class PercentageStateManager extends StateManager {
         int maxRange = manager.chart.max(manager.range);
         maxCurrent = maxRange;
         float step = step(maxRange);
-        int maxChart = toStepped(maxRange);
+        int maxChart = maxStepped(maxRange);
 
         previousStep = step;
         currentStep = previousStep;
@@ -64,7 +64,7 @@ public class PercentageStateManager extends StateManager {
         int maxRange = manager.chart.max(manager.range);
         maxCurrent = maxRange;
         updateAxisAnimation(maxRange);
-        int maxStepped = toStepped(maxRange);
+        int maxStepped = maxStepped(maxRange);
         chart.maxStart = chart.maxCurrent;
         chart.maxEnd = maxStepped;
     }

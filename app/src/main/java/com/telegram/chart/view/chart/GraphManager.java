@@ -97,10 +97,10 @@ public class GraphManager {
     public void matrix(int id, RectF r, Matrix matrix) {
         final float width = r.width();
         final float scaleX = getScaleRange() * sectionWidth(width);
-        final float scaleY = (1f / (state.chart.yMaxCurrent[id] / r.height())) * state.chart.multiCurrent[id];
+        final float scaleY = (1f / ((state.chart.yMaxCurrent[id] - state.chart.yMinCurrent[id]) / r.height())) * state.chart.multiCurrent[id];
         final float dx = (-width * range.start) * getScaleRange();
         final float offsetX = r.left + dx;
-        final float offsetY = r.bottom;
+        final float offsetY = r.bottom + (scaleY * state.chart.yMinCurrent[id]);
         matrix.reset();
         matrix.setScale(scaleX, scaleY);
         matrix.postTranslate(offsetX, offsetY);

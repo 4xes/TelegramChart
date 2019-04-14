@@ -32,6 +32,7 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 public class ChartView extends BaseMeasureView implements Themable, GraphManager.InvalidateListener, TimeAnimator.TimeListener {
 
     protected final RectF chartBound = new RectF();
+    protected final RectF percentageBound = new RectF();
     protected final RectF visibleBound = new RectF();
     protected final RectF datesBound = new RectF();
     protected final RectF titleBound = new RectF();
@@ -46,7 +47,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     private XYRender xyRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
-    private GraphManager graphManager;
+    private GraphManager manager;
     private String titleText;
     private int selectIndex = NONE_INDEX;
     public static final String TAG = ChartView.class.getSimpleName();
@@ -104,7 +105,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     }
 
     public void seGraph(GraphManager manager) {
-        this.graphManager = manager;
+        this.manager = manager;
         render = RenderFabric.getChart(manager);
         xyRender = new XYRender(manager);
         manager.registerView(getViewId(), this);
@@ -126,11 +127,13 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         titleBound.set(bound);
         titleBound.bottom = bound.top + measureHeightText(titlePaint) + pxFromDp(8f);
         chartBound.set(bound);
-        chartBound.top = bound.top + measureHeightText(titlePaint) + pxFromDp(16f);
+        chartBound.top = bound.top + measureHeightText(titlePaint) + pxFromDp(18f);
         datesBound.set(bound);
         datesBound.top = bound.bottom - pxFromDp(28f);
         chartBound.bottom = datesBound.top;
         chartBound.inset(horizontalPadding, 0f);
+        percentageBound.set(chartBound);
+        percentageBound.top = percentageBound.top + pxFromDp(16f);
         gradientDrawable.setBounds((int) visibleBound.left, (int) bound.top, (int) visibleBound.right, (int) chartBound.top);
     }
 
@@ -138,14 +141,14 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         if (render != null) {
-            int touchIndex = graphManager.getIndex(x, bound);
+            int touchIndex = manager.getIndex(x, bound);
             if (touchIndex != selectIndex) {
                 selectIndex = touchIndex;
                 if (onShowInfoListener != null) {
                     if (selectIndex == NONE_INDEX) {
                         onShowInfoListener.hideInfo();
                     } else {
-                        graphManager.calculateLine(selectIndex, chartBound, point);
+                        manager.calculateLine(selectIndex, chartBound, point);
                         onShowInfoListener.showInfo(selectIndex, chartBound, point);
                     }
                 }
@@ -168,25 +171,23 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
             canvas.drawColor(theme.contentColor);
         }
 
-        boolean hasContent = graphManager.countVisible() > 0;
+        boolean hasContent = manager.countVisible() > 0;
         if (render != null) {
-            render.render(canvas, chartBound, visibleBound);
+            if (manager.chart.isPercentage) {
+                render.render(canvas, percentageBound, visibleBound);
+            } else {
+                render.render(canvas, chartBound, visibleBound);
+            }
         }
 
         if (hasContent) {
             if (xyRender != null) {
                 if (selectIndex != NONE_INDEX) {
-                    graphManager.calculateLine(selectIndex, chartBound, point);
+                    manager.calculateLine(selectIndex, chartBound, point);
                     xyRender.renderVLine(canvas, chartBound, point.x);
                 }
-                xyRender.renderYText(canvas, chartBound);
-                xyRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
-            }
-        }
-        if (xyRender != null) {
-            xyRender.renderY0TextAndLine(canvas,chartBound);
-            if (hasContent) {
                 xyRender.renderYLines(canvas, chartBound);
+                xyRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
             }
         }
 
@@ -243,8 +244,8 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                 return;
             }
         }
-        if (isReady() && graphManager != null) {
-            graphManager.onTimeUpdate(deltaTime);
+        if (isReady() && manager != null) {
+            manager.onTimeUpdate(deltaTime);
         }
     }
 

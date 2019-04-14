@@ -26,6 +26,8 @@ public class LineState extends State {
         for (int id = 0; id < size; id++) {
             yMaxStart[id] = yMaxEnd[id];
             yMaxCurrent[id] = yMaxEnd[id];
+            yMinStart[id] = yMinEnd[id];
+            yMinCurrent[id] = yMinEnd[id];
             multiStart[id] = multiEnd[id];
             multiCurrent[id] = multiEnd[id];
         }
@@ -34,10 +36,11 @@ public class LineState extends State {
     @Override
     protected void changeScale(float delta) {
         changeValue(yMaxStart, yMaxCurrent, yMaxEnd, delta);
+        changeValue(yMinStart, yMinCurrent, yMinEnd, delta);
         changeValue(multiStart, multiCurrent, multiEnd, delta);
     }
 
     public boolean isNeedInvalidate() {
-        return  !(Arrays.equals(yMaxCurrent, yMaxEnd) && Arrays.equals(alphaCurrent, alphaEnd) && Arrays.equals(multiCurrent, multiEnd));
+        return  !(Arrays.equals(yMaxCurrent, yMaxEnd) && Arrays.equals(yMinCurrent, yMinEnd) && Arrays.equals(alphaCurrent, alphaEnd) && Arrays.equals(multiCurrent, multiEnd));
     }
 }

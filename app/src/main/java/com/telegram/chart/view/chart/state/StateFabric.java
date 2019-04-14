@@ -11,7 +11,7 @@ public class StateFabric {
             case Chart.TYPE_LINE_SCALED:
                 return new LineStateManager(manager);
             case Chart.TYPE_BAR:
-                return new LineStateManager(manager);
+                return new BarStateManager(manager);
             case Chart.TYPE_BAR_STACKED:
                 return new PercentageStateManager(manager);
             case Chart.TYPE_PERCENTAGE:
