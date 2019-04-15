@@ -1,20 +1,32 @@
 package com.telegram.chart.view.chart;
 
+import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.telegram.chart.data.Chart;
+import com.telegram.chart.data.parser.ChartsInteractor;
+import com.telegram.chart.data.parser.DataInteractorImpl;
 import com.telegram.chart.view.chart.state.StateFabric;
 import com.telegram.chart.view.chart.state.StateManager;
 
 public class GraphManager {
     public final StateManager state;
+    public GraphManager zoomManager;
+    private ChartsInteractor interactor = null;
 
     public final Chart chart;
     public final Range range = new Range();
+    public final boolean canZoom = true;
 
     public void setVisible(int id, boolean isVisible) {
+        if (zoomManager != null) {
+            zoomManager.setVisible(id, isVisible);
+            return;
+        }
         if (chart.visible[id] == isVisible) {
             return;
         }
@@ -26,6 +38,10 @@ public class GraphManager {
     }
 
     public void update(int id, float start, float end) {
+        if (zoomManager != null) {
+            zoomManager.update(id, start, end);
+            return;
+        }
         if (this.range.start != start || this.range.end != end) {
             this.range.start = start;
             this.range.end = end;
@@ -57,7 +73,10 @@ public class GraphManager {
 
     private final InvalidateListener[] invalidateListeners = new InvalidateListener[3];
 
-    public GraphManager(Chart chart) {
+    public GraphManager(Context context, Chart chart) {
+        if (context != null) {
+            this.interactor = new DataInteractorImpl(context);
+        }
         this.chart = chart;
         this.state = StateFabric.getStateManager(this);
     }
@@ -224,12 +243,38 @@ public class GraphManager {
 
 
     public void onTimeUpdate(long deltaTime) {
+        if (zoomManager != null) {
+            zoomManager.onTimeUpdate(deltaTime);
+        }
         state.tick();
         if (state.chart.needInvalidate) {
             invalidateById(Ids.CHART);
         }
         if (state.preview.needInvalidate) {
             invalidateById(Ids.PREVIEW);
+        }
+    }
+
+    private Handler handler = new Handler(Looper.getMainLooper());
+
+    public void onZoom(int index) {
+        if (interactor != null) {
+            try {
+                Chart chartNew = interactor.getChart("1/2018-04/07");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ChartView) invalidateListeners[Ids.CHART]).resetIndex();
+                        zoomManager = new GraphManager(null, chartNew);
+                        zoomManager.registerView(Ids.CHART, invalidateListeners[Ids.CHART]);
+                        //zoomManager.registerView(Ids.PREVIEW, invalidateListeners[Ids.PREVIEW]);
+                        zoomManager.registerView(Ids.RANGE, invalidateListeners[Ids.RANGE]);
+
+                    }
+                });
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
         }
     }
 

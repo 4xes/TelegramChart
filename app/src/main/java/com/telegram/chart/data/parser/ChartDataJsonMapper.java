@@ -38,9 +38,9 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
         final JSONArray columns = json.getJSONArray(COLUMNS);
         final JSONObject names = json.getJSONObject(NAMES);
         final JSONObject colors = json.getJSONObject(COLORS);
-        final JSONObject colorsNights = json.getJSONObject(COLORS_NIGHT);
-        final JSONObject buttonColors = json.getJSONObject(BUTTON_COLORS);
-        final JSONObject buttonColorsNights = json.getJSONObject(BUTTON_COLORS_NIGHT);
+        final JSONObject colorsNights = json.optJSONObject(COLORS_NIGHT);
+        final JSONObject buttonColors = json.optJSONObject(BUTTON_COLORS);
+        final JSONObject buttonColorsNights = json.optJSONObject(BUTTON_COLORS_NIGHT);
         final JSONObject tooltipColors = json.getJSONObject(TOOLTIP_COLORS);
         final JSONObject tooltipColorNights = json.getJSONObject(TOOLTIP_COLORS_NIGHT);
         final boolean yScaled = json.optBoolean(Y_SCALED, false);

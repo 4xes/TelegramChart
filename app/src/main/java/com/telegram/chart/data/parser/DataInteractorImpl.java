@@ -20,4 +20,11 @@ public class DataInteractorImpl implements ChartsInteractor {
         return new ChartDataJsonMapper().map(jsonObject);
     }
 
+
+    @Override
+    public Chart getChart(String date) throws Throwable {
+        JSONObject jsonObject = AssetUtils.readJsonObject(context, date + ".json");
+        return new ChartDataJsonMapper().map(jsonObject);
+    }
+
 }

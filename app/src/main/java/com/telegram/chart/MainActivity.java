@@ -66,7 +66,7 @@ public class MainActivity extends ThemeBaseActivity {
     }
 
     private void renderChart(String title, final Chart chart) {
-        final GraphManager manager = new GraphManager(chart);
+        final GraphManager manager = new GraphManager(this, chart);
         LayoutInflater inflater = LayoutInflater.from(this);
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.chart_layout, content, false);
         final View shadowTop = view.findViewById(R.id.shadowTop);

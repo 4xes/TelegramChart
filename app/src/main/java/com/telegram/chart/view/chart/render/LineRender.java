@@ -76,6 +76,7 @@ class LineRender extends Render {
     }
 
     public void initDrawArrays() {
+        GraphManager manager = (this.manager.zoomManager != null)? this.manager.zoomManager: this.manager;
         for (int id = 0; id < manager.countLines(); id++) {
             int[] y = manager.chart.data[id].y;
 
@@ -101,6 +102,7 @@ class LineRender extends Render {
     }
 
     public void recalculateLines(RectF r, int lower, int upper) {
+        GraphManager manager = (this.manager.zoomManager != null)? this.manager.zoomManager: this.manager;
         for (int id = 0; id < manager.countLines(); id++) {
             manager.matrix(id, r, matrix);
             matrix.mapPoints(drawLines[id], lower * 4, lines[id], lower * 4, (upper - lower) * 2);
@@ -112,6 +114,8 @@ class LineRender extends Render {
 
     @Override
     public void render(Canvas canvas, RectF chart, RectF visible, int selectIndex) {
+        GraphManager manager = (this.manager.zoomManager != null)? this.manager.zoomManager: this.manager;
+
         final int lower = getLower(chart, visible);
         final int upper = getUpper(chart, visible);
         for (int id = 0; id < manager.countLines(); id++) {
