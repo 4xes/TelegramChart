@@ -76,6 +76,7 @@ abstract class BaseStackedRender extends Render {
                     canvas.drawLines(bars[id], lower * 4, (upper - lower) * 4 + 4, paint[id]);
                     if (selectIndex != NONE_INDEX) {
                         paint[id].setColor(color[id]);
+                        canvas.drawLines(bars[id], selectIndex * 4, 4, paint[id]);
                     }
                 }
             }

@@ -276,6 +276,9 @@ public class GraphManager {
                 handler.post(() -> {
                     ((ChartView) invalidateListeners[Ids.CHART]).resetIndex();
                     zoomManager = new GraphManager(zoomChart, range);
+                    for (int id = 0; id < countLines(); id++) {
+                        zoomManager.chart.visible[id] = chart.visible[id];
+                    }
                     zoomManager.registerView(Ids.CHART, invalidateListeners[Ids.CHART]);
                     zoomManager.registerView(Ids.PREVIEW, invalidateListeners[Ids.PREVIEW]);
                     zoomManager.registerView(Ids.RANGE, invalidateListeners[Ids.RANGE]);
