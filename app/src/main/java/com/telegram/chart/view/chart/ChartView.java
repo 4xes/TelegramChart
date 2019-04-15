@@ -262,7 +262,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         //canvas.drawRect(zoomOutBound, debugPaint);
 
         boolean hasContent = manager.countVisible() > 0;
-        if (render != null && zoomRender == null) {
+        if (render != null && (zoomXYRender == null || manager.state.previousZoom != manager.state.currentZoom)) {
             if (manager.chart.isPercentage) {
                 render.render(canvas, percentageBound, visibleBound, selectChartIndex);
             } else {
@@ -278,7 +278,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         }
 
         if (hasContent) {
-            if (xyRender != null && zoomXYRender == null) {
+            if (xyRender != null && (zoomXYRender == null || manager.state.previousZoom != manager.state.currentZoom)) {
                 if (selectChartIndex != NONE_INDEX) {
                     if (manager.chart.isPercentage || manager.chart.isLined) {
                         manager.calculateLine(selectChartIndex, chartBound, point);

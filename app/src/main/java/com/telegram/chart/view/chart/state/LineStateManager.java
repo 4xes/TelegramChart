@@ -6,8 +6,8 @@ import static com.telegram.chart.data.Chart.maxStepped;
 import static com.telegram.chart.data.Chart.minStepped;
 import static com.telegram.chart.data.Chart.step;
 import static com.telegram.chart.view.chart.XYRender.GRID;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_LONG;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_SHORT;
+import static com.telegram.chart.view.chart.state.State.DURATION_LONG;
+import static com.telegram.chart.view.chart.state.State.DURATION_SHORT;
 
 public class LineStateManager extends StateManager {
     public LineStateManager(GraphManager manager) {
@@ -71,8 +71,8 @@ public class LineStateManager extends StateManager {
 
     @Override
     public void setAnimationStart() {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
 
         for (int id = 0; id < manager.countLines(); id++) {
             preview.multiStart[id] = 0f;
@@ -88,7 +88,7 @@ public class LineStateManager extends StateManager {
     @Override
     public void updateRange() {
         super.updateRange();
-        chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
+        chart.resetScaleAnimation(DURATION_SHORT);
 
         int maxRange = manager.chart.max(manager.range);
         int minRange = manager.chart.min(manager.range);
@@ -139,10 +139,10 @@ public class LineStateManager extends StateManager {
 
     @Override
     public void setAnimationHide(int targetId) {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        chart.resetFadingAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        chart.resetFadingAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
+        preview.resetFadingAnimation(DURATION_LONG);
 
         int max = manager.chart.max();
         int min = manager.chart.min();

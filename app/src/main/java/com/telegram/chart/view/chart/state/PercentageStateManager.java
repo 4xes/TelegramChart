@@ -4,8 +4,8 @@ import com.telegram.chart.view.chart.GraphManager;
 
 import static com.telegram.chart.data.Chart.maxStepped;
 import static com.telegram.chart.data.Chart.step;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_LONG;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_SHORT;
+import static com.telegram.chart.view.chart.state.State.DURATION_LONG;
+import static com.telegram.chart.view.chart.state.State.DURATION_SHORT;
 
 public class PercentageStateManager extends StateManager {
 
@@ -44,8 +44,8 @@ public class PercentageStateManager extends StateManager {
 
     @Override
     public void setAnimationStart() {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
 
         for (int id = 0; id < manager.countLines(); id++) {
             preview.alphaStart[id] = 0f;
@@ -61,7 +61,7 @@ public class PercentageStateManager extends StateManager {
     @Override
     public void updateRange() {
         super.updateRange();
-        chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
+        chart.resetScaleAnimation(DURATION_SHORT);
         int maxRange = manager.chart.max(manager.range);
         maxCurrent = maxRange;
         updateAxisAnimation(maxRange);
@@ -81,10 +81,10 @@ public class PercentageStateManager extends StateManager {
     }
 
     public void setAnimationHide(int targetId) {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        chart.resetFadingAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        chart.resetFadingAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
+        preview.resetFadingAnimation(DURATION_LONG);
 
         int max = manager.chart.max();
 

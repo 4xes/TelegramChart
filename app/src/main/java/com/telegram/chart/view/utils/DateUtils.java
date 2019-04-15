@@ -12,9 +12,15 @@ public class DateUtils {
 	public static String TOOLTIP_YEAR_FORMAT_MAX = "MMM yyyy";
 	public static String X_FORMAT = "MMM d";
 	public static String X_FORMAT_MAX = "MMM dd";
+
+	public static String X_FORMAT_TIME_FORMAT = "h:mm";
+	public static String X_FORMAT_TIME_MAX = "hh:mm";
 	private static SimpleDateFormat INFO_DATE_DAY_FORMAT = new SimpleDateFormat(TOOLTIP_DAY_FORMAT, Locale.ENGLISH);
 	private static SimpleDateFormat INFO_DATE_MONTH_YEAR_FORMAT = new SimpleDateFormat(TOOLTIP_MONTH_YEAR, Locale.ENGLISH);
 	private static SimpleDateFormat X_DATE_FORMAT = new SimpleDateFormat(X_FORMAT, Locale.ENGLISH);
+
+
+	private static SimpleDateFormat X_DATE_TIME = new SimpleDateFormat(X_FORMAT_TIME_FORMAT, Locale.ENGLISH);
 	private static Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 	private static Calendar calendarUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
@@ -49,6 +55,11 @@ public class DateUtils {
 	public static String getDateX(long date){
 		calendar.setTimeInMillis(date);
 		return X_DATE_FORMAT.format(calendar.getTime());
+	}
+
+	public static String getTime(long date){
+		calendar.setTimeInMillis(date);
+		return X_DATE_TIME.format(calendar.getTime());
 	}
 
 	public static String getPath(int num, long date) {
