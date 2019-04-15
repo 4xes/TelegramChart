@@ -30,13 +30,13 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 
 public class ChartView extends BaseMeasureView implements Themable, GraphManager.InvalidateListener, TimeAnimator.TimeListener {
-
     protected final RectF chartBound = new RectF();
     protected final RectF percentageBound = new RectF();
     protected final RectF visibleBound = new RectF();
     protected final RectF datesBound = new RectF();
     protected final RectF titleBound = new RectF();
     private final TextPaint titlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint datePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final PointF point = new PointF();
     private final GradientDrawable gradientDrawable = new GradientDrawable();
@@ -48,6 +48,9 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
     private GraphManager manager;
+    private float dateOffsetX = pxFromDp(10f);
+    private float dateOffsetY = pxFromDp(10f);
+    private float dateSize = pxFromSp(13f);
     private String titleText;
     private int selectIndex = NONE_INDEX;
     public static final String TAG = ChartView.class.getSimpleName();
@@ -83,6 +86,11 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         titlePaint.setTextAlign(Paint.Align.LEFT);
         titlePaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 
+        datePaint.setStyle(Paint.Style.FILL);
+        datePaint.setTextSize(pxFromSp(13f));
+        datePaint.setTextAlign(Paint.Align.RIGHT);
+        datePaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+
         debugPaint.setStyle(Paint.Style.STROKE);
 
         gradientColors[1] = Color.TRANSPARENT;
@@ -101,6 +109,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         gradientDrawable.setColors(gradientColors);
 
         titlePaint.setColor(theme.titleColor);
+        datePaint.setColor(theme.titleColor);
         invalidate();
     }
 
@@ -210,6 +219,24 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         }
         gradientDrawable.draw(canvas);
         canvas.drawText(titleText, titleBound.left, titleBound.bottom, titlePaint);
+
+        final float percent = manager.state.progressDate();
+
+        //renderYTextLeft(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart,1f - percent, 1f - percent, scaleMax);
+        //renderYTextLeft(canvas, r, step, step, minStepped, 1f / percent, percent, scaleMax);
+        renderDate(canvas, -percent, 1f - percent);
+        renderDate(canvas, 1f - percent, percent);
+    }
+
+
+    public void renderDate(Canvas canvas, float offsetPercentage, float alphaPercentage) {
+        final float offsetX = dateOffsetX * offsetPercentage;
+        final float offsetY = dateOffsetY * offsetPercentage;
+
+        int alpha = (int) Math.ceil(255 * alphaPercentage);
+        datePaint.setAlpha(alpha);
+        datePaint.setTextSize(dateSize * alphaPercentage);
+        canvas.drawText(manager.state.currentDate, titleBound.right + offsetX, titleBound.bottom + offsetY, datePaint);
     }
 
     @Override

@@ -130,6 +130,7 @@ public class ScaledStateManager extends StateManager {
 
     @Override
     public void updateRange() {
+        super.updateRange();
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
         int maxRange = manager.chart.max(0, manager.range);
@@ -234,9 +235,9 @@ public class ScaledStateManager extends StateManager {
     @Override
     public void tick() {
         chart.needInvalidate = chart.isNeedInvalidate()
+                || currentDate1 != prevDate1 || currentDate2 != prevDate2
                 || currentStep != previousStep || currentMaxChart != previousMaxChart || currentMinChart != previousMinChart
-                || currentStep2 != previousStep2 || currentMaxChart2 != previousMaxChart2 || currentMinChart2 != previousMinChart2
-        ;
+                || currentStep2 != previousStep2 || currentMaxChart2 != previousMaxChart2 || currentMinChart2 != previousMinChart2;
         preview.needInvalidate = preview.isNeedInvalidate();
         chart.tickScale();
         chart.tickFading();
@@ -244,6 +245,7 @@ public class ScaledStateManager extends StateManager {
         preview.tickFading();
         tickAxisChange();
         tickAxisChange2();
+        tickDateChange();
     }
 
     public void tickAxisChange2() {

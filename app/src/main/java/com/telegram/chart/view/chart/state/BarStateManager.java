@@ -66,6 +66,7 @@ public class BarStateManager extends StateManager {
 
     @Override
     public void updateRange() {
+        super.updateRange();
         chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
 
         int maxRange = manager.chart.max(manager.range);

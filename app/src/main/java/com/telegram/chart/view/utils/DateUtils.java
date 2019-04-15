@@ -17,6 +17,23 @@ public class DateUtils {
 	private static SimpleDateFormat X_DATE_FORMAT = new SimpleDateFormat(X_FORMAT, Locale.ENGLISH);
 	private static Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
 
+	public static String TITLE_FORMAT = "dd MMM yyyy";
+	private static SimpleDateFormat titleFormat = new SimpleDateFormat(TITLE_FORMAT, Locale.ENGLISH);
+
+	public static String getTitle(long start, long end) {
+		String startDate = getTitle(start);
+		if (start == end) {
+			return startDate;
+		} else {
+			return startDate + " - " + getTitle(end);
+		}
+	}
+
+	public static String getTitle(long date) {
+		calendar.setTimeInMillis(date);
+		return titleFormat.format(calendar.getTime());
+	}
+
 	public static String getToolTipDay(long date){
 		calendar.setTimeInMillis(date);
 		return INFO_DATE_DAY_FORMAT.format(calendar.getTime());
@@ -31,4 +48,6 @@ public class DateUtils {
 		calendar.setTimeInMillis(date);
 		return X_DATE_FORMAT.format(calendar.getTime());
 	}
+
+
 }
