@@ -270,7 +270,7 @@ public class GraphManager {
     private Handler handler = new Handler(Looper.getMainLooper());
 
     public void onZoom(int index) {
-        if (!(chart.isLined || chart.isStacked)) {
+        if (!(chart.isLined || chart.isStacked || chart.isBar)) {
             return;
         }
         if (interactor != null) {
