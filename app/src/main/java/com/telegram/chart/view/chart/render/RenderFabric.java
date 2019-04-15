@@ -21,7 +21,7 @@ public class RenderFabric {
                 render = new StackedRender(graphManager);
                 break;
             case Chart.TYPE_PERCENTAGE:
-                render = new PercentageRender(graphManager);
+                render = new PieRender(graphManager);
                 break;
         }
         if (render == null) {
