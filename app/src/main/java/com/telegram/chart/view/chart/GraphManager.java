@@ -181,6 +181,16 @@ public class GraphManager {
 
     public void calculateLine(int index, RectF r, PointF point) {
         calculatePoint(0, index, r, point);
+        float maxY = point.y;
+        for (int id = 0; id < countLines(); id++) {
+            if (chart.visible[id]) {
+                calculatePoint(id, index, r, point);
+                if (maxY > point.y) {
+                    maxY = point.y;
+                }
+            }
+        }
+        point.y = maxY;
     }
 
     public void calculatePoint(int id, int index, RectF r, PointF point) {

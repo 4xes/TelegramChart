@@ -1,5 +1,6 @@
 package com.telegram.chart.view.chart;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PointF;
@@ -13,12 +14,12 @@ import com.telegram.chart.view.theme.Theme;
 
 import static com.telegram.chart.view.chart.GraphManager.NONE_INDEX;
 
-public class TooltipView extends BaseMeasureView implements Themable, ChartView.OnShowInfoListener {
+public class TooltipView extends BaseMeasureView implements Themable, ValueAnimator.AnimatorUpdateListener, ChartView.OnShowInfoListener {
     private TooltipRender infoRender;
     private Theme theme;
     protected final RectF drawBound = new RectF();
-    private final PointF point = new PointF();
     private int index = NONE_INDEX;
+    private ValueAnimator animator = null;
 
     public TooltipView(Context context) {
         super(context);
@@ -61,14 +62,42 @@ public class TooltipView extends BaseMeasureView implements Themable, ChartView.
 
     @Override
     public void showInfo(int index, RectF bound, PointF point) {
+        this.drawBound.set(bound);
         if (getVisibility() == View.VISIBLE && this.index == index) {
             return;
         }
-        setVisibility(View.VISIBLE);
         this.index = index;
-        this.drawBound.set(bound);
-        this.point.set(point);
+        if (getVisibility() == View.VISIBLE) {
+            //animate
+            if (infoRender != null) {
+                infoRender.measure();
+                float x = infoRender.getDrawPosition(bound, point);
+                toggleAnimate(x);
+            }
+        } else {
+            setVisibility(View.VISIBLE);
+        }
+        if (infoRender != null) {
+            infoRender.measure();
+            float x = infoRender.getDrawPosition(bound, point);
+            infoRender.setPosition(bound, x);
+        }
         invalidate();
+    }
+
+    private float animationX = -1;
+    private void toggleAnimate(float x) {
+        if (animationX == x && animator != null && animator.isRunning()) {
+            return;
+        }
+        animationX = x;
+        ValueAnimator animator = this.animator;
+        if (animator != null) {
+            animator.cancel();
+        }
+        animator = ValueAnimator.ofFloat(infoRender.getPosition(), x);
+        animator.addUpdateListener(this);
+        animator.start();
     }
 
     @Override
@@ -81,7 +110,14 @@ public class TooltipView extends BaseMeasureView implements Themable, ChartView.
     @Override
     protected void onDraw(Canvas canvas) {
         if (infoRender != null && index != NONE_INDEX) {
-            infoRender.render(canvas, index, drawBound, point);
+            infoRender.render(canvas, index);
         }
+    }
+
+    @Override
+    public void onAnimationUpdate(ValueAnimator animation) {
+        float position  = (float) animation.getAnimatedValue();
+        infoRender.setPosition(drawBound, position);
+        invalidate();
     }
 }
