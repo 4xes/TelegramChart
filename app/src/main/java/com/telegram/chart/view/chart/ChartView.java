@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.text.TextPaint;
@@ -18,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.BuildConfig;
+import com.telegram.chart.R;
 import com.telegram.chart.view.annotation.Nullable;
 import com.telegram.chart.view.chart.render.Render;
 import com.telegram.chart.view.chart.render.RenderFabric;
@@ -35,7 +37,9 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     protected final RectF visibleBound = new RectF();
     protected final RectF datesBound = new RectF();
     protected final RectF titleBound = new RectF();
+    protected final RectF zoomOutBound = new RectF();
     private final TextPaint titlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint zoomPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint datePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final PointF point = new PointF();
@@ -44,15 +48,23 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     private final float horizontalPadding = pxFromDp(1f);
     private TimeAnimator animator;
     private Render render;
+    private Render zoomRender;
     private XYRender xyRender;
+    private XYRender zoomXYRender;
     private OnShowInfoListener onShowInfoListener;
     private Theme theme;
     private GraphManager manager;
     private float dateOffsetX = pxFromDp(10f);
     private float dateOffsetY = pxFromDp(10f);
     private float dateSize = pxFromSp(13f);
+    private float titleSizeText = pxFromSp(15f);
     private String titleText;
-    private int selectIndex = NONE_INDEX;
+    private int selectChartIndex = NONE_INDEX;
+    private int selectZoomIndex = NONE_INDEX;
+    private Drawable zoomOutDay;
+    private Drawable zoomOutNight;
+    private Drawable currentZoom;
+    private final float zoomOutSize = pxFromDp(24f);
     public static final String TAG = ChartView.class.getSimpleName();
 
     public void setOnShowInfoListener(OnShowInfoListener onShowInfoListener) {
@@ -78,16 +90,26 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
         initPaints(context);
+        zoomOutDay = context.getResources().getDrawable(R.drawable.ic_zoom_day);
+        zoomOutDay.setBounds(0, 0, (int) zoomOutSize, (int) zoomOutSize);
+        zoomOutNight = context.getResources().getDrawable(R.drawable.ic_zoom_night);
+        zoomOutNight.setBounds(0, 0, (int) zoomOutSize, (int) zoomOutSize);
+        currentZoom = zoomOutDay;
     }
 
     private void initPaints(Context context) {
         titlePaint.setStyle(Paint.Style.FILL);
-        titlePaint.setTextSize(pxFromSp(15f));
+        titlePaint.setTextSize(titleSizeText);
         titlePaint.setTextAlign(Paint.Align.LEFT);
         titlePaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 
+        zoomPaint.setStyle(Paint.Style.FILL);
+        zoomPaint.setTextSize(titleSizeText);
+        zoomPaint.setTextAlign(Paint.Align.LEFT);
+        zoomPaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+
         datePaint.setStyle(Paint.Style.FILL);
-        datePaint.setTextSize(pxFromSp(13f));
+        datePaint.setTextSize(pxFromSp(dateSize));
         datePaint.setTextAlign(Paint.Align.RIGHT);
         datePaint.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
 
@@ -105,11 +127,24 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         if (render != null) {
             render.applyTheme(theme);
         }
+        if (zoomRender != null) {
+            zoomRender.applyTheme(theme);
+        }
+        if (xyRender != null) {
+            xyRender.applyTheme(theme);
+        }
+        if (theme.id == Theme.DAY) {
+            currentZoom = zoomOutDay;
+        } else {
+            currentZoom = zoomOutNight;
+        }
+
         gradientColors[0] = theme.contentColor;
         gradientDrawable.setColors(gradientColors);
 
         titlePaint.setColor(theme.titleColor);
         datePaint.setColor(theme.titleColor);
+        zoomPaint.setColor(theme.zoomColor);
         invalidate();
     }
 
@@ -135,6 +170,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         visibleBound.set(0, getPaddingTop(), getWidth(), getHeight() - getPaddingBottom());
         titleBound.set(bound);
         titleBound.bottom = bound.top + measureHeightText(titlePaint) + pxFromDp(8f);
+        zoomOutBound.set(visibleBound.left, bound.top,bound.left + zoomPaint.measureText("Zoom Out") + zoomOutSize * 2f, titleBound.bottom + titleBound.height() / 2f);
         chartBound.set(bound);
         chartBound.top = bound.top + measureHeightText(titlePaint) + pxFromDp(18f);
         datesBound.set(bound);
@@ -150,27 +186,41 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
+        if (zoomOutBound.contains(x, y)) {
+            if (manager.zoomManager != null) {
+                manager.state.resetZoom(false);
+            }
+            selectChartIndex = NONE_INDEX;
+            onShowInfoListener.hideInfo();
+            invalidate();
+        }
         if (render != null) {
+            GraphManager manager = this.manager.zoomManager != null? this.manager.zoomManager: this.manager;
+            boolean isZoom = this.manager.zoomManager != null;
             if (chartBound.top < y && chartBound.bottom > y) {
                 int touchIndex = manager.getIndex(x, chartBound);
-                if (touchIndex != selectIndex) {
-                    selectIndex = touchIndex;
+                if (touchIndex != selectChartIndex) {
+                    if (isZoom) {
+                        selectZoomIndex = touchIndex;
+                    } else {
+                        selectChartIndex = touchIndex;
+                    }
                     if (onShowInfoListener != null) {
-                        if (selectIndex == NONE_INDEX) {
+                        if (touchIndex == NONE_INDEX) {
                             onShowInfoListener.hideInfo();
                         } else {
-                            manager.calculateLine(selectIndex, chartBound, point);
+                            manager.calculateLine(touchIndex, chartBound, point);
                             if (manager.chart.isPercentage) {
-                                onShowInfoListener.showInfo(selectIndex, percentageBound, point);
+                                onShowInfoListener.showInfo(touchIndex, percentageBound, point);
                             } else {
-                                onShowInfoListener.showInfo(selectIndex, chartBound, point);
+                                onShowInfoListener.showInfo(touchIndex, chartBound, point);
                             }
                         }
                     }
                     invalidate();
                 }
             } else {
-                selectIndex = NONE_INDEX;
+                selectChartIndex = NONE_INDEX;
                 onShowInfoListener.hideInfo();
                 invalidate();
             }
@@ -179,11 +229,29 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     }
 
     public void resetIndex() {
-        selectIndex = NONE_INDEX;
+        selectChartIndex = NONE_INDEX;
+        selectZoomIndex = NONE_INDEX;
+        onShowInfoListener.hideInfo();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (manager.zoomManager != null) {
+            if (zoomRender == null) {
+                zoomRender = RenderFabric.getChart(manager.zoomManager);
+                if (zoomXYRender == null) {
+                    zoomXYRender = new XYRender(manager.zoomManager);
+                }
+                if(theme != null) {
+                    zoomRender.applyTheme(theme);
+                    zoomXYRender.applyTheme(theme);
+                }
+            }
+        } else {
+            zoomRender = null;
+            zoomXYRender = null;
+        }
+
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "onDraw");
         }
@@ -191,20 +259,29 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
             canvas.drawColor(theme.contentColor);
         }
 
+        //canvas.drawRect(zoomOutBound, debugPaint);
+
         boolean hasContent = manager.countVisible() > 0;
-        if (render != null) {
+        if (render != null && zoomRender == null) {
             if (manager.chart.isPercentage) {
-                render.render(canvas, percentageBound, visibleBound, selectIndex);
+                render.render(canvas, percentageBound, visibleBound, selectChartIndex);
             } else {
-                render.render(canvas, chartBound, visibleBound, selectIndex);
+                render.render(canvas, chartBound, visibleBound, selectChartIndex);
+            }
+        }
+        if (zoomRender != null) {
+            if (manager.chart.isPercentage) {
+                zoomRender.render(canvas, percentageBound, visibleBound, selectZoomIndex);
+            } else {
+                zoomRender.render(canvas, chartBound, visibleBound, selectZoomIndex);
             }
         }
 
         if (hasContent) {
-            if (xyRender != null) {
-                if (selectIndex != NONE_INDEX) {
+            if (xyRender != null && zoomXYRender == null) {
+                if (selectChartIndex != NONE_INDEX) {
                     if (manager.chart.isPercentage || manager.chart.isLined) {
-                        manager.calculateLine(selectIndex, chartBound, point);
+                        manager.calculateLine(selectChartIndex, chartBound, point);
                         if (manager.chart.isPercentage) {
                             xyRender.renderVLine(canvas, percentageBound, point.x);
                         } else {
@@ -216,27 +293,75 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                 xyRender.renderYLines(canvas, manager.chart.isPercentage? percentageBound : chartBound);
                 xyRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
             }
+
+            if (zoomXYRender != null) {
+                GraphManager manager = this.manager.zoomManager != null? this.manager.zoomManager: this.manager;
+                if (selectZoomIndex != NONE_INDEX) {
+                    if (manager.chart.isPercentage || manager.chart.isLined) {
+                        manager.calculateLine(selectZoomIndex, chartBound, point);
+                        if (manager.chart.isPercentage) {
+                            xyRender.renderVLine(canvas, percentageBound, point.x);
+                        } else {
+                            xyRender.renderVLine(canvas, chartBound, point.x);
+                        }
+
+                    }
+                }
+                zoomXYRender.renderYLines(canvas, manager.chart.isPercentage? percentageBound : chartBound);
+                zoomXYRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
+            }
         }
         gradientDrawable.draw(canvas);
-        canvas.drawText(titleText, titleBound.left, titleBound.bottom, titlePaint);
 
-        final float percent = manager.state.progressDate();
-
-        //renderYTextLeft(canvas, r, step, manager.state.previousStep, manager.state.previousMinChart,1f - percent, 1f - percent, scaleMax);
-        //renderYTextLeft(canvas, r, step, step, minStepped, 1f / percent, percent, scaleMax);
-        renderDate(canvas, -percent, 1f - percent);
-        renderDate(canvas, 1f - percent, percent);
+        renderTitle(canvas);
+        renderDates(canvas);
     }
 
+    private void renderDates(Canvas canvas) {
+        GraphManager manager = this.manager.zoomManager != null? this.manager.zoomManager: this.manager;
+        final float percent = manager.state.progressDate();
+        renderDate(canvas, -percent, 1f - percent, manager.state.prevDate);
+        renderDate(canvas, 1f - percent, percent, manager.state.currentDate);
+    }
 
-    public void renderDate(Canvas canvas, float offsetPercentage, float alphaPercentage) {
+    public void renderDate(Canvas canvas, float offsetPercentage, float alphaPercentage, String date) {
         final float offsetX = dateOffsetX * offsetPercentage;
         final float offsetY = dateOffsetY * offsetPercentage;
 
         int alpha = (int) Math.ceil(255 * alphaPercentage);
-        datePaint.setAlpha(alpha);
-        datePaint.setTextSize(dateSize * alphaPercentage);
-        canvas.drawText(manager.state.currentDate, titleBound.right + offsetX, titleBound.bottom + offsetY, datePaint);
+        if (alpha != 0) {
+            datePaint.setAlpha(alpha);
+            datePaint.setTextSize(dateSize * alphaPercentage);
+            canvas.drawText(date, titleBound.right + offsetX, titleBound.bottom + offsetY, datePaint);
+        }
+    }
+
+    private void renderTitle(Canvas canvas) {
+        final float percent = manager.state.progressZoom();
+        Log.d("percent", String.valueOf(percent));
+        renderTitle(canvas, -percent, 1f - percent, manager.state.previousZoom);
+        renderTitle(canvas, 1f - percent, percent, manager.state.currentZoom);
+    }
+
+    public void renderTitle(Canvas canvas, float offsetPercentage, float alphaPercentage, boolean isZoom) {
+        final float offsetX = dateOffsetX * offsetPercentage;
+        final float offsetY = dateOffsetY * offsetPercentage;
+        final float iconSize = zoomOutSize * alphaPercentage;
+
+        int alpha = (int) Math.ceil(255 * alphaPercentage);
+        if (alpha != 0) {
+            if (isZoom) {
+                zoomPaint.setAlpha(alpha);
+                zoomPaint.setTextSize(titleSizeText * alphaPercentage);
+                currentZoom.setBounds((int) dateOffsetX, (int) dateOffsetY, (int) dateOffsetX + (int) iconSize, (int) iconSize + (int) dateOffsetY);
+                currentZoom.draw(canvas);
+                canvas.drawText("Zoom Out", titleBound.left + zoomOutSize * 1.4f + offsetX, titleBound.bottom + offsetY, zoomPaint);
+            } else {
+                titlePaint.setAlpha(alpha);
+                titlePaint.setTextSize(titleSizeText * alphaPercentage);
+                canvas.drawText(titleText, titleBound.left + offsetX, titleBound.bottom + offsetY, titlePaint);
+            }
+        }
     }
 
     @Override

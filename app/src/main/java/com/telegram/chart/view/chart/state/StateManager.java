@@ -49,6 +49,8 @@ public abstract class StateManager {
         this.manager = manager;
         int indexNew1 = manager.chart.getLower(manager.range.start);
         int indexNew2 = manager.chart.getUpper(manager.range.end);
+        prevDate1 = indexNew1;
+        prevDate2 = indexNew2;
         currentDate1 = indexNew1;
         currentDate2 = indexNew2;
         currentDate = DateUtils.getTitle(manager.chart.x[currentDate1] * 1000L, manager.chart.x[currentDate2] * 1000L);
@@ -68,13 +70,13 @@ public abstract class StateManager {
             currentDate = DateUtils.getTitle(manager.chart.x[currentDate1] * 1000L, manager.chart.x[currentDate2] * 1000L);
             resetDateAnimation();
         }
-
     }
     public abstract void updateAxisAnimation(int maxChart);
     public abstract void setAnimationHide(int targetId);
 
     public void tick() {
         chart.needInvalidate = chart.isNeedInvalidate()
+                || currentZoom != previousZoom
                 || currentDate1 != prevDate1 || currentDate2 != prevDate2
                 || currentStep != previousStep || currentMaxChart != previousMaxChart || currentMinChart != previousMinChart;
         preview.needInvalidate = preview.isNeedInvalidate();
@@ -84,6 +86,7 @@ public abstract class StateManager {
         preview.tickFading();
         tickAxisChange();
         tickDateChange();
+        tickZoomChange();
     }
 
     public void tickAxisChange() {
@@ -118,8 +121,37 @@ public abstract class StateManager {
         }
     }
 
+    public long executedZoomTime = ANIMATION_DURATION_LONG;
+    public long durationZoom = ANIMATION_DURATION_LONG;
+
+    public boolean previousZoom = false;
+    public boolean currentZoom = false;
+
+    public void tickZoomChange() {
+        if (executedZoomTime < durationZoom) {
+            executedZoomTime += ANIMATION_TICK;
+
+            if (executedZoomTime > durationZoom) {
+                executedZoomTime = durationZoom;
+            }
+
+            if (executedZoomTime == durationZoom) {
+                previousZoom = currentZoom;
+                if (!currentZoom) {
+                    manager.zoomManager = null;
+                }
+                chart.needInvalidate = true;
+                preview.needInvalidate = true;
+            }
+        }
+    }
+
     public float progressDate() {
         return Math.min(1f, executedDateTime / (float) durationDate);
+    }
+
+    public float progressZoom() {
+        return Math.min(1f, executedZoomTime / (float) durationZoom);
     }
 
     public float progressAxis() {
@@ -136,6 +168,13 @@ public abstract class StateManager {
 
     public void resetDateAnimation() {
         executedDateTime = 0;
+    }
+
+    public void resetZoom(boolean isZoom) {
+        if (currentZoom != isZoom) {
+            currentZoom = isZoom;
+            executedZoomTime = 0;
+        }
     }
 
     private final static long ANIMATION_DURATION_LONG = 300L;

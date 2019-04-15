@@ -65,8 +65,10 @@ public class TooltipView extends BaseMeasureView implements Themable, ValueAnima
                 if (infoRender != null) {
                     if (infoRender.infoRect.contains(x, y)) {
                         if (index != NONE_INDEX) {
+                            if (manager.zoomManager == null) {
+                                manager.onZoom(index);
+                            }
                             hideInfo();
-                            manager.onZoom(index);
                         }
                         return true;
                     }

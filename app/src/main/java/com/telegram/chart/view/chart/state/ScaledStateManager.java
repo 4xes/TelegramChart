@@ -235,6 +235,7 @@ public class ScaledStateManager extends StateManager {
     @Override
     public void tick() {
         chart.needInvalidate = chart.isNeedInvalidate()
+                || currentZoom != previousZoom
                 || currentDate1 != prevDate1 || currentDate2 != prevDate2
                 || currentStep != previousStep || currentMaxChart != previousMaxChart || currentMinChart != previousMinChart
                 || currentStep2 != previousStep2 || currentMaxChart2 != previousMaxChart2 || currentMinChart2 != previousMinChart2;
@@ -246,6 +247,7 @@ public class ScaledStateManager extends StateManager {
         tickAxisChange();
         tickAxisChange2();
         tickDateChange();
+        tickZoomChange();
     }
 
     public void tickAxisChange2() {

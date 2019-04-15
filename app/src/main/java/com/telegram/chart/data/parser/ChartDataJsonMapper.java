@@ -21,10 +21,6 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
     private static final String BUTTON_COLORS_NIGHT = "button_color_night";
     private static final String TOOLTIP_COLORS = "tooltip_color";
     private static final String TOOLTIP_COLORS_NIGHT = "tooltip_color_night";
-    private static final String X_TEXT_COLOR = "x_text_color";
-    private static final String X_TEXT_COLOR_NIGHT = "x_text_color_night";
-    private static final String Y_TEXT_COLOR = "y_text_color";
-    private static final String Y_TEXT_COLOR_NIGHT = "y_text_color_night";
     private static final String LINE = "line";
     private static final String BAR = "bar";
     private static final String Y_SCALED = "y_scaled";
@@ -38,9 +34,9 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
         final JSONArray columns = json.getJSONArray(COLUMNS);
         final JSONObject names = json.getJSONObject(NAMES);
         final JSONObject colors = json.getJSONObject(COLORS);
-        final JSONObject colorsNights = json.optJSONObject(COLORS_NIGHT);
-        final JSONObject buttonColors = json.optJSONObject(BUTTON_COLORS);
-        final JSONObject buttonColorsNights = json.optJSONObject(BUTTON_COLORS_NIGHT);
+        final JSONObject colorsNights = json.getJSONObject(COLORS_NIGHT);
+        final JSONObject buttonColors = json.getJSONObject(BUTTON_COLORS);
+        final JSONObject buttonColorsNights = json.getJSONObject(BUTTON_COLORS_NIGHT);
         final JSONObject tooltipColors = json.getJSONObject(TOOLTIP_COLORS);
         final JSONObject tooltipColorNights = json.getJSONObject(TOOLTIP_COLORS_NIGHT);
         final boolean yScaled = json.optBoolean(Y_SCALED, false);

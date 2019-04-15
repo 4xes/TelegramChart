@@ -24,6 +24,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
     private final RectF chartBound = new RectF();
     private final float horizontalPadding = pxFromDp(1f);
     private final float verticalPadding = pxFromDp(2f);
+    private Render zoomRender;
     private Render render;
     private GraphManager manager;
     public static final String TAG = PreviewChartView.class.getSimpleName();
@@ -78,6 +79,9 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         if (render != null) {
             render.applyTheme(theme);
         }
+        if (zoomRender != null) {
+            zoomRender.applyTheme(theme);
+        }
         invalidate();
     }
 
@@ -111,6 +115,17 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (manager.zoomManager != null) {
+            if (zoomRender == null) {
+                zoomRender = RenderFabric.getPreview(manager.zoomManager);
+                if(theme != null) {
+                    zoomRender.applyTheme(theme);
+                }
+            }
+        }else {
+            zoomRender = null;
+        }
+
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "onDraw");
         }
@@ -120,8 +135,12 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         }
 
 
-        if (render != null) {
+        if (render != null && zoomRender == null) {
             render.render(canvas, chartBound, null, NONE_INDEX);
+        }
+
+        if (zoomRender != null) {
+            zoomRender.render(canvas, chartBound, null, NONE_INDEX);
         }
     }
 

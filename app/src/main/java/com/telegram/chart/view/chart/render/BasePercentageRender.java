@@ -25,11 +25,7 @@ abstract class BasePercentageRender extends Render {
 
     protected void initPaints() {
         for (int id = 0; id < manager.countLines(); id++) {
-            if (isPreview) {
-                paint[id].setAntiAlias(false);
-            } else {
-                paint[id].setAntiAlias(true);
-            }
+            paint[id].setAntiAlias(false);
             paint[id].setStyle(Paint.Style.FILL);
         }
     }

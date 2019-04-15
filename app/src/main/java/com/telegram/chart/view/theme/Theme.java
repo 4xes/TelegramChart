@@ -28,8 +28,9 @@ public class Theme {
     public final int axisStackedX;
     public final int axisStackedY;
     public final int mask;
+    public final int zoomColor;
 
-    public Theme(Context context, @ThemeId int id, int actionBar, String actionBarColorTitle, int titleColor, int contentColor, int windowColor, int gridColor, int rangeColor, int rangeSelectedColor, int tooltipArrow, int shadowTop, int shadowBottom, int axisX, int axisY, int axisStackedX, int axisStackedY, int mask) {
+    public Theme(Context context, @ThemeId int id, int actionBar, String actionBarColorTitle, int titleColor, int contentColor, int windowColor, int gridColor, int rangeColor, int rangeSelectedColor, int tooltipArrow, int shadowTop, int shadowBottom, int axisX, int axisY, int axisStackedX, int axisStackedY, int mask, int zoomColor) {
         this.id = id;
         this.actionBar = getColor(context, actionBar);
         this.actionBarColorTitle = actionBarColorTitle;
@@ -47,6 +48,7 @@ public class Theme {
         this.axisStackedX = getColor(context, axisStackedX);
         this.axisStackedY = getColor(context, axisStackedY);
         this.mask = getColor(context, mask);
+        this.zoomColor = getColor(context, zoomColor);
     }
 
     public int getId() {
@@ -72,7 +74,8 @@ public class Theme {
                 R.color.axis_y_night,
                 R.color.axis_x_stacked_night,
                 R.color.axis_y_stacked_night,
-                R.color.mask_night
+                R.color.mask_night,
+                R.color.zoom_out_text_night
         );
     }
 
@@ -95,7 +98,8 @@ public class Theme {
                 R.color.axis_y_day,
                 R.color.axis_x_stacked_day,
                 R.color.axis_y_stacked_day,
-                R.color.mask_day
+                R.color.mask_day,
+                R.color.zoom_out_text_day
         );
     }
 
