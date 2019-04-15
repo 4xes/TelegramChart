@@ -11,6 +11,7 @@ public class Chart {
     public static final String TYPE_BAR = "bar";
     public static final String TYPE_LINE_SCALED = "line_scaled";
     public static final String TYPE_PERCENTAGE = "percentage";
+    public static final String TYPE_PIE = "pie";
     public final Data[] data;
     public final int[] x;
     public final String type;
@@ -22,6 +23,7 @@ public class Chart {
     public final boolean isScaled;
     public final boolean isStacked;
     public final boolean isBar;
+    public final boolean isPie;
     public final int max;
     public final String maxLengthName;
 
@@ -38,6 +40,7 @@ public class Chart {
         isScaled = Chart.TYPE_LINE_SCALED.equals(type);
         isStacked = Chart.TYPE_BAR_STACKED.equals(type);
         isBar = Chart.TYPE_BAR.equals(type);
+        isPie = Chart.TYPE_PIE.equals(type);
 
         int max = Integer.MIN_VALUE;
         String maxLengthName = "";
@@ -51,6 +54,10 @@ public class Chart {
         }
         this.max = max;
         this.maxLengthName = maxLengthName;
+    }
+
+    public static Chart createPie(Chart chart) {
+        return new Chart(chart.x, chart.data, TYPE_PIE);
     }
 
     public int getLower(float lower) {

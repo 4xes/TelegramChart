@@ -21,6 +21,9 @@ public class RenderFabric {
                 render = new StackedRender(graphManager);
                 break;
             case Chart.TYPE_PERCENTAGE:
+                render = new PercentageRender(graphManager);
+                break;
+            case Chart.TYPE_PIE:
                 render = new PieRender(graphManager);
                 break;
         }
@@ -46,6 +49,9 @@ public class RenderFabric {
                 render = new PreviewStackedRender(graphManager);
                 break;
             case Chart.TYPE_PERCENTAGE:
+                render = new PreviewPercentageRender(graphManager);
+                break;
+            case Chart.TYPE_PIE:
                 render = new PreviewPercentageRender(graphManager);
                 break;
         }

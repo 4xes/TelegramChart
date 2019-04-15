@@ -270,12 +270,14 @@ public class GraphManager {
     private Handler handler = new Handler(Looper.getMainLooper());
 
     public void onZoom(int index) {
-        if (!(chart.isLined || chart.isStacked || chart.isBar)) {
-            return;
-        }
         if (interactor != null) {
             try {
-                Chart zoomChart = interactor.getChart(DateUtils.getPath(num, chart.x[index] * 1000L));
+                Chart zoomChart;
+                if (chart.isPercentage) {
+                    zoomChart = Chart.createPie(chart);
+                } else {
+                    zoomChart = interactor.getChart(DateUtils.getPath(num, chart.x[index] * 1000L));
+                }
                 for (int id = 0; id < countLines(); id++) {
                     zoomChart.visible[id] = chart.visible[id];
                 }

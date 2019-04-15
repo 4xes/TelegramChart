@@ -294,7 +294,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                 xyRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
             }
 
-            if (zoomXYRender != null) {
+            if (zoomXYRender != null && manager.zoomManager != null && !manager.zoomManager.chart.isPie) {
                 GraphManager manager = this.manager.zoomManager != null? this.manager.zoomManager: this.manager;
                 if (selectZoomIndex != NONE_INDEX) {
                     if (manager.chart.isPercentage || manager.chart.isLined) {
