@@ -11,5 +11,5 @@ public class Range {
     public static final int RANGE_MULTI = 8;
     public static final float RANGE_MIN_INIT = 1f / (float) RANGE_MULTI;
     public static final float RANGE_END_INIT = 1f;
-    public static final float RANGE_START_INIT = 0f;
+    public static final float RANGE_START_INIT = 1f - RANGE_MIN_INIT;
 }

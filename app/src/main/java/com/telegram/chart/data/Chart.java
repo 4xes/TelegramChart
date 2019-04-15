@@ -21,6 +21,7 @@ public class Chart {
     public final boolean isLined;
     public final boolean isScaled;
     public final boolean isStacked;
+    public final boolean isBar;
     public final int max;
     public final String maxLengthName;
 
@@ -36,6 +37,7 @@ public class Chart {
         isLined = Chart.TYPE_LINE.equals(type) || Chart.TYPE_LINE_SCALED.equals(type);
         isScaled = Chart.TYPE_LINE_SCALED.equals(type);
         isStacked = Chart.TYPE_BAR_STACKED.equals(type);
+        isBar = Chart.TYPE_BAR.equals(type);
 
         int max = Integer.MIN_VALUE;
         String maxLengthName = "";

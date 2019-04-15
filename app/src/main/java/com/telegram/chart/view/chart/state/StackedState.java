@@ -28,6 +28,8 @@ public class StackedState extends State {
         for (int id = 0; id < size; id++) {
             percentStart[id] = percentEnd[id];
             percentCurrent[id] = percentEnd[id];
+            multiStart[id] = multiEnd[id];
+            multiCurrent[id] = multiEnd[id];
         }
     }
 

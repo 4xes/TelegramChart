@@ -149,7 +149,7 @@ public abstract class StateManager {
         for (int id = 0; id < manager.countLines(); id++) {
             preview.alphaStart[id] = 0f;
             preview.alphaCurrent[id] = preview.alphaStart[id];
-            preview.alphaEnd[id] = 1f;
+            preview.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
 
             chart.multiStart[id] = 0f;
             chart.multiCurrent[id] = preview.multiStart[id];
@@ -161,7 +161,7 @@ public abstract class StateManager {
 
             chart.alphaStart[id] = 0f;
             chart.alphaCurrent[id] = chart.alphaStart[id];
-            chart.alphaEnd[id] = 1f;
+            chart.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
         }
         preview.resetScaleAnimation(DURATION_LONG);
         preview.resetFadingAnimation(DURATION_LONG);

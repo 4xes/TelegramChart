@@ -27,6 +27,9 @@ public class GraphManager {
     public void setVisible(int id, boolean isVisible) {
         if (zoomManager != null) {
             zoomManager.setVisible(id, isVisible);
+            if (chart.isBar) {
+                return;
+            }
         }
         if (chart.visible[id] == isVisible) {
             return;
@@ -273,12 +276,12 @@ public class GraphManager {
         if (interactor != null) {
             try {
                 Chart zoomChart = interactor.getChart(DateUtils.getPath(num, chart.x[index] * 1000L));
+                for (int id = 0; id < countLines(); id++) {
+                    zoomChart.visible[id] = chart.visible[id];
+                }
                 handler.post(() -> {
                     ((ChartView) invalidateListeners[Ids.CHART]).resetIndex();
                     zoomManager = new GraphManager(zoomChart, range);
-                    for (int id = 0; id < countLines(); id++) {
-                        zoomManager.chart.visible[id] = chart.visible[id];
-                    }
                     zoomManager.registerView(Ids.CHART, invalidateListeners[Ids.CHART]);
                     zoomManager.registerView(Ids.PREVIEW, invalidateListeners[Ids.PREVIEW]);
                     zoomManager.registerView(Ids.RANGE, invalidateListeners[Ids.RANGE]);

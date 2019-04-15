@@ -25,17 +25,17 @@ public class BarStateManager extends StateManager {
             preview.yMaxCurrent[id] = preview.yMaxStart[id];
             preview.yMaxEnd[id] = maxPreview;
 
-            preview.alphaStart[id] = 1f;
+            preview.alphaStart[id] = manager.chart.visible[id] ? 1f: 0f;
             preview.alphaCurrent[id] = preview.alphaStart[id];
-            preview.alphaEnd[id] = 1f;
+            preview.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
 
             preview.multiStart[id] = 0f;
             preview.multiCurrent[id] = preview.multiStart[id];
             preview.multiEnd[id] = 1f;
 
-            chart.alphaStart[id] = 1f;
+            chart.alphaStart[id] = manager.chart.visible[id] ? 1f: 0f;
             chart.alphaCurrent[id] = chart.alphaStart[id];
-            chart.alphaEnd[id] = 1f;
+            chart.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
 
             chart.yMaxStart[id] = maxChart;
             chart.yMaxCurrent[id] = chart.yMaxStart[id];
