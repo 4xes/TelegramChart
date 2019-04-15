@@ -210,10 +210,12 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                             onShowInfoListener.hideInfo();
                         } else {
                             manager.calculateLine(touchIndex, chartBound, point);
-                            if (manager.chart.isPercentage) {
-                                onShowInfoListener.showInfo(touchIndex, percentageBound, point);
-                            } else {
-                                onShowInfoListener.showInfo(touchIndex, chartBound, point);
+                            if (!manager.chart.isPie) {
+                                if (manager.chart.isPercentage) {
+                                    onShowInfoListener.showInfo(touchIndex, percentageBound, point);
+                                } else {
+                                    onShowInfoListener.showInfo(touchIndex, chartBound, point);
+                                }
                             }
                         }
                     }
