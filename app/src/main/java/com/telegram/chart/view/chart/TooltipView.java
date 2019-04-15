@@ -70,17 +70,17 @@ public class TooltipView extends BaseMeasureView implements Themable, ValueAnima
         if (getVisibility() == View.VISIBLE) {
             //animate
             if (infoRender != null) {
-                infoRender.measure();
-                float x = infoRender.getDrawPosition(bound, point);
+                infoRender.measure(drawBound);
+                float x = infoRender.getDrawPosition(drawBound, point);
                 toggleAnimate(x);
             }
         } else {
             setVisibility(View.VISIBLE);
         }
         if (infoRender != null) {
-            infoRender.measure();
-            float x = infoRender.getDrawPosition(bound, point);
-            infoRender.setPosition(bound, x);
+            infoRender.measure(drawBound);
+            float x = infoRender.getDrawPosition(drawBound, point);
+            infoRender.setPosition(x);
         }
         invalidate();
     }
@@ -110,6 +110,7 @@ public class TooltipView extends BaseMeasureView implements Themable, ValueAnima
     @Override
     protected void onDraw(Canvas canvas) {
         if (infoRender != null && index != NONE_INDEX) {
+            infoRender.measure(drawBound);
             infoRender.render(canvas, index);
         }
     }
@@ -117,7 +118,7 @@ public class TooltipView extends BaseMeasureView implements Themable, ValueAnima
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
         float position  = (float) animation.getAnimatedValue();
-        infoRender.setPosition(drawBound, position);
+        infoRender.setPosition(position);
         invalidate();
     }
 }

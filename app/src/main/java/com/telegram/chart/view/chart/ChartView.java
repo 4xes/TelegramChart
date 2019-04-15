@@ -140,8 +140,9 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
+        float y = event.getY();
         if (render != null) {
-            if (visibleBound.contains(event.getX(), event.getY())) {
+            if (chartBound.top < y && chartBound.bottom > y) {
                 int touchIndex = manager.getIndex(x, chartBound);
                 if (touchIndex != selectIndex) {
                     selectIndex = touchIndex;
@@ -159,6 +160,10 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                     }
                     invalidate();
                 }
+            } else {
+                selectIndex = NONE_INDEX;
+                onShowInfoListener.hideInfo();
+                invalidate();
             }
         }
         return true;

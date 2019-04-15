@@ -126,7 +126,7 @@ public class TooltipRender implements Themable {
         paintShadow.setMaskFilter(new BlurMaskFilter(BLUR_RADIUS, BlurMaskFilter.Blur.NORMAL));
     }
 
-    public void measure() {
+    public void measure(RectF bound) {
         int visible = manager.countVisible();
         final boolean hasPercent = manager.chart.isPercentage;
         final float percentMaxWidth = hasPercent ? maxPercentWidth: 0;
@@ -135,7 +135,9 @@ public class TooltipRender implements Themable {
         final float titleMaxWidth = maxDateWidth + arrowPadding + arrowWidth;
         final float rowMaxWidth = percentMaxWidth + maxNameWidth + SPACING_HORIZONTAL + maxValueWidth;
         width = PADDING + Math.max(titleMaxWidth, rowMaxWidth) + PADDING;
-        height = PADDING + dateHeight + SPACING_VERTICAL + (manager.countVisible() * (namesHeight + SPACING_VERTICAL)) + percentageSumHeight + PADDING - paintName.descent();
+        height = PADDING + dateHeight + SPACING_VERTICAL + (visible * (namesHeight + SPACING_VERTICAL)) + percentageSumHeight + PADDING - paintName.descent();
+        infoRect.top = bound.top;
+        infoRect.bottom = bound.top + height;
     }
 
     public float getDrawPosition(RectF bound, PointF point) {
@@ -170,8 +172,9 @@ public class TooltipRender implements Themable {
         return x;
     }
 
-    public void setPosition(RectF bound, float x) {
-        infoRect.set(x, bound.top, x + width, bound.top + height);
+    public void setPosition(float x) {
+        infoRect.left = x;
+        infoRect.right = x + width;
     }
 
     public int getPosition() {
