@@ -70,6 +70,7 @@ public class BarStateManager extends StateManager {
 
         int maxRange = manager.chart.max(manager.range);
         updateAxisAnimation(maxRange);
+        maxCurrent = maxRange;
 
         int maxStepped = maxStepped(maxRange);
         for (int id = 0; id < manager.countLines(); id++) {

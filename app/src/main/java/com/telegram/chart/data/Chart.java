@@ -18,6 +18,7 @@ public class Chart {
     public final Calculator calculator;
     public final boolean isPercentage;
     public final boolean isLine;
+    public final boolean isLined;
     public final boolean isScaled;
     public final boolean isStacked;
     public final int max;
@@ -31,7 +32,8 @@ public class Chart {
         Arrays.fill(visible, true);
         calculator = CalculatorFabric.getCalculator(this);
         isPercentage = Chart.TYPE_PERCENTAGE.equals(type);
-        isLine = Chart.TYPE_LINE.equals(type) || Chart.TYPE_LINE_SCALED.equals(type);
+        isLine = Chart.TYPE_LINE.equals(type);
+        isLined = Chart.TYPE_LINE.equals(type) || Chart.TYPE_LINE_SCALED.equals(type);
         isScaled = Chart.TYPE_LINE_SCALED.equals(type);
         isStacked = Chart.TYPE_BAR_STACKED.equals(type);
 

@@ -42,13 +42,14 @@ public class TooltipRender implements Themable {
     private final Drawable shadowDrawableNight;
     private boolean isDay = true;
     private final SparseArray<String> sparsePercent = new SparseArray<>();
-    private final SparseArray<String> sparseDates = new SparseArray<>();
+    private final SparseArray<String> sparseYears = new SparseArray<>();
     private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valuesHeight;
     private final float namesHeight;
     private final float dateHeight;
     private final float maxValueWidth;
     private final float maxDateWidth;
+    private final float maxDateDayWidth;
     private final float maxNameWidth;
     private final float maxPercentWidth;
     private float arrowWidthStroke = pxFromDp(1.5f);
@@ -67,7 +68,8 @@ public class TooltipRender implements Themable {
         dateHeight = measureHeightText(paintDate);
         namesHeight = measureHeightText(paintName);
         valuesHeight = measureHeightText(paintValue);
-        maxDateWidth = paintDate.measureText(DateUtils.TOOLTIP_FORMAT_MAX);
+        maxDateDayWidth = paintDate.measureText(DateUtils.TOOLTIP_DAY_FORMAT_MAX);
+        maxDateWidth = maxDateDayWidth + paintDate.measureText(DateUtils.TOOLTIP_YEAR_FORMAT_MAX);
         maxValueWidth = paintValue.measureText(String.valueOf(manager.chart.max));
         maxNameWidth = paintValue.measureText(manager.chart.maxLengthName);
         maxPercentWidth = paintPercent.measureText("100% ");
@@ -77,7 +79,7 @@ public class TooltipRender implements Themable {
         String valueString = sparsePercent.get(percent);
         if (valueString == null) {
             valueString = percent + "% ";
-            sparseDates.put(percent, valueString);
+            sparseYears.put(percent, valueString);
         }
         return valueString;
     }
@@ -86,7 +88,7 @@ public class TooltipRender implements Themable {
         String valueString = sparseValues.get(value);
         if (valueString == null) {
             valueString = String.valueOf(value);
-            sparseDates.put(value, valueString);
+            sparseYears.put(value, valueString);
         }
         return valueString;
     }
@@ -94,8 +96,8 @@ public class TooltipRender implements Themable {
     public String getDate(int index) {
         String valueString = sparseValues.get(index);
         if (valueString == null) {
-            valueString = DateUtils.getInfoDate(manager.chart.x[index] * 1000L);
-            sparseDates.put(index, valueString);
+            valueString = DateUtils.getToolTipDay(manager.chart.x[index] * 1000L) + DateUtils.getToolTipMonthAndYear(manager.chart.x[index] * 1000L);
+            sparseYears.put(index, valueString);
         }
         return valueString;
     }

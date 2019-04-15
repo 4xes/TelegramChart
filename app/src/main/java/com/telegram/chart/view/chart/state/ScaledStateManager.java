@@ -262,10 +262,6 @@ public class ScaledStateManager extends StateManager {
         }
     }
 
-    public float progressAxis2() {
-        return Math.min(1f, executedAxisTime2 / (float) durationAxis2);
-    }
-
     public void resetAxisAnimation2() {
         executedAxisTime2 = 0;
     }

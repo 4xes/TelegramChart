@@ -71,6 +71,10 @@ public abstract class StateManager {
         return Math.min(1f, executedAxisTime / (float) durationAxis);
     }
 
+    public float progressAxis2() {
+        return Math.min(1f, executedAxisTime2 / (float) durationAxis2);
+    }
+
     public void resetAxisAnimation() {
         executedAxisTime = 0;
     }
