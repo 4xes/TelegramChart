@@ -135,7 +135,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
         }
 
 
-        if (render != null && zoomRender == null) {
+        if (render != null && (zoomRender == null || manager.state.previousZoom != manager.state.currentZoom)) {
             render.render(canvas, chartBound, null, NONE_INDEX);
         }
 
