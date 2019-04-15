@@ -49,6 +49,8 @@ public abstract class StateManager {
         this.manager = manager;
         int indexNew1 = manager.chart.getLower(manager.range.start);
         int indexNew2 = manager.chart.getUpper(manager.range.end);
+        prevDate1 = indexNew1;
+        prevDate2 = indexNew2;
         currentDate1 = indexNew1;
         currentDate2 = indexNew2;
         currentDate = DateUtils.getTitle(manager.chart.x[currentDate1] * 1000L, manager.chart.x[currentDate2] * 1000L);
