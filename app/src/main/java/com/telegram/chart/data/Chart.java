@@ -20,6 +20,8 @@ public class Chart {
     public final boolean isLine;
     public final boolean isScaled;
     public final boolean isStacked;
+    public final int max;
+    public final String maxLengthName;
 
     public Chart(int[] x, Data[] data, String type) {
         this.x = x;
@@ -33,6 +35,18 @@ public class Chart {
         isScaled = Chart.TYPE_LINE_SCALED.equals(type);
         isStacked = Chart.TYPE_BAR_STACKED.equals(type);
 
+        int max = Integer.MIN_VALUE;
+        String maxLengthName = "";
+        for (int id = 0; id < data.length; id++) {
+            if (data[id].name.length() > maxLengthName.length()) {
+                maxLengthName = data[id].name;
+            }
+            if (data[id].max > max) {
+                max = data[id].max;
+            }
+        }
+        this.max = max;
+        this.maxLengthName = maxLengthName;
     }
 
     public int getLower(float lower) {

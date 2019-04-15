@@ -150,7 +150,11 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                             onShowInfoListener.hideInfo();
                         } else {
                             manager.calculateLine(selectIndex, chartBound, point);
-                            onShowInfoListener.showInfo(selectIndex, chartBound, point);
+                            if (manager.chart.isPercentage) {
+                                onShowInfoListener.showInfo(selectIndex, percentageBound, point);
+                            } else {
+                                onShowInfoListener.showInfo(selectIndex, chartBound, point);
+                            }
                         }
                     }
                     invalidate();
@@ -187,7 +191,12 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
                 if (selectIndex != NONE_INDEX) {
                     if (manager.chart.isPercentage || manager.chart.isLine) {
                         manager.calculateLine(selectIndex, chartBound, point);
-                        xyRender.renderVLine(canvas, chartBound, point.x);
+                        if (manager.chart.isPercentage) {
+                            xyRender.renderVLine(canvas, percentageBound, point.x);
+                        } else {
+                            xyRender.renderVLine(canvas, chartBound, point.x);
+                        }
+
                     }
                 }
                 xyRender.renderYLines(canvas, manager.chart.isPercentage? percentageBound : chartBound);

@@ -9,6 +9,8 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.TextPaint;
+import android.util.SparseArray;
 
 import com.telegram.chart.R;
 import com.telegram.chart.view.theme.Themable;
@@ -22,52 +24,77 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 public class TooltipRender implements Themable {
 
     private GraphManager manager;
-    private final Paint paintRect = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint paintDate = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint paintValue = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint paintName = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint paintDate = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint paintValue = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint paintName = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint paintPercent = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 
     private final RectF infoRect = new RectF();
-    private final float PADDING = pxFromDp(8f);
+    private final float PADDING = pxFromDp(16f);
     private final float SPACING_HORIZONTAL = pxFromDp(10f);
-    private final float SPACING_VERTICAL = pxFromDp(2f);
-
-    private final Paint paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final float OFFSET = pxFromDp(1f);
+    private final float SPACING_VERTICAL = pxFromDp(4f);
     private final float BLUR_RADIUS = pxFromDp(2f);
     private final RectF shadowRect = new RectF();
     private final float xLineOffset = pxFromDp(16f);
+    private final float arrowWidth = pxFromDp(10f);
+    private final float arrowPadding = pxFromDp(20f);
     private final Drawable shadowDrawableDay;
     private final Drawable shadowDrawableNight;
     private boolean isDay = true;
-    private final float dateHeight;
-    private final float dateWidth;
-    private final String[] names;
-    private final String[] values;
-    private final float[] valuesWidth;
+    private final SparseArray<String> sparsePercent = new SparseArray<>();
+    private final SparseArray<String> sparseDates = new SparseArray<>();
+    private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valuesHeight;
-    private final float[] namesWidth;
-    private final int[] colors;
-    private final int[] colorsNights;
     private final float namesHeight;
+    private final float dateHeight;
+    private final float maxValueWidth;
+    private final float maxDateWidth;
+    private final float maxNameWidth;
+    private final float maxPercentWidth;
+    private int sumColor;
 
     public TooltipRender(GraphManager manager, Context context) {
         this.manager = manager;
-        values = new String[manager.countLines()];
-        names = new String[manager.countLines()];
-        valuesWidth = new float[manager.countLines()];
-        namesWidth = new float[manager.countLines()];
-        colors = new int[manager.countLines()];
-        colorsNights = new int[manager.countLines()];
         initPaints();
+
+        shadowDrawableDay = context.getResources().getDrawable(R.drawable.shadow_day);
+        shadowDrawableNight = context.getResources().getDrawable(R.drawable.shadow_night);
 
         dateHeight = measureHeightText(paintDate);
         namesHeight = measureHeightText(paintName);
         valuesHeight = measureHeightText(paintValue);
-        dateWidth = paintDate.measureText(DateUtils.TOOLTIP_FORMAT_MAX);
+        maxDateWidth = paintDate.measureText(DateUtils.TOOLTIP_FORMAT_MAX);
+        maxValueWidth = paintValue.measureText(String.valueOf(manager.chart.max));
+        maxNameWidth = paintValue.measureText(manager.chart.maxLengthName);
+        maxPercentWidth = paintPercent.measureText("100% ");
+    }
 
-        shadowDrawableDay = context.getResources().getDrawable(R.drawable.shadow_day);
-        shadowDrawableNight = context.getResources().getDrawable(R.drawable.shadow_night);
+    public String getPercent(int percent) {
+        String valueString = sparsePercent.get(percent);
+        if (valueString == null) {
+            valueString = percent + "% ";
+            sparseDates.put(percent, valueString);
+        }
+        return valueString;
+    }
+
+    public String getValue(int value) {
+        String valueString = sparseValues.get(value);
+        if (valueString == null) {
+            valueString = String.valueOf(value);
+            sparseDates.put(value, valueString);
+        }
+        return valueString;
+    }
+
+    public String getDate(int index) {
+        String valueString = sparseValues.get(index);
+        if (valueString == null) {
+            valueString = DateUtils.getInfoDate(manager.chart.x[index] * 1000L);
+            sparseDates.put(index, valueString);
+        }
+        return valueString;
     }
 
     private void initPaints() {
@@ -76,15 +103,19 @@ public class TooltipRender implements Themable {
         paintDate.setTextAlign(Paint.Align.LEFT);
 
         paintValue.setStyle(Paint.Style.FILL);
-        paintValue.setTextSize(pxFromSp(14f));
+        paintValue.setTextSize(pxFromSp(11f));
         paintValue.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        paintValue.setTextAlign(Paint.Align.LEFT);
+        paintValue.setTextAlign(Paint.Align.RIGHT);
+
+        paintPercent.setStyle(Paint.Style.FILL);
+        paintPercent.setTextSize(pxFromSp(11f));
+        paintPercent.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        paintPercent.setTextAlign(Paint.Align.RIGHT);
 
         paintName.setStyle(Paint.Style.FILL);
         paintName.setTextSize(pxFromSp(11f));
         paintName.setTextAlign(Paint.Align.LEFT);
 
-        paintRect.setStyle(Paint.Style.FILL);
 
         paintShadow.setColor(Color.BLACK);
         paintShadow.setStyle(Paint.Style.FILL);
@@ -98,45 +129,15 @@ public class TooltipRender implements Themable {
         if (visible == 0) {
             return;
         }
-        final String date = DateUtils.getInfoDate(manager.chart.x[index] * 1000L);
 
-        int n = 0;
-        for (int id = 0; id < manager.countLines(); id++) {
-            if (manager.chart.visible[id]) {
-                values[n] = String.valueOf(manager.chart.data[id].y[index]);
-                names[n] = manager.chart.data[id].name;
-                valuesWidth[n] = paintValue.measureText(values[n]);
-                namesWidth[n] = paintName.measureText(names[n]);
-                colors[n] = manager.chart.data[id].color;
-                colorsNights[n] = manager.chart.data[id].colorNight;
-                n++;
-            }
-        }
-
-        float maxColumnW1 = 0f;
-        float maxColumnW2 = 0f;
-        for (int i = 0; i < visible; i++) {
-            if ((i & 1) == 0) {
-                if (maxColumnW1 < valuesWidth[i]) {
-                    maxColumnW1 = valuesWidth[i];
-                }
-                if (maxColumnW1 < namesWidth[i]) {
-                    maxColumnW1 = namesWidth[i];
-                }
-            } else {
-                if (maxColumnW2 < valuesWidth[i]) {
-                    maxColumnW2 = valuesWidth[i];
-                }
-                if (maxColumnW2 < namesWidth[i]) {
-                    maxColumnW2 = namesWidth[i];
-                }
-            }
-        }
-
-        final float spacingHorizontal = visible > 1 ? SPACING_HORIZONTAL : 0;
-        final int rows = (visible - 1) / 2;
-        final float width = PADDING + Math.max(dateWidth, maxColumnW1 + spacingHorizontal + maxColumnW2) + PADDING;
-        final float height = PADDING + dateHeight  + valuesHeight + namesHeight + SPACING_VERTICAL + (rows * (valuesHeight + namesHeight + SPACING_VERTICAL)) + PADDING - paintName.descent();
+        final boolean hasPercent = manager.chart.isPercentage;
+        final float percentMaxWidth = hasPercent ? maxPercentWidth: 0;
+        final boolean hasSum = (manager.chart.isStacked) && visible > 1;
+        final float percentageSumHeight = hasSum ? namesHeight + SPACING_VERTICAL: 0;
+        final float titleMaxWidth = maxDateWidth + arrowPadding + arrowWidth;
+        final float rowMaxWidth = percentMaxWidth + maxNameWidth + SPACING_HORIZONTAL + maxValueWidth;
+        final float width = PADDING + Math.max(titleMaxWidth, rowMaxWidth) + PADDING;
+        float height = PADDING + dateHeight + SPACING_VERTICAL + (manager.countVisible() * (namesHeight + SPACING_VERTICAL)) + percentageSumHeight + PADDING - paintName.descent();
 
         float leftRect = pointF.x - xLineOffset;
         if (leftRect < bound.left) {
@@ -146,7 +147,7 @@ public class TooltipRender implements Themable {
             leftRect = bound.right - width;
         }
         infoRect.set(leftRect, bound.top, leftRect + width, bound.top + height);
-        shadowRect.set(infoRect.left + OFFSET, infoRect.top + OFFSET, infoRect.right - OFFSET, infoRect.bottom);
+        shadowRect.set(infoRect);
 
         if (isDay) {
             shadowDrawableDay.setBounds((int) shadowRect.left, (int) shadowRect.top, (int) shadowRect.right, (int) shadowRect.bottom);
@@ -157,31 +158,46 @@ public class TooltipRender implements Themable {
         }
 
         final float left = infoRect.left + PADDING;
+        final float right = infoRect.right - PADDING;
         final float top = infoRect.top + PADDING;
 
         final float dateY = top + (dateHeight / 2f) + paintDate.descent();
-        canvas.drawText(date, left, dateY, paintDate);
+        canvas.drawText(getDate(index), left, dateY, paintDate);
 
-        for (int i = 0; i < visible; i++) {
-            final int iRow = i / 2;
-            final int iColumn = (i & 1) == 0 ? 0 : 1;
-            final float x = left + (iColumn * (maxColumnW1 + spacingHorizontal));
-            final float offsetValuesY = (valuesHeight / 2f) + paintValue.descent();
-            final float yValues = top + dateHeight + offsetValuesY + SPACING_VERTICAL + (iRow * (namesHeight + valuesHeight + SPACING_VERTICAL));
-            final float offsetNamesY = (namesHeight / 2f) + paintName.descent();
-            final float yNames = yValues - offsetValuesY + valuesHeight + offsetNamesY;
-            int color = isDay? colors[i]: colorsNights[i];
-            paintValue.setColor(color);
-            canvas.drawText(values[i], x, yValues, paintValue);
-            paintName.setColor(color);
-            canvas.drawText(names[i], x, yNames, paintName);
+        float y = top + namesHeight + SPACING_VERTICAL;
+        int sum = 0;
+        for (int id = 0; id < manager.countLines(); id++) {
+            if (manager.chart.visible[id]) {
+                sum += manager.chart.data[id].y[index];
+            }
+        }
+        final float valueOffsetY = (valuesHeight / 2f) + paintValue.descent();
+        for (int id = 0; id < manager.countLines(); id++) {
+            if (manager.chart.visible[id]) {
+                int value = manager.chart.data[id].y[index];
+                if (hasPercent) {
+                    int percent = (int) Math.ceil((((double) (value)) / sum) * 100f);
+                    canvas.drawText(getPercent(percent), left + percentMaxWidth, y + valueOffsetY, paintPercent);
+                }
+                canvas.drawText(manager.chart.data[id].name, left + (hasPercent? percentMaxWidth: 0), y + valueOffsetY, paintName);
+                paintValue.setColor(isDay? manager.chart.data[id].tooltipColor: manager.chart.data[id].tooltipColorNight);
+                canvas.drawText(getValue(value), right, y + valueOffsetY, paintValue);
+                y += namesHeight + SPACING_VERTICAL;
+            }
+        }
+        if (hasSum) {
+            canvas.drawText("All", left, y + valueOffsetY, paintName);
+            paintValue.setColor(sumColor);
+            canvas.drawText(getValue(sum), right, y + valueOffsetY, paintValue);
         }
     }
 
     @Override
     public void applyTheme(Theme theme) {
         paintDate.setColor(theme.titleColor);
-        paintRect.setColor(theme.tooltipColor);
+        paintName.setColor(theme.titleColor);
+        paintPercent.setColor(theme.titleColor);
+        sumColor = theme.titleColor;
         isDay = theme.getId() == Theme.DAY;
     }
 }

@@ -81,7 +81,7 @@ public class TooltipView extends BaseMeasureView implements Themable, ChartView.
     @Override
     protected void onDraw(Canvas canvas) {
         if (infoRender != null && index != NONE_INDEX) {
-            infoRender.render(canvas, index, bound, point);
+            infoRender.render(canvas, index, drawBound, point);
         }
     }
 }
