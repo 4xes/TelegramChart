@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.telegram.chart.view.annotation.Nullable;
@@ -20,6 +21,8 @@ public class TooltipView extends BaseMeasureView implements Themable, ValueAnima
     protected final RectF drawBound = new RectF();
     private int index = NONE_INDEX;
     private ValueAnimator animator = null;
+    private GraphManager manager;
+    private OnZoomListener listener;
 
     public TooltipView(Context context) {
         super(context);
@@ -44,8 +47,42 @@ public class TooltipView extends BaseMeasureView implements Themable, ValueAnima
 
     }
 
-    public void seGraph(GraphManager graphManager) {
-        infoRender = new TooltipRender(graphManager, getContext());
+    interface OnZoomListener {
+        void onZoom();
+    }
+
+    public void setListener(OnZoomListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        final float x = event.getX();
+        final float y = event.getY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (infoRender != null) {
+                    if (infoRender.infoRect.contains(x, y)) {
+                        if (listener != null) {
+                            listener.onZoom();
+                        }
+                        return true;
+                    }
+                }
+            case MotionEvent.ACTION_MOVE:
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+
+        return false;
+    }
+
+    public void seGraph(GraphManager manager) {
+        this.manager = manager;
+        infoRender = new TooltipRender(manager, getContext());
+
         if (theme != null) {
             applyTheme(theme);
         }

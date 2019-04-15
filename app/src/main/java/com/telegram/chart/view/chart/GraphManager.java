@@ -10,6 +10,7 @@ import com.telegram.chart.view.chart.state.StateManager;
 
 public class GraphManager {
     public final StateManager state;
+
     public final Chart chart;
     public final Range range = new Range();
 

@@ -29,7 +29,7 @@ public class TooltipRender implements Themable {
     private final TextPaint paintPercent = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint paintArrow = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    private final RectF infoRect = new RectF();
+    public final RectF infoRect = new RectF();
     private final float PADDING = pxFromDp(16f);
     private final float SPACING_HORIZONTAL = pxFromDp(10f);
     private final float SPACING_VERTICAL = pxFromDp(4f);
