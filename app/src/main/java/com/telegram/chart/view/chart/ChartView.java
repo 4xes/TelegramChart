@@ -278,7 +278,7 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         }
 
         if (hasContent) {
-            if (xyRender != null) {
+            if (xyRender != null && zoomXYRender == null) {
                 if (selectChartIndex != NONE_INDEX) {
                     if (manager.chart.isPercentage || manager.chart.isLined) {
                         manager.calculateLine(selectChartIndex, chartBound, point);
