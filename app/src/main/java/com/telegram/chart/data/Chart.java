@@ -59,7 +59,23 @@ public class Chart {
     public static Chart createPie(Chart chart, int index) {
         int minIndex = 0;
         int maxIndex = chart.x.length;
-        return new Chart(chart.x, chart.data, TYPE_PIE);
+
+        int offsetIndex = index - 3;
+        if (offsetIndex + 7 > maxIndex) {
+            offsetIndex = maxIndex - 7;
+        }
+
+        if (offsetIndex < minIndex) {
+            offsetIndex = 0;
+        }
+
+        int x[] = Arrays.copyOfRange(chart.x, offsetIndex, offsetIndex + 7);
+        Data[] data = new Data[chart.data.length];
+        for (int id = 0; id < chart.data.length; id++) {
+            data[id] = Data.createPie(chart.data[id], index);
+        }
+
+        return new Chart(x, data, TYPE_PIE);
     }
 
     public int getLower(float lower) {
