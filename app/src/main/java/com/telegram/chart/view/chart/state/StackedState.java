@@ -34,10 +34,11 @@ public class StackedState extends State {
     @Override
     void changeScale(float delta) {
         changeMax(delta);
+        changeValue(multiStart, multiCurrent, multiEnd, delta);
         changeValue(percentStart, percentCurrent, percentEnd, delta);
     }
 
     public boolean isNeedInvalidate() {
-        return !(Arrays.equals(percentCurrent, percentEnd) && Arrays.equals(alphaCurrent, alphaEnd) && maxCurrent == maxEnd);
+        return !(Arrays.equals(percentCurrent, percentEnd) && Arrays.equals(alphaCurrent, alphaEnd) && Arrays.equals(multiCurrent, multiEnd) && maxCurrent == maxEnd);
     }
 }

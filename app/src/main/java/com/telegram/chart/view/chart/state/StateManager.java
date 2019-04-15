@@ -141,7 +141,6 @@ public abstract class StateManager {
                 if (!currentZoom) {
                     manager.zoomManager = null;
                 }
-                resetState();
             }
         }
     }
@@ -219,7 +218,10 @@ public abstract class StateManager {
             if (!isZoom) {
                 if (manager.zoomManager != null) {
                     manager.zoomManager.state.hideState();
+                    manager.state.resetState();
                 }
+            } else {
+                manager.state.hideState();
             }
             currentZoom = isZoom;
             executedZoomTime = 0;

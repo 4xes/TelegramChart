@@ -55,6 +55,16 @@ public class PercentageStateManager extends StateManager {
             chart.alphaStart[id] = 0f;
             chart.alphaCurrent[id] = chart.alphaStart[id];
             chart.alphaEnd[id] = 1f;
+
+            if (manager.chart.isStacked) {
+                preview.multiStart[id] = 0f;
+                preview.multiCurrent[id] = preview.multiStart[id];
+                preview.multiEnd[id] = 1f;
+
+                chart.multiStart[id] = 0f;
+                chart.multiCurrent[id] = chart.multiStart[id];
+                chart.multiEnd[id] = 1f;
+            }
         }
     }
 
