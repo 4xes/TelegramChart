@@ -97,7 +97,7 @@ public class MainActivity extends ThemeBaseActivity {
             if (tooltipView.isShowing()) {
                 tooltipView.invalidate();
             }
-        });
+        }, chart.isBar);
         rangeView.setOnRangeListener((start, end) -> {
             chartView.resetIndex();
             tooltipView.hideInfo();

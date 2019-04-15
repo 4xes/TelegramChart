@@ -139,6 +139,9 @@ public abstract class StateManager {
             if (executedZoomTime == durationZoom) {
                 previousZoom = currentZoom;
                 if (!currentZoom) {
+                    if (manager.onShowCheckboxes != null) {
+                        manager.onShowCheckboxes.onRemove();
+                    }
                     manager.zoomManager = null;
                 }
             }

@@ -279,6 +279,11 @@ public class GraphManager {
                 for (int id = 0; id < countLines(); id++) {
                     zoomChart.visible[id] = chart.visible[id];
                 }
+                if (chart.isBar) {
+                    if (onShowCheckboxes != null) {
+                        onShowCheckboxes.onShow(zoomChart);
+                    }
+                }
                 handler.post(() -> {
                     ((ChartView) invalidateListeners[Ids.CHART]).resetIndex();
                     zoomManager = new GraphManager(zoomChart, range);
@@ -294,4 +299,15 @@ public class GraphManager {
     }
 
     public static final int NONE_INDEX = -1;
+    public OnShowCheckboxes onShowCheckboxes;
+
+    public void setOnShowCheckboxes(OnShowCheckboxes onShowCheckboxes) {
+        this.onShowCheckboxes = onShowCheckboxes;
+    }
+
+    public interface OnShowCheckboxes {
+        void onShow(Chart chart);
+        void onRemove();
+    }
+
 }
