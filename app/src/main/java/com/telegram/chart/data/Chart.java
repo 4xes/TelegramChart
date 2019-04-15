@@ -56,7 +56,9 @@ public class Chart {
         this.maxLengthName = maxLengthName;
     }
 
-    public static Chart createPie(Chart chart) {
+    public static Chart createPie(Chart chart, int index) {
+        int minIndex = 0;
+        int maxIndex = chart.x.length;
         return new Chart(chart.x, chart.data, TYPE_PIE);
     }
 

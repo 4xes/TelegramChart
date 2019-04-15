@@ -274,7 +274,7 @@ public class GraphManager {
             try {
                 Chart zoomChart;
                 if (chart.isPercentage) {
-                    zoomChart = Chart.createPie(chart);
+                    zoomChart = Chart.createPie(chart, index);
                 } else {
                     zoomChart = interactor.getChart(DateUtils.getPath(num, chart.x[index] * 1000L));
                 }
