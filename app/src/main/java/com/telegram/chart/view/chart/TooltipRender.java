@@ -176,7 +176,7 @@ public class TooltipRender implements Themable {
             if (manager.chart.visible[id]) {
                 int value = manager.chart.data[id].y[index];
                 if (hasPercent) {
-                    int percent = (int) Math.ceil((((double) (value)) / sum) * 100f);
+                    int percent = (int) Math.round((((double) (value)) / sum) * 100f);
                     canvas.drawText(getPercent(percent), left + percentMaxWidth, y + valueOffsetY, paintPercent);
                 }
                 canvas.drawText(manager.chart.data[id].name, left + (hasPercent? percentMaxWidth: 0), y + valueOffsetY, paintName);
