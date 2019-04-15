@@ -140,7 +140,9 @@ public abstract class StateManager {
                 previousZoom = currentZoom;
                 if (!currentZoom) {
                     if (manager.onShowCheckboxes != null) {
-                        manager.onShowCheckboxes.onRemove();
+                        if (manager.chart.isBar) {
+                            manager.onShowCheckboxes.onRemove();
+                        }
                     }
                     manager.zoomManager = null;
                 }
