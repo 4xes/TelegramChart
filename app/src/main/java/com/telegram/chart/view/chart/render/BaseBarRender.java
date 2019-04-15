@@ -7,6 +7,8 @@ import android.graphics.RectF;
 import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.utils.ColorUtils;
 
+import static com.telegram.chart.view.chart.GraphManager.NONE_INDEX;
+
 abstract class BaseBarRender extends Render {
     protected final float[] drawBars;
 
@@ -42,7 +44,7 @@ abstract class BaseBarRender extends Render {
     protected abstract void updateMatrix(RectF chart);
 
     @Override
-    public void render(Canvas canvas, RectF chart, RectF visible) {
+    public void render(Canvas canvas, RectF chart, RectF visible, int selectIndex) {
         int lower = getLower(chart, visible);
         int upper = getUpper(chart, visible);
         updateMatrix(chart);
@@ -52,13 +54,21 @@ abstract class BaseBarRender extends Render {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
             int alpha = (int) Math.ceil(255 * currentAlpha);
             if (alpha != 0) {
-                final int blendColor =  ColorUtils.blendARGB(backgroundColor, color[0], currentAlpha);
+                int blendColor =  ColorUtils.blendARGB(backgroundColor, color[0], currentAlpha);
                 paint[id].setColor(blendColor);
                 if (isPreview) {
                     canvas.drawLines(drawBars, paint[id]);
                 } else {
+                    if (selectIndex != NONE_INDEX) {
+                        paint[id].setColor(ColorUtils.blendARGB(blendColor, colorMask, 0.5f));
+                    }
                     canvas.drawLines(drawBars, lower * 4, (upper - lower) * 4 + 4, paint[id]);
+                    if (selectIndex != NONE_INDEX) {
+                        paint[id].setColor(blendColor);
+                        canvas.drawLines(drawBars, selectIndex * 4, 4, paint[id]);
+                    }
                 }
+
             }
         }
         canvas.restoreToCount(saveCount);

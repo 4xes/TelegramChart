@@ -71,16 +71,9 @@ public class GraphManager {
     }
 
     public int getIndex(float x, RectF r) {
-        x = x - r.left;
-        if (x < r.left) {
-            x = r.left;
-        }
-        if (x > r.right) {
-            x = r.right;
-        }
         int lower = chart.getLower(range.start);
         int upper =  chart.getUpper(range.end);
-        int index = (int) (Math.ceil(x - (-r.width() * range.start) * getScaleRange()) / (getScaleRange() * sectionWidth(r.width())));
+        int index = (int) (Math.ceil(x - r.left - (-r.width() * range.start) * getScaleRange()) / (getScaleRange() * sectionWidth(r.width())));
         if (index < lower) {
             return lower;
         }

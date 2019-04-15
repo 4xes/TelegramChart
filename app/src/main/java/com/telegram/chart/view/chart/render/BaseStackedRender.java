@@ -5,6 +5,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
+import com.telegram.chart.view.utils.ColorUtils;
+
+import static com.telegram.chart.view.chart.GraphManager.NONE_INDEX;
 
 abstract class BaseStackedRender extends Render {
     private final float[][] bars;
@@ -45,7 +48,8 @@ abstract class BaseStackedRender extends Render {
 
     protected abstract void updateMatrix(RectF chart);
 
-    public void render(Canvas canvas, RectF chart, RectF visible) {
+    @Override
+    public void render(Canvas canvas, RectF chart, RectF visible, int selectIndex) {
         int lower = getLower(chart, visible);
         int upper = getUpper(chart, visible);
         updateMatrix(chart);
@@ -59,7 +63,16 @@ abstract class BaseStackedRender extends Render {
                 if (isPreview) {
                     canvas.drawLines(bars[id], paint[id]);
                 } else {
+                    if (selectIndex != NONE_INDEX) {
+                        paint[id].setColor(ColorUtils.blendARGB(color[id], colorMask, 0.5f));
+                    } else {
+                        paint[id].setColor(color[id]);
+                    }
                     canvas.drawLines(bars[id], lower * 4, (upper - lower) * 4 + 4, paint[id]);
+                    if (selectIndex != NONE_INDEX) {
+                        paint[id].setColor(color[id]);
+                        canvas.drawLines(bars[id], selectIndex * 4, 4, paint[id]);
+                    }
                 }
             }
         }

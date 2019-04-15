@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.theme.Theme;
 
+import static com.telegram.chart.view.chart.GraphManager.NONE_INDEX;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 class LineRender extends Render {
@@ -109,7 +110,8 @@ class LineRender extends Render {
         }
     }
 
-    public void render(Canvas canvas, RectF chart, RectF visible) {
+    @Override
+    public void render(Canvas canvas, RectF chart, RectF visible, int selectIndex) {
         final int lower = getLower(chart, visible);
         final int upper = getUpper(chart, visible);
         for (int id = 0; id < manager.countLines(); id++) {
@@ -131,19 +133,18 @@ class LineRender extends Render {
                 }
             }
         }
-    }
 
-    @Override
-    public void renderSelect(Canvas canvas, int index, RectF chart, RectF visible) {
-        for (int id = 0; id < manager.countLines(); id++) {
-            float currentAlpha = manager.state.chart.alphaCurrent[id];
-            int alpha = (int) Math.ceil(255 * currentAlpha);
-            if (alpha != 0) {
-                manager.calculatePoint(id, index, chart, point);
-                paintCircle.setColor(color[id]);
-                paintCircle.setAlpha(alpha);
-                canvas.drawCircle(point.x, point.y, radius, paintInsideCircle);
-                canvas.drawCircle(point.x, point.y, radius, paintCircle);
+        if (selectIndex != NONE_INDEX) {
+            for (int id = 0; id < manager.countLines(); id++) {
+                float currentAlpha = manager.state.chart.alphaCurrent[id];
+                int alpha = (int) Math.ceil(255 * currentAlpha);
+                if (alpha != 0) {
+                    manager.calculatePoint(id, selectIndex, chart, point);
+                    paintCircle.setColor(color[id]);
+                    paintCircle.setAlpha(alpha);
+                    canvas.drawCircle(point.x, point.y, radius, paintInsideCircle);
+                    canvas.drawCircle(point.x, point.y, radius, paintCircle);
+                }
             }
         }
     }

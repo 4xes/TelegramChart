@@ -72,7 +72,7 @@ public class Theme {
                 R.color.axis_y_night,
                 R.color.axis_x_stacked_night,
                 R.color.axis_y_stacked_night,
-                R.color.mask_day
+                R.color.mask_night
         );
     }
 
@@ -95,7 +95,7 @@ public class Theme {
                 R.color.axis_y_day,
                 R.color.axis_x_stacked_day,
                 R.color.axis_y_stacked_day,
-                R.color.mask_night
+                R.color.mask_day
         );
     }
 

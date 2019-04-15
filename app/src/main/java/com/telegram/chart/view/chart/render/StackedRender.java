@@ -7,7 +7,7 @@ import com.telegram.chart.view.chart.GraphManager;
 class StackedRender extends BaseStackedRender {
 
     public StackedRender(GraphManager manager) {
-        super(manager, true);
+        super(manager, false);
     }
 
     @Override

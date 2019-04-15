@@ -16,6 +16,7 @@ public abstract class Render implements Themable {
     protected final Matrix matrix = new Matrix();
     protected int backgroundColor;
     protected final boolean isPreview;
+    protected int colorMask;
 
     public Render(GraphManager manager, boolean isPreview) {
         this.manager = manager;
@@ -28,7 +29,7 @@ public abstract class Render implements Themable {
         color = new int[this.manager.countLines()];
     }
 
-    public abstract void render(Canvas canvas, RectF chart, RectF visible);
+    public abstract void render(Canvas canvas, RectF chart, RectF visible, int index);
 
     @Override
     public void applyTheme(Theme theme) {
@@ -41,9 +42,8 @@ public abstract class Render implements Themable {
             }
             paint[id].setColor(color[id]);
         }
+        colorMask = theme.mask;
     }
-
-    public void renderSelect(Canvas canvas, int index, RectF chart, RectF visible) {}
 
     protected int getLower(RectF chart, RectF visible) {
         if (isPreview) {

@@ -16,6 +16,7 @@ import com.telegram.chart.view.chart.render.RenderFabric;
 import com.telegram.chart.view.theme.Themable;
 import com.telegram.chart.view.theme.Theme;
 
+import static com.telegram.chart.view.chart.GraphManager.NONE_INDEX;
 import static com.telegram.chart.view.utils.ViewUtils.pxFromDp;
 
 public class PreviewChartView extends BaseMeasureView implements Themable, GraphManager.InvalidateListener {
@@ -120,7 +121,7 @@ public class PreviewChartView extends BaseMeasureView implements Themable, Graph
 
 
         if (render != null) {
-            render.render(canvas, chartBound, null);
+            render.render(canvas, chartBound, null, NONE_INDEX);
         }
     }
 

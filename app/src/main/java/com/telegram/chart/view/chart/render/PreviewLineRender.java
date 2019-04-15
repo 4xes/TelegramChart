@@ -50,7 +50,7 @@ class PreviewLineRender extends Render {
     }
 
     @Override
-    public void render(Canvas canvas, RectF chart, RectF visible) {
+    public void render(Canvas canvas, RectF chart, RectF visible, int selectIndex) {
         for (int id = 0; id < manager.countLines(); id++) {
             float currentAlpha = manager.state.chart.alphaCurrent[id];
             int alpha = (int) Math.ceil(255 * currentAlpha);

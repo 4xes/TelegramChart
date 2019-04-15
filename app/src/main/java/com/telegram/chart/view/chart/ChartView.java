@@ -141,18 +141,20 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         if (render != null) {
-            int touchIndex = manager.getIndex(x, bound);
-            if (touchIndex != selectIndex) {
-                selectIndex = touchIndex;
-                if (onShowInfoListener != null) {
-                    if (selectIndex == NONE_INDEX) {
-                        onShowInfoListener.hideInfo();
-                    } else {
-                        manager.calculateLine(selectIndex, chartBound, point);
-                        onShowInfoListener.showInfo(selectIndex, chartBound, point);
+            if (visibleBound.contains(event.getX(), event.getY())) {
+                int touchIndex = manager.getIndex(x, chartBound);
+                if (touchIndex != selectIndex) {
+                    selectIndex = touchIndex;
+                    if (onShowInfoListener != null) {
+                        if (selectIndex == NONE_INDEX) {
+                            onShowInfoListener.hideInfo();
+                        } else {
+                            manager.calculateLine(selectIndex, chartBound, point);
+                            onShowInfoListener.showInfo(selectIndex, chartBound, point);
+                        }
                     }
+                    invalidate();
                 }
-                invalidate();
             }
         }
         return true;
@@ -174,25 +176,23 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
         boolean hasContent = manager.countVisible() > 0;
         if (render != null) {
             if (manager.chart.isPercentage) {
-                render.render(canvas, percentageBound, visibleBound);
+                render.render(canvas, percentageBound, visibleBound, selectIndex);
             } else {
-                render.render(canvas, chartBound, visibleBound);
+                render.render(canvas, chartBound, visibleBound, selectIndex);
             }
         }
 
         if (hasContent) {
             if (xyRender != null) {
                 if (selectIndex != NONE_INDEX) {
-                    manager.calculateLine(selectIndex, chartBound, point);
-                    xyRender.renderVLine(canvas, chartBound, point.x);
+                    if (manager.chart.isPercentage || manager.chart.isLine) {
+                        manager.calculateLine(selectIndex, chartBound, point);
+                        xyRender.renderVLine(canvas, chartBound, point.x);
+                    }
                 }
                 xyRender.renderYLines(canvas, manager.chart.isPercentage? percentageBound : chartBound);
                 xyRender.renderXLines(canvas, datesBound, chartBound, visibleBound);
             }
-        }
-
-        if (selectIndex != NONE_INDEX && render != null) {
-            render.renderSelect(canvas, selectIndex, chartBound, visibleBound);
         }
         gradientDrawable.draw(canvas);
         canvas.drawText(titleText, titleBound.left, titleBound.bottom, titlePaint);

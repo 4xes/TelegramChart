@@ -3,6 +3,7 @@ package com.telegram.chart.view.chart.render;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.RectF;
 
 import com.telegram.chart.view.chart.GraphManager;
@@ -10,6 +11,7 @@ import com.telegram.chart.view.theme.Theme;
 
 abstract class BasePercentageRender extends Render {
     protected final Path[] path;
+    private final PointF point = new PointF();
 
     public BasePercentageRender(GraphManager manager, boolean isPreview) {
         super(manager, isPreview);
@@ -78,7 +80,7 @@ abstract class BasePercentageRender extends Render {
     protected abstract void updateMatrix(RectF chart);
 
     @Override
-    public void render(Canvas canvas, RectF chart, RectF visible) {
+    public void render(Canvas canvas, RectF chart, RectF visible, int selectIndex) {
         int lower = getLower(chart, visible);
         int upper = getUpper(chart, visible);
         updateMatrix(chart);
