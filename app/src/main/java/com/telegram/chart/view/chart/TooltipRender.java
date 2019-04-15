@@ -96,7 +96,7 @@ public class TooltipRender implements Themable {
     public String getDate(int index) {
         String valueString = sparseValues.get(index);
         if (valueString == null) {
-            valueString = DateUtils.getToolTipDay(manager.chart.x[index] * 1000L) + DateUtils.getToolTipMonthAndYear(manager.chart.x[index] * 1000L);
+            valueString = DateUtils.getToolTipDay(manager.chart.x[index] * 1000L) + " " + DateUtils.getToolTipMonthAndYear(manager.chart.x[index] * 1000L);
             sparseYears.put(index, valueString);
         }
         return valueString;
