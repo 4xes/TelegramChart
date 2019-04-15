@@ -27,15 +27,14 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
     private Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint rangePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint roundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint linePaint = new Paint();
-    private Paint pointPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint markPaint = new Paint();
     private RectF roundRect = new RectF();
     private RectF fingerRect = new RectF();
 
     private float paddingFinger = pxFromDp(1f);
     private float lineWidth = pxFromDp(2f);
     private float lineHeight = pxFromDp(10f);
-    private float[] linePoints = new float[8];
+    private float[] markPoints = new float[8];
     private float withFinger = pxFromDp(10f);
     private float RANGE_RADIUS = pxFromDp(6f);
 
@@ -61,14 +60,10 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
     }
 
     private void initPaint() {
-        linePaint.setStrokeWidth(lineWidth);
-        linePaint.setColor(Color.WHITE);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeCap(Paint.Cap.BUTT);
-
-        pointPaint.setStrokeWidth(lineWidth);
-        pointPaint.setColor(Color.WHITE);
-        pointPaint.setStyle(Paint.Style.STROKE);
+        markPaint.setStrokeWidth(lineWidth);
+        markPaint.setColor(Color.WHITE);
+        markPaint.setStyle(Paint.Style.STROKE);
+        markPaint.setStrokeCap(Paint.Cap.ROUND);
 
         roundPaint.setStyle(Paint.Style.STROKE);
         roundPaint.setStrokeWidth(RANGE_RADIUS);
@@ -109,15 +104,15 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
         selectedRange.inset(withFinger, 0);
         fingerRect.inset(0, -paddingFinger);
 
-        linePoints[0] = fingerRect.left + withFinger / 2f;
-        linePoints[1] = fingerRect.centerY() - lineHeight / 2f;
-        linePoints[2] = linePoints[0];
-        linePoints[3] = fingerRect.centerY() + lineHeight / 2f;
+        markPoints[0] = fingerRect.left + withFinger / 2f;
+        markPoints[1] = fingerRect.centerY() - lineHeight / 2f;
+        markPoints[2] = markPoints[0];
+        markPoints[3] = fingerRect.centerY() + lineHeight / 2f;
 
-        linePoints[4] = fingerRect.right - withFinger / 2f;
-        linePoints[5] = linePoints[1];
-        linePoints[6] = linePoints[4];
-        linePoints[7] = linePoints[3];
+        markPoints[4] = fingerRect.right - withFinger / 2f;
+        markPoints[5] = markPoints[1];
+        markPoints[6] = markPoints[4];
+        markPoints[7] = markPoints[3];
     }
 
     @Override
@@ -131,8 +126,7 @@ public class RangeView extends BaseRangeView implements Themable, GraphManager.I
         canvas.drawRoundRect(line, RANGE_RADIUS, RANGE_RADIUS, rangePaint);
         canvas.drawRoundRect(roundRect, RANGE_RADIUS * 1.5f, RANGE_RADIUS * 1.5f, roundPaint);
         canvas.drawRoundRect(fingerRect, RANGE_RADIUS, RANGE_RADIUS, selectedPaint);
-        canvas.drawLines(linePoints, linePaint);
-        canvas.drawPoints(linePoints, pointPaint);
+        canvas.drawLines(markPoints, markPaint);
         canvas.restoreToCount(saveRange);
     }
 

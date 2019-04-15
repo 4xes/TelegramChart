@@ -1,7 +1,6 @@
 package com.telegram.chart.view.chart;
 
 import android.content.Context;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -24,19 +23,20 @@ import static com.telegram.chart.view.utils.ViewUtils.pxFromSp;
 public class TooltipRender implements Themable {
 
     private GraphManager manager;
-    private final Paint paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint paintDate = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint paintValue = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint paintName = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint paintPercent = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private Paint paintArrow = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private final RectF infoRect = new RectF();
     private final float PADDING = pxFromDp(16f);
     private final float SPACING_HORIZONTAL = pxFromDp(10f);
     private final float SPACING_VERTICAL = pxFromDp(4f);
-    private final float BLUR_RADIUS = pxFromDp(2f);
     private final float cursorOffset = pxFromDp(8f);
-    private final float arrowWidth = pxFromDp(10f);
+    private final float arrowWidth = pxFromDp(4f);
+    private final float offsetArrow = pxFromDp(2f);
+    private final float arrowHeight = pxFromDp(8f);
     private final float arrowPadding = pxFromDp(20f);
     private final Drawable shadowDrawableDay;
     private final Drawable shadowDrawableNight;
@@ -51,9 +51,11 @@ public class TooltipRender implements Themable {
     private final float maxDateWidth;
     private final float maxNameWidth;
     private final float maxPercentWidth;
+    private float arrowWidthStroke = pxFromDp(1.5f);
     private int sumColor;
     float width = 0;
     float height = 0;
+    private float[] arrowPoints = new float[8];
 
     public TooltipRender(GraphManager manager, Context context) {
         this.manager = manager;
@@ -119,11 +121,10 @@ public class TooltipRender implements Themable {
         paintName.setTextAlign(Paint.Align.LEFT);
 
 
-        paintShadow.setColor(Color.BLACK);
-        paintShadow.setStyle(Paint.Style.FILL);
-        float SHADOW_DEPTH = 0.9f;
-        paintShadow.setAlpha((int) (100f + 150f * (1f - SHADOW_DEPTH)));
-        paintShadow.setMaskFilter(new BlurMaskFilter(BLUR_RADIUS, BlurMaskFilter.Blur.NORMAL));
+        paintArrow.setStrokeWidth(arrowWidthStroke);
+        paintArrow.setColor(Color.WHITE);
+        paintArrow.setStyle(Paint.Style.STROKE);
+        paintArrow.setStrokeCap(Paint.Cap.ROUND);
     }
 
     public void measure(RectF bound) {
@@ -138,6 +139,15 @@ public class TooltipRender implements Themable {
         height = PADDING + dateHeight + SPACING_VERTICAL + (visible * (namesHeight + SPACING_VERTICAL)) + percentageSumHeight + PADDING - paintName.descent();
         infoRect.top = bound.top;
         infoRect.bottom = bound.top + height;
+
+        arrowPoints[0] = infoRect.right - PADDING - arrowWidth - offsetArrow;
+        arrowPoints[1] = infoRect.top + PADDING + offsetArrow;
+        arrowPoints[2] = arrowPoints[0] + arrowWidth;
+        arrowPoints[3] = arrowPoints[1] + (arrowHeight / 2f);
+        arrowPoints[4] = arrowPoints[2];
+        arrowPoints[5] = arrowPoints[3];
+        arrowPoints[6] = arrowPoints[0];
+        arrowPoints[7] = arrowPoints[1] + arrowHeight;
     }
 
     public float getDrawPosition(RectF bound, PointF point) {
@@ -232,6 +242,7 @@ public class TooltipRender implements Themable {
             paintValue.setColor(sumColor);
             canvas.drawText(getValue(sum), right, y + valueOffsetY, paintValue);
         }
+        canvas.drawLines(arrowPoints, paintArrow);
     }
 
     @Override
@@ -241,5 +252,6 @@ public class TooltipRender implements Themable {
         paintPercent.setColor(theme.titleColor);
         sumColor = theme.titleColor;
         isDay = theme.getId() == Theme.DAY;
+        paintArrow.setColor(theme.tooltipArrow);
     }
 }

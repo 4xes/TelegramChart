@@ -34,8 +34,6 @@
     <color name="scroll_selected_day">#8C86A9C4</color>
     <color name="scroll_selected_night">#806F899E</color>
 
-    <color name="tooltip_bg_day">#FFFFFF</color>
-    <color name="tooltip_bg_night">#1C2533</color>
     <color name="tooltip_arrow_day">#D2D5D7</color>
     <color name="tooltip_arrow_night">#D2D5D7</color>
 </resources>

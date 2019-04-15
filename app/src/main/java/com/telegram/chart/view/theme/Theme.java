@@ -20,7 +20,7 @@ public class Theme {
     public final int gridColor;
     public final int rangeColor;
     public final int rangeSelectedColor;
-    public final int tooltipColor;
+    public final int tooltipArrow;
     public final int shadowTop;
     public final int shadowBottom;
     public final int axisX;
@@ -29,7 +29,7 @@ public class Theme {
     public final int axisStackedY;
     public final int mask;
 
-    public Theme(Context context, @ThemeId int id, int actionBar, String actionBarColorTitle, int titleColor, int contentColor, int windowColor, int gridColor, int rangeColor, int rangeSelectedColor, int tooltipColor, int shadowTop, int shadowBottom, int axisX, int axisY, int axisStackedX, int axisStackedY, int mask) {
+    public Theme(Context context, @ThemeId int id, int actionBar, String actionBarColorTitle, int titleColor, int contentColor, int windowColor, int gridColor, int rangeColor, int rangeSelectedColor, int tooltipArrow, int shadowTop, int shadowBottom, int axisX, int axisY, int axisStackedX, int axisStackedY, int mask) {
         this.id = id;
         this.actionBar = getColor(context, actionBar);
         this.actionBarColorTitle = actionBarColorTitle;
@@ -39,7 +39,7 @@ public class Theme {
         this.gridColor = getColor(context, gridColor);
         this.rangeColor = getColor(context, rangeColor);
         this.rangeSelectedColor = getColor(context, rangeSelectedColor);
-        this.tooltipColor = getColor(context, tooltipColor);
+        this.tooltipArrow = getColor(context, tooltipArrow);
         this.shadowTop = shadowTop;
         this.shadowBottom = shadowBottom;
         this.axisX = getColor(context, axisX);
@@ -65,7 +65,7 @@ public class Theme {
                 R.color.grid_lines_night,
                 R.color.scroll_night,
                 R.color.scroll_selected_night,
-                R.color.tooltip_bg_night,
+                R.color.tooltip_arrow_night,
                 R.drawable.shadow_top_night,
                 R.drawable.shadow_bottom_night,
                 R.color.axis_x_night,
@@ -88,7 +88,7 @@ public class Theme {
                 R.color.grid_lines_day,
                 R.color.scroll_day,
                 R.color.scroll_selected_day,
-                R.color.tooltip_bg_day,
+                R.color.tooltip_arrow_day,
                 R.drawable.shadow_top_day,
                 R.drawable.shadow_bottom_day,
                 R.color.axis_x_day,
