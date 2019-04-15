@@ -338,7 +338,6 @@ public class ChartView extends BaseMeasureView implements Themable, GraphManager
 
     private void renderTitle(Canvas canvas) {
         final float percent = manager.state.progressZoom();
-        Log.d("percent", String.valueOf(percent));
         renderTitle(canvas, -percent, 1f - percent, manager.state.previousZoom);
         renderTitle(canvas, 1f - percent, percent, manager.state.currentZoom);
     }
