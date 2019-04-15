@@ -502,17 +502,11 @@
       0
     ]
   ],
-  "types": {
-    "y0": "line",
-    "y1": "line",
-    "x": "x"
-  },
-  "names": {
-    "y0": "Joined",
-    "y1": "Left"
-  },
-  "colors": {
-    "y0": "#4BD964",
-    "y1": "#FE3C30"
-  }
-}
+    "types":{"y0":"line","y1":"line","x":"x"},
+  "names":{"y0":"Joined","y1":"Left"},
+  "colors":{"y0":"#4BD964","y1":"#FE3C30"},
+  "colors_night":{"y0":"#4BD964","y1":"#E6574F"},
+  "button_color":{"y0":"#5FB641","y1":"#E65850"},
+  "button_color_night":{"y0":"#5AB34D","y1":"#CF5D57"},
+  "tooltip_color":{"y0":"#F34C44","y1":"#3CC23F"},
+  "tooltip_color_night":{"y0":"#4BD964","y1":"#F7655E"}}
