@@ -11,6 +11,7 @@ public class Chart {
     public static final String TYPE_BAR = "bar";
     public static final String TYPE_LINE_SCALED = "line_scaled";
     public static final String TYPE_PERCENTAGE = "percentage";
+    public static final String TYPE_PIE = "pie";
     public final Data[] data;
     public final int[] x;
     public final String type;
@@ -21,6 +22,8 @@ public class Chart {
     public final boolean isLined;
     public final boolean isScaled;
     public final boolean isStacked;
+    public final boolean isBar;
+    public final boolean isPie;
     public final int max;
     public final String maxLengthName;
 
@@ -36,6 +39,8 @@ public class Chart {
         isLined = Chart.TYPE_LINE.equals(type) || Chart.TYPE_LINE_SCALED.equals(type);
         isScaled = Chart.TYPE_LINE_SCALED.equals(type);
         isStacked = Chart.TYPE_BAR_STACKED.equals(type);
+        isBar = Chart.TYPE_BAR.equals(type);
+        isPie = Chart.TYPE_PIE.equals(type);
 
         int max = Integer.MIN_VALUE;
         String maxLengthName = "";
@@ -49,6 +54,28 @@ public class Chart {
         }
         this.max = max;
         this.maxLengthName = maxLengthName;
+    }
+
+    public static Chart createPie(Chart chart, int index) {
+        int minIndex = 0;
+        int maxIndex = chart.x.length;
+
+        int offsetIndex = index - 3;
+        if (offsetIndex + 7 > maxIndex) {
+            offsetIndex = maxIndex - 7;
+        }
+
+        if (offsetIndex < minIndex) {
+            offsetIndex = 0;
+        }
+
+        int x[] = Arrays.copyOfRange(chart.x, offsetIndex, offsetIndex + 7);
+        Data[] data = new Data[chart.data.length];
+        for (int id = 0; id < chart.data.length; id++) {
+            data[id] = Data.createPie(chart.data[id], index);
+        }
+
+        return new Chart(x, data, TYPE_PIE);
     }
 
     public int getLower(float lower) {

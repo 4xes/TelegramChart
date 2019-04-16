@@ -65,8 +65,8 @@ public class MainActivity extends ThemeBaseActivity {
         }
     }
 
-    private void renderChart(String title, final Chart chart) {
-        final GraphManager manager = new GraphManager(chart);
+    private void renderChart(int num, String title, final Chart chart) {
+        final GraphManager manager = new GraphManager(num, this, chart);
         LayoutInflater inflater = LayoutInflater.from(this);
         final LinearLayout view = (LinearLayout) inflater.inflate(R.layout.chart_layout, content, false);
         final View shadowTop = view.findViewById(R.id.shadowTop);
@@ -97,7 +97,7 @@ public class MainActivity extends ThemeBaseActivity {
             if (tooltipView.isShowing()) {
                 tooltipView.invalidate();
             }
-        });
+        }, chart.isBar);
         rangeView.setOnRangeListener((start, end) -> {
             chartView.resetIndex();
             tooltipView.hideInfo();
@@ -115,11 +115,11 @@ public class MainActivity extends ThemeBaseActivity {
             final Chart chart4 = interactor.getChart(4);
             final Chart chart5 = interactor.getChart(5);
             content.post(() -> {
-                renderChart("Followers", chart1);
-                renderChart("Interactions", chart2);
-                renderChart("Messages", chart3);
-                renderChart("Views", chart4);
-                renderChart("Apps", chart5);
+                renderChart(1, "Followers", chart1);
+                renderChart(2, "Interactions", chart2);
+                renderChart(3,"Messages", chart3);
+                renderChart(4,"Views", chart4);
+                renderChart(5,"Apps", chart5);
                 applyTheme(getCurrentTheme());
             });
         } catch (Throwable throwable) {

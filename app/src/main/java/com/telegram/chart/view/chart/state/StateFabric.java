@@ -16,6 +16,8 @@ public class StateFabric {
                 return new PercentageStateManager(manager);
             case Chart.TYPE_PERCENTAGE:
                 return new PercentageStateManager(manager);
+            case Chart.TYPE_PIE:
+                return new PercentageStateManager(manager);
             default:
                 throw new IllegalArgumentException();
         }

@@ -94,6 +94,7 @@ public class TooltipRender implements Themable {
     }
 
     public String getDate(int index) {
+        GraphManager manager = this.manager.zoomManager != null? this.manager.zoomManager: this.manager;
         String valueString = sparseValues.get(index);
         if (valueString == null) {
             valueString = DateUtils.getToolTipDay(manager.chart.x[index] * 1000L) + " " + DateUtils.getToolTipMonthAndYear(manager.chart.x[index] * 1000L);
@@ -130,6 +131,7 @@ public class TooltipRender implements Themable {
     }
 
     public void measure(RectF bound) {
+        GraphManager manager = this.manager.zoomManager != null? this.manager.zoomManager: this.manager;
         int visible = manager.countVisible();
         final boolean hasPercent = manager.chart.isPercentage;
         final float percentMaxWidth = hasPercent ? maxPercentWidth: 0;
@@ -194,6 +196,7 @@ public class TooltipRender implements Themable {
     }
 
     public void render(Canvas canvas, int index) {
+        GraphManager manager = this.manager.zoomManager != null? this.manager.zoomManager: this.manager;
         int visible = manager.countVisible();
         if (visible == 0) {
             return;
@@ -244,7 +247,9 @@ public class TooltipRender implements Themable {
             paintValue.setColor(sumColor);
             canvas.drawText(getValue(sum), right, y + valueOffsetY, paintValue);
         }
-        canvas.drawLines(arrowPoints, paintArrow);
+        if (!manager.isZoom) {
+            canvas.drawLines(arrowPoints, paintArrow);
+        }
     }
 
     @Override

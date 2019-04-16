@@ -4,9 +4,9 @@ package com.telegram.chart.view.chart.state;
 public abstract class State {
     public final int size;
     public long executedScaleTime = 0;
-    public long durationScale = ANIMATION_DURATION_LONG;
+    public long durationScale = DURATION_LONG;
     public long executedFadingTime = 0;
-    public long durationFading = ANIMATION_DURATION_LONG;
+    public long durationFading = DURATION_LONG;
     public int maxStart;
     public int maxCurrent;
     public int maxEnd;
@@ -136,7 +136,7 @@ public abstract class State {
     public abstract boolean isNeedInvalidate();
 
 
-    public final static long ANIMATION_DURATION_LONG = 300L;
-    public final static long ANIMATION_DURATION_SHORT = 150L;
+    public final static long DURATION_LONG = 300L;
+    public final static long DURATION_SHORT = 150L;
     public final static long ANIMATION_TICK = 16L;
 }

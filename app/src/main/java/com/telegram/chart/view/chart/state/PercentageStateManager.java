@@ -4,8 +4,8 @@ import com.telegram.chart.view.chart.GraphManager;
 
 import static com.telegram.chart.data.Chart.maxStepped;
 import static com.telegram.chart.data.Chart.step;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_LONG;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_SHORT;
+import static com.telegram.chart.view.chart.state.State.DURATION_LONG;
+import static com.telegram.chart.view.chart.state.State.DURATION_SHORT;
 
 public class PercentageStateManager extends StateManager {
 
@@ -31,37 +31,47 @@ public class PercentageStateManager extends StateManager {
         chart.maxCurrent = maxChart;
 
         for (int id = 0; id < manager.countLines(); id++) {
-            preview.percentStart[id] = 1f;
+            preview.percentStart[id] = manager.chart.visible[id] ? 1f: 0f;
             preview.percentCurrent[id] = preview.percentStart[id];
-            preview.percentEnd[id] = 1f;
+            preview.percentEnd[id] = manager.chart.visible[id] ? 1f: 0f;
 
-            chart.percentStart[id] = 1f;
+            chart.percentStart[id] = manager.chart.visible[id] ? 1f: 0f;
             chart.percentCurrent[id] = chart.percentStart[id];
-            chart.percentEnd[id] = 1f;
+            chart.percentEnd[id] = manager.chart.visible[id] ? 1f: 0f;
         }
         setAnimationStart();
     }
 
     @Override
     public void setAnimationStart() {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
 
         for (int id = 0; id < manager.countLines(); id++) {
-            preview.alphaStart[id] = 0f;
+            preview.alphaStart[id] = manager.chart.visible[id] ? 0f: 1f;
             preview.alphaCurrent[id] = preview.alphaStart[id];
-            preview.alphaEnd[id] = 1f;
+            preview.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
 
-            chart.alphaStart[id] = 0f;
+            chart.alphaStart[id] = manager.chart.visible[id] ? 0f: 1f;
             chart.alphaCurrent[id] = chart.alphaStart[id];
-            chart.alphaEnd[id] = 1f;
+            chart.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
+
+            if (manager.chart.isStacked) {
+                preview.multiStart[id] = 0f;
+                preview.multiCurrent[id] = preview.multiStart[id];
+                preview.multiEnd[id] = 1f;
+
+                chart.multiStart[id] = 0f;
+                chart.multiCurrent[id] = chart.multiStart[id];
+                chart.multiEnd[id] = 1f;
+            }
         }
     }
 
     @Override
     public void updateRange() {
         super.updateRange();
-        chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
+        chart.resetScaleAnimation(DURATION_SHORT);
         int maxRange = manager.chart.max(manager.range);
         maxCurrent = maxRange;
         updateAxisAnimation(maxRange);
@@ -81,10 +91,10 @@ public class PercentageStateManager extends StateManager {
     }
 
     public void setAnimationHide(int targetId) {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        chart.resetFadingAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        chart.resetFadingAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
+        preview.resetFadingAnimation(DURATION_LONG);
 
         int max = manager.chart.max();
 

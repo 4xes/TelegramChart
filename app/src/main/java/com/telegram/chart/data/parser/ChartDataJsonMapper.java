@@ -21,10 +21,6 @@ class ChartDataJsonMapper implements Mapper<Chart, JSONObject> {
     private static final String BUTTON_COLORS_NIGHT = "button_color_night";
     private static final String TOOLTIP_COLORS = "tooltip_color";
     private static final String TOOLTIP_COLORS_NIGHT = "tooltip_color_night";
-    private static final String X_TEXT_COLOR = "x_text_color";
-    private static final String X_TEXT_COLOR_NIGHT = "x_text_color_night";
-    private static final String Y_TEXT_COLOR = "y_text_color";
-    private static final String Y_TEXT_COLOR_NIGHT = "y_text_color_night";
     private static final String LINE = "line";
     private static final String BAR = "bar";
     private static final String Y_SCALED = "y_scaled";

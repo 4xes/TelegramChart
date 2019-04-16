@@ -23,6 +23,9 @@ public class RenderFabric {
             case Chart.TYPE_PERCENTAGE:
                 render = new PercentageRender(graphManager);
                 break;
+            case Chart.TYPE_PIE:
+                render = new PieRender(graphManager);
+                break;
         }
         if (render == null) {
             throw new IllegalArgumentException();
@@ -46,6 +49,9 @@ public class RenderFabric {
                 render = new PreviewStackedRender(graphManager);
                 break;
             case Chart.TYPE_PERCENTAGE:
+                render = new PreviewPercentageRender(graphManager);
+                break;
+            case Chart.TYPE_PIE:
                 render = new PreviewPercentageRender(graphManager);
                 break;
         }

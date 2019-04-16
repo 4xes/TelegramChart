@@ -4,6 +4,7 @@ import com.telegram.chart.view.chart.GraphManager;
 import com.telegram.chart.view.utils.DateUtils;
 
 import static com.telegram.chart.view.chart.state.State.ANIMATION_TICK;
+import static com.telegram.chart.view.chart.state.State.DURATION_LONG;
 
 public abstract class StateManager {
     public long executedAxisTime = ANIMATION_DURATION_LONG;
@@ -70,13 +71,13 @@ public abstract class StateManager {
             currentDate = DateUtils.getTitle(manager.chart.x[currentDate1] * 1000L, manager.chart.x[currentDate2] * 1000L);
             resetDateAnimation();
         }
-
     }
     public abstract void updateAxisAnimation(int maxChart);
     public abstract void setAnimationHide(int targetId);
 
     public void tick() {
         chart.needInvalidate = chart.isNeedInvalidate()
+                || currentZoom != previousZoom
                 || currentDate1 != prevDate1 || currentDate2 != prevDate2
                 || currentStep != previousStep || currentMaxChart != previousMaxChart || currentMinChart != previousMinChart;
         preview.needInvalidate = preview.isNeedInvalidate();
@@ -86,6 +87,7 @@ public abstract class StateManager {
         preview.tickFading();
         tickAxisChange();
         tickDateChange();
+        tickZoomChange();
     }
 
     public void tickAxisChange() {
@@ -120,8 +122,84 @@ public abstract class StateManager {
         }
     }
 
+    public long executedZoomTime = ANIMATION_DURATION_LONG;
+    public long durationZoom = ANIMATION_DURATION_LONG;
+
+    public boolean previousZoom = false;
+    public boolean currentZoom = false;
+
+    public void tickZoomChange() {
+        if (executedZoomTime < durationZoom) {
+            executedZoomTime += ANIMATION_TICK;
+
+            if (executedZoomTime > durationZoom) {
+                executedZoomTime = durationZoom;
+            }
+
+            if (executedZoomTime == durationZoom) {
+                previousZoom = currentZoom;
+                if (!currentZoom) {
+                    if (manager.onShowCheckboxes != null) {
+                        if (manager.chart.isBar) {
+                            manager.onShowCheckboxes.onRemove();
+                        }
+                    }
+                    manager.zoomManager = null;
+                }
+            }
+        }
+    }
+
+    public void resetState() {
+        for (int id = 0; id < manager.countLines(); id++) {
+            preview.alphaStart[id] = 0f;
+            preview.alphaCurrent[id] = preview.alphaStart[id];
+            preview.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
+
+            chart.multiStart[id] = 0f;
+            chart.multiCurrent[id] = preview.multiStart[id];
+            chart.multiEnd[id] = 1f;
+
+            preview.multiStart[id] = 0f;
+            preview.multiCurrent[id] = preview.multiStart[id];
+            preview.multiEnd[id] = 1f;
+
+            chart.alphaStart[id] = 0f;
+            chart.alphaCurrent[id] = chart.alphaStart[id];
+            chart.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
+        }
+        preview.resetScaleAnimation(DURATION_LONG);
+        preview.resetFadingAnimation(DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        chart.resetFadingAnimation(DURATION_LONG);
+    }
+
+    public void hideState() {
+        for (int id = 0; id < manager.countLines(); id++) {
+            preview.alphaStart[id] = preview.alphaCurrent[id];
+            preview.alphaEnd[id] = 0f;
+
+            chart.multiStart[id] = chart.multiCurrent[id];
+            chart.multiEnd[id] = 0f;
+
+            preview.multiStart[id] = preview.multiCurrent[id];
+            preview.multiEnd[id] = 0f;
+
+            chart.alphaStart[id] = chart.alphaCurrent[id];
+            chart.alphaEnd[id] = 0f;
+        }
+        preview.resetScaleAnimation(DURATION_LONG);
+        preview.resetFadingAnimation(DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        chart.resetFadingAnimation(DURATION_LONG);
+    }
+
     public float progressDate() {
         return Math.min(1f, executedDateTime / (float) durationDate);
+    }
+
+    public float progressZoom() {
+        return Math.min(1f, executedZoomTime / (float) durationZoom);
     }
 
     public float progressAxis() {
@@ -138,6 +216,21 @@ public abstract class StateManager {
 
     public void resetDateAnimation() {
         executedDateTime = 0;
+    }
+
+    public void resetZoom(boolean isZoom) {
+        if (currentZoom != isZoom) {
+            if (!isZoom) {
+                if (manager.zoomManager != null) {
+                    manager.zoomManager.state.hideState();
+                    manager.state.resetState();
+                }
+            } else {
+                manager.state.hideState();
+            }
+            currentZoom = isZoom;
+            executedZoomTime = 0;
+        }
     }
 
     private final static long ANIMATION_DURATION_LONG = 300L;

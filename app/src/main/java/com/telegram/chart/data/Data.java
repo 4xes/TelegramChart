@@ -1,5 +1,7 @@
 package com.telegram.chart.data;
 
+import java.util.Arrays;
+
 public class Data {
     public final String name;
     public final int color;
@@ -73,6 +75,33 @@ public class Data {
         tempMinUpperId = upper;
         tempRangeMinY = min;
         return min;
+    }
+
+    public static Data createPie(Data data, int index) {
+        int minIndex = 0;
+        int maxIndex = data.y.length;
+
+        int offsetIndex = index - 3;
+        if (offsetIndex + 7 > maxIndex) {
+            offsetIndex = maxIndex - 7;
+        }
+
+        if (offsetIndex < minIndex) {
+            offsetIndex = 0;
+        }
+
+        int y[] = Arrays.copyOfRange(data.y, offsetIndex, offsetIndex + 7);
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < y.length;i++) {
+            if (max < y[i]) {
+                max = y[i];
+            }
+            if (min > y[i]) {
+                min = y[i];
+            }
+        }
+        return new Data(data.name, data.color, data.colorNight,  data.buttonColor, data.buttonColorNight, data.tooltipColor, data.tooltipColorNight, y, max, min);
     }
 
 }

@@ -29,7 +29,7 @@ abstract class BaseStackedRender extends Render {
         }
     }
 
-    public void recalculateBars(int lower, int upper) {
+    public void recalculateBars(RectF bound, int lower, int upper) {
         for (int i = lower; i <= upper; i++) {
             int sum = 0;
             for (int id = 0; id < manager.countLines(); id++) {
@@ -39,9 +39,13 @@ abstract class BaseStackedRender extends Render {
                 final int iY1 = i * 4 + 3;
                 bars[id][iX0] = i;
                 bars[id][iY0] = sum;
-                sum -= Math.round(manager.chart.data[id].y[i] * manager.state.chart.percentCurrent[id]);
+                sum -= Math.round(manager.chart.data[id].y[i] * manager.state.chart.percentCurrent[id]) * manager.state.chart.multiCurrent[id];
                 bars[id][iX1] = bars[id][iX0];
                 bars[id][iY1] = sum;
+                if (sum == 0) {
+                    bars[id][iY1] = - bound.height();
+                    bars[id][iY0] = - bound.height();
+                }
             }
         }
     }
@@ -53,7 +57,7 @@ abstract class BaseStackedRender extends Render {
         int lower = getLower(chart, visible);
         int upper = getUpper(chart, visible);
         updateMatrix(chart);
-        recalculateBars(lower, upper);
+        recalculateBars(chart, lower, upper);
         int saveCount = canvas.save();
         canvas.setMatrix(matrix);
         for (int id = 0; id < manager.countLines(); id++) {
@@ -68,6 +72,7 @@ abstract class BaseStackedRender extends Render {
                     } else {
                         paint[id].setColor(color[id]);
                     }
+                    paint[id].setAlpha(alpha);
                     canvas.drawLines(bars[id], lower * 4, (upper - lower) * 4 + 4, paint[id]);
                     if (selectIndex != NONE_INDEX) {
                         paint[id].setColor(color[id]);

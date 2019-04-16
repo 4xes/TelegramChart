@@ -6,8 +6,8 @@ import static com.telegram.chart.data.Chart.maxStepped;
 import static com.telegram.chart.data.Chart.minStepped;
 import static com.telegram.chart.data.Chart.step;
 import static com.telegram.chart.view.chart.XYRender.GRID;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_LONG;
-import static com.telegram.chart.view.chart.state.State.ANIMATION_DURATION_SHORT;
+import static com.telegram.chart.view.chart.state.State.DURATION_LONG;
+import static com.telegram.chart.view.chart.state.State.DURATION_SHORT;
 
 public class LineStateManager extends StateManager {
     public LineStateManager(GraphManager manager) {
@@ -42,17 +42,17 @@ public class LineStateManager extends StateManager {
             preview.yMinCurrent[id] = preview.yMinStart[id];
             preview.yMinEnd[id] = minPreview;
 
-            preview.alphaStart[id] = 1f;
+            preview.alphaStart[id] = manager.chart.visible[id] ? 1f: 0f;
             preview.alphaCurrent[id] = preview.alphaStart[id];
-            preview.alphaEnd[id] = 1f;
+            preview.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
 
             preview.multiStart[id] = 0f;
             preview.multiCurrent[id] = preview.multiStart[id];
             preview.multiEnd[id] = 1f;
 
-            chart.alphaStart[id] = 1f;
+            chart.alphaStart[id] = manager.chart.visible[id] ? 1f: 0f;
             chart.alphaCurrent[id] = chart.alphaStart[id];
-            chart.alphaEnd[id] = 1f;
+            chart.alphaEnd[id] = manager.chart.visible[id] ? 1f: 0f;
 
             chart.yMaxStart[id] = maxChart;
             chart.yMaxCurrent[id] = chart.yMaxStart[id];
@@ -71,8 +71,8 @@ public class LineStateManager extends StateManager {
 
     @Override
     public void setAnimationStart() {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
 
         for (int id = 0; id < manager.countLines(); id++) {
             preview.multiStart[id] = 0f;
@@ -88,7 +88,7 @@ public class LineStateManager extends StateManager {
     @Override
     public void updateRange() {
         super.updateRange();
-        chart.resetScaleAnimation(ANIMATION_DURATION_SHORT);
+        chart.resetScaleAnimation(DURATION_SHORT);
 
         int maxRange = manager.chart.max(manager.range);
         int minRange = manager.chart.min(manager.range);
@@ -139,10 +139,10 @@ public class LineStateManager extends StateManager {
 
     @Override
     public void setAnimationHide(int targetId) {
-        chart.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        chart.resetFadingAnimation(ANIMATION_DURATION_LONG);
-        preview.resetScaleAnimation(ANIMATION_DURATION_LONG);
-        preview.resetFadingAnimation(ANIMATION_DURATION_LONG);
+        chart.resetScaleAnimation(DURATION_LONG);
+        chart.resetFadingAnimation(DURATION_LONG);
+        preview.resetScaleAnimation(DURATION_LONG);
+        preview.resetFadingAnimation(DURATION_LONG);
 
         int max = manager.chart.max();
         int min = manager.chart.min();

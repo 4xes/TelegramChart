@@ -24,6 +24,7 @@ public class XYRender implements Themable {
     private final TextPaint yPaintRight = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint xPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Paint linePaint = new Paint();
+    private final SparseArray<String> sparseTimes = new SparseArray<>();
     private final SparseArray<String> sparseDates = new SparseArray<>();
     private final SparseArray<String> sparseValues = new SparseArray<>();
     private final float valueHeight;
@@ -36,7 +37,11 @@ public class XYRender implements Themable {
         this.manager = manager;
         initPaints();
         valueHeight = measureHeightText(yPaintLeft);
-        dateWidth = xPaint.measureText(DateUtils.X_FORMAT_MAX);
+        if (manager.isZoom) {
+            dateWidth = xPaint.measureText(DateUtils.X_FORMAT_TIME_MAX);
+        } else {
+            dateWidth = xPaint.measureText(DateUtils.X_FORMAT_MAX);
+        }
     }
 
     private void initPaints() {
@@ -262,13 +267,19 @@ public class XYRender implements Themable {
                 if ((right < visibleBound.left) || (left > visibleBound.right)) {
                     continue;
                 }
-                String date = sparseDates.get(index);
-                if (date == null) {
-                    date = DateUtils.getDateX(manager.chart.x[index] * 1000L);
-                    sparseDates.put(index, date);
+                if (manager.isZoom) {
+                    xPaint.setAlpha(alpha);
+                    canvas.drawText(DateUtils.getTime(manager.chart.x[index] * 1000L), x, chartBound.centerY() + valueHeight / 2f, xPaint);
+                } else {
+                    String date = sparseDates.get(index);
+                    if (date == null) {
+                        date = DateUtils.getDateX(manager.chart.x[index] * 1000L);
+                        sparseDates.put(index, date);
+                    }
+                    xPaint.setAlpha(alpha);
+                    canvas.drawText(date, x, chartBound.centerY() + valueHeight / 2f, xPaint);
                 }
-                xPaint.setAlpha(alpha);
-                canvas.drawText(date, x, chartBound.centerY() + valueHeight / 2f, xPaint);
+
             }
         }
     }
@@ -300,6 +311,6 @@ public class XYRender implements Themable {
         return step;
     }
 
-    public static final int GRID = 100;
-    public static final int STEP = 15;
+    public static final int GRID = 12;
+    public static final int STEP = 2;
 }
